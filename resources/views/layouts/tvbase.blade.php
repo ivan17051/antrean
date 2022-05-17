@@ -25,13 +25,7 @@
                 </div>
             </div>
 
-            @include('layouts.partials.navbar')
-
-            @include('layouts.partials.sidebar')
-
-            @include('layouts.partials.chat')   
-
-            <section class="content">
+            <section class="content content--full" style="padding-top: 30px!important;">
                  
                 @yield('content')
 
