@@ -43,7 +43,10 @@
     <div class="d-flex justify-content-between align-items-center">
         <span class="nav-item">
             <div>
-                <p id="date_time" style="margin-bottom: 0px!important; font-size: 20px; font-weight: 400; "></p>
+                <p class="time" id="date_time" style="margin-bottom: 0px!important; font-size: 20px; font-weight: 400; ">
+                    <span class="dateindo"></span>
+                    <span class="time__hours"></span>:<span class="time__min"></span>:<span class="time__sec"></span>
+                </p>
             </div>
         </span>
         <div>
@@ -138,38 +141,8 @@ function setpoli(id) {
     $('#menu').modal('hide');
 }
 
-function date_time(id) {
-    date = new Date;
-    year = date.getFullYear();
-    month = date.getMonth();
-    months = new Array('Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember');
-    d = date.getDate();
-    day = date.getDay();
-    days = new Array('Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu');
-    h = date.getHours();
-    if(h<10)
-    {
-            h = "0"+h;
-    }
-    m = date.getMinutes();
-    if(m<10)
-    {
-            m = "0"+m;
-    }
-    s = date.getSeconds();
-    if(s<10)
-    {
-            s = "0"+s;
-    }
-    result = ''+days[day]+' '+d+' '+months[month]+' '+year+' '+h+':'+m+':'+s;
-    document.getElementById(id).innerHTML = result;
-    setTimeout('date_time("'+id+'");','1000');
-    return true;
-}
-
 $(function () {
     $('#menu').modal('show');
-    date_time("date_time");
 });
 </script>
 @endsection

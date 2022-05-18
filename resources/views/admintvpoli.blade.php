@@ -2,23 +2,22 @@
 @section('content')
 <header class="content__title">
     <h1>Admin TV Poli</h1>
-    <small>Welcome to the unique Material Design admin web app experience!</small>
+    <small>
+        <p class="time" id="date_time" style="margin-bottom: 0px!important; font-weight: 400; ">
+            <span class="dateindo"></span>
+            <span class="time__hours"></span>:<span class="time__min"></span>:<span class="time__sec"></span>
+        </p>
+    </small>
 
     <div class="actions">
-        <a href="" class="actions__item zmdi zmdi-trending-up"></a>
         <a href="" class="actions__item zmdi zmdi-check-all"></a>
-
-        <div class="dropdown actions__item">
-            <i data-toggle="dropdown" class="zmdi zmdi-more-vert"></i>
-            <div class="dropdown-menu dropdown-menu-right">
-                <a href="" class="dropdown-item">Refresh</a>
-                <a href="" class="dropdown-item">Manage Widgets</a>
-                <a href="" class="dropdown-item">Settings</a>
-            </div>
-        </div>
     </div>
 </header>
-
+<div class="row content__title">
+    <div class="col-md-12">
+        <h4>POLI UMUM</h4>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-6">
         <div class="row">

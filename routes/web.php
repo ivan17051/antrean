@@ -20,4 +20,6 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
 
-Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('tvpoli');
+Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('admintvpoli');
+
+Route::get('/tv', function(){ return view('tv'); })->name('tv');
