@@ -36,8 +36,8 @@
                 <a href=""><i class="zmdi zmdi-tv"></i> TV</a>
 
                 <ul>
-                    <li><a href="{{url('/tvutama')}}">TV Utama</a></li>
-                    <li><a href="{{url('/tvnonpanggilan')}}">TV Non Panggilan</a></li>
+                    <li><a href="{{url('/admintvpoli')}}">TV Utama</a></li>
+                    <li><a href="{{url('/tv')}}">TV Non Panggilan</a></li>
                     <li><a href="{{url('/tvpoli')}}">TV Poli</a></li>
                 </ul>
             </li>
