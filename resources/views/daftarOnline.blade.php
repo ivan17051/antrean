@@ -115,6 +115,8 @@ const filterFaskesOnChange = async function(e){
         $('#faskes').attr('hidden', false);
     }else{
         $('#faskes').attr('hidden', true);
+        $('#poli').attr('hidden', true);
+        $('#calendar').attr('hidden', true);
     }
     dt.forEach(e => {
         str+=`<option value="${e.id}">${e.nama}</option>`;
@@ -133,6 +135,7 @@ const filterPoliOnChange = async function(e){
         $('#poli').attr('hidden', false);
     } else{
         $('#poli').attr('hidden', true);
+        $('#calendar').attr('hidden', true);
     }
     dt.forEach(e => {
         str+=`<option value="${e.id}">${e.nama}</option>`;

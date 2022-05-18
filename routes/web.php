@@ -15,9 +15,16 @@ use Illuminate\Support\Facades\Route;
 
 
 //Auth::routes();
-
+Route::get('/', function(){
+  return redirect('/home');
+});
 Route::get('/home', 'HomeController@index')->name('home');
+
 Route::get('/daftar', 'PendaftaranController@daftarOnline');
+Route::get('/daftaronsite', 'PendaftaranController@daftarOnSite');
+Route::get('/daftarbarcode', 'PendaftaranController@daftarBarcode');
+
+Route::get('/resume', 'ResumeController@resume');
 
 Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
 
