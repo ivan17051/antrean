@@ -1,0 +1,29 @@
+.tv-antrian .antrian-nomor{
+    font-size: 7.5rem;
+    text-align: center;
+}
+
+.tv-antrian .antrian-nama, .tv-antrian .antrian-dokter{
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.font-2c5rem{
+    font-size: 2.5rem;
+}
+
+.fweight-400{
+    font-weight: 400!important;
+}
+
+.p-0{
+    padding: 0!important;
+}
+
+#menu-list-poli .item-poli button{
+    width: 100%!important;
+}
+
+#menu-list-poli .item-poli{
+    padding-top: 2rem;
+}

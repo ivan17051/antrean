@@ -9,11 +9,9 @@
         <link rel="stylesheet" href="{{ asset('public/vendors/animate.css/animate.min.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/jquery-scrollbar/jquery.scrollbar.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/fullcalendar/fullcalendar.min.css') }}">
-        <link rel="stylesheet" href="{{ asset('public/vendors/select2/css/select2.min.css') }}">
 
         <!-- App styles -->
         <link rel="stylesheet" href="{{ asset('public/css/app.min.css') }}">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css">
         <link rel="stylesheet" href="{{ asset('public/css/custom.css') }}">
     </head>
 
@@ -27,13 +25,7 @@
                 </div>
             </div>
 
-            @include('layouts.partials.navbar')
-
-            @include('layouts.partials.sidebar')
-
-            @include('layouts.partials.chat')   
-
-            <section class="content">
+            <section class="content content--full" style="padding-top: 30px!important;">
                  
                 @yield('content')
 
@@ -70,7 +62,6 @@
 
         <!-- App functions and actions -->
         <script src="{{ asset('public/js/app.min.js') }}"></script>
-        <script src="{{ asset('public/vendors/select2/js/select2.full.min.js') }}"></script>
 
         @yield('jsx')
     </body>

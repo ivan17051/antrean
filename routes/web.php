@@ -18,3 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/daftar', 'PendaftaranController@daftarOnline');
+
+Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
+
+Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('tvpoli');
