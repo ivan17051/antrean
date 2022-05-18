@@ -1,7 +1,65 @@
-@extends('layouts.app')
+@extends('layouts.tvbase')
 
 @section('content')
-<div class="container">
+<div class="login">
+    <!-- Register -->
+    <div class="login__block active">
+        <div class="login__block__header palette-Blue bg">
+            <i class="zmdi zmdi-account-circle"></i>
+            Buat Akun
+
+            <div class="actions actions--inverse login__block__actions">
+                <div class="dropdown">
+                    <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
+
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="{{url('/login')}}">Sudah Punya Akun?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="login__block__body">
+            <div class="form-group form-group--float form-group--centered">
+                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                <label>Nama</label>
+                <i class="form-group__bar"></i>
+                @error('name')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <div class="form-group form-group--float form-group--centered">
+                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
+                <label>Alamat Email</label>
+                <i class="form-group__bar"></i>
+                @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <div class="form-group form-group--float form-group--centered">
+                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                <label>Password</label>
+                <i class="form-group__bar"></i>
+                @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <button href="{{url('/')}}" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-check"></i></button>
+        </div>
+    </div>
+</div>
+
+
+<!-- <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -73,5 +131,5 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 @endsection

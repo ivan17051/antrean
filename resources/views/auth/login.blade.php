@@ -1,7 +1,88 @@
-@extends('layouts.app')
+@extends('layouts.tvbase')
 
 @section('content')
-<div class="container">
+
+<div class="login">
+
+<!-- Login -->
+<div class="login__block active" id="l-login">
+    <div class="login__block__header">
+        <i class="zmdi zmdi-account-circle"></i>
+        Silahkan Login
+
+        <div class="actions actions--inverse login__block__actions">
+            <div class="dropdown">
+                <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="{{url('/register')}}">Buat Akun</a>
+                    <a class="dropdown-item" data-ma-action="login-switch" data-ma-target="#l-forget-password" href="">Lupa password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login__block__body">
+        <div class="form-group form-group--float form-group--centered">
+        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+            <label>Alamat Email</label>
+            <i class="form-group__bar"></i>
+            @error('email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+
+        <div class="form-group form-group--float form-group--centered">
+        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+            <label>Password</label>
+            <i class="form-group__bar"></i>
+            @error('password')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+
+        <button href="{{url('/')}}" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-long-arrow-right"></i></button>
+    </div>
+</div>
+
+<!-- Forgot Password -->
+<div class="login__block" id="l-forget-password">
+    <div class="login__block__header palette-Purple bg">
+        <i class="zmdi zmdi-account-circle"></i>
+        Lupa Password?
+
+        <div class="actions actions--inverse login__block__actions">
+            <div class="dropdown">
+                <i data-toggle="dropdown" class="zmdi zmdi-more-vert actions__item"></i>
+
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" data-ma-action="login-switch" data-ma-target="#l-login" href="">Sudah Punya Akun?</a>
+                    <a class="dropdown-item" href="{{url('/register')}}">Buat Akun</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login__block__body">
+        <p class="mt-4">Masukkan alamat email anda.</p>
+
+        <div class="form-group form-group--float form-group--centered">
+            <input type="text" class="form-control">
+            <label>Alamat Email</label>
+            <i class="form-group__bar"></i>
+        </div>
+
+        <button href="index.html" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-check"></i></button>
+    </div>
+</div>
+</div>
+
+
+<!-- <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -69,5 +150,5 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 @endsection
