@@ -17,42 +17,30 @@
         </div>
 
         <ul class="navigation">
-            <li class="navigation__active"><a href="index.html"><i class="zmdi zmdi-home"></i> Home</a></li>
+            <li class="navigation__active"><a href="{{url('/home')}}"><i class="zmdi zmdi-home"></i> Beranda</a></li>
 
-           
+            <li><a href="{{url('/daftar')}}"><i class="zmdi zmdi-calendar"></i> Pendaftaran (Pasien)</a></li>
 
             <li class="navigation__sub">
-                <a href=""><i class="zmdi zmdi-collection-text"></i> Forms</a>
+                <a href=""><i class="zmdi zmdi-collection-text"></i> Pendaftaran (Faskes)</a>
 
                 <ul>
-                    <li><a href="form-elements.html">Basic Form Elements</a></li>
-                    <li><a href="form-components.html">Form Components</a></li>
-                    <li><a href="form-layouts.html">Form Layouts</a></li>
-                    <li><a href="form-validation.html">Form Validation</a></li>
+                    <li><a href="{{url('/daftaronsite')}}">On Site</a></li>
+                    <li><a href="{{url('/daftarbarcode')}}">Barcode</a></li>
                 </ul>
             </li>
 
-            
+            <li><a href="{{url('/resume')}}"><i class="zmdi zmdi-calendar"></i> Resume Medis</a></li>
 
             <li class="navigation__sub">
-                <a href=""><i class="zmdi zmdi-group-work"></i> Javascript Components</a>
+                <a href=""><i class="zmdi zmdi-tv"></i> TV</a>
 
-                <ul class="navigation__sub">
-                    <li><a href="carousel.html">Carousel</a></li>
-                    <li><a href="collapse.html">Collapse</a></li>
-                    <li><a href="dropdowns.html">Dropdowns</a></li>
-                    <li><a href="modals.html">Modals</a></li>
-                    <li><a href="popover.html">Popover</a></li>
-                    <li><a href="tabs.html">Tabs</a></li>
-                    <li><a href="tooltips.html">Tooltips</a></li>
-                    <li><a href="notifications-alerts.html">Notifications & Alerts</a></li>
-                    <li><a href="tree-view.html">Tree View</a></li>
+                <ul>
+                    <li><a href="{{url('/tvutama')}}">TV Utama</a></li>
+                    <li><a href="{{url('/tvnonpanggilan')}}">TV Non Panggilan</a></li>
+                    <li><a href="{{url('/tvpoli')}}">TV Poli</a></li>
                 </ul>
             </li>
-
-           
-            <li><a href="calendar.html"><i class="zmdi zmdi-calendar"></i> Calendar</a></li>
-
             
         </ul>
     </div>

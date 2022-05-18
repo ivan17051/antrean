@@ -8,21 +8,21 @@
                 </div>
 
                 <div class="header__logo hidden-sm-down">
-                    <h1><a href="index.html">Material Admin 2.0</a></h1>
+                    <h1><a href="{{url('/')}}">E-Health</a></h1>
                 </div>
 
-                <form class="search">
+                <!-- <form class="search">
                     <div class="search__inner">
                         <input type="text" class="search__text" placeholder="Search for people, files, documents...">
                         <i class="zmdi zmdi-search search__helper" data-ma-action="search-close"></i>
                     </div>
-                </form>
+                </form> -->
 
                 <ul class="top-nav">
-                    <li class="hidden-xl-up"><a href="" data-ma-action="search-open"><i class="zmdi zmdi-search"></i></a></li>
+                    <!-- <li class="hidden-xl-up"><a href="" data-ma-action="search-open"><i class="zmdi zmdi-search"></i></a></li> -->
 
 
-                    <li class="dropdown top-nav__notifications">
+                    <!-- <li class="dropdown top-nav__notifications">
                         <a href="" data-toggle="dropdown" class="top-nav__notify">
                             <i class="zmdi zmdi-notifications"></i>
                         </a>
@@ -214,13 +214,13 @@
                                 </a>
                             </div>
                         </div>
-                    </li>
+                    </li> -->
 
                     <li class="dropdown hidden-xs-down">
                         <a href="" data-toggle="dropdown"><i class="zmdi zmdi-more-vert"></i></a>
 
                         <div class="dropdown-menu dropdown-menu-right">
-                            <div class="dropdown-item theme-switch">
+                            <!-- <div class="dropdown-item theme-switch">
                                 Theme Switch
 
                                 <div class="btn-group btn-group-toggle btn-group--colors" data-toggle="buttons">
@@ -238,16 +238,16 @@
                                     <label class="btn bg-indigo"><input type="radio" value="indigo" autocomplete="off"></label>
                                     <label class="btn bg-brown"><input type="radio" value="brown" autocomplete="off"></label>
                                 </div>
-                            </div>
-                            <a href="" class="dropdown-item">Fullscreen</a>
-                            <a href="" class="dropdown-item">Clear Local Storage</a>
+                            </div> -->
+                            <a href="{{url('/login')}}" class="dropdown-item">Login</a>
+                            <a href="{{url('/register')}}" class="dropdown-item">Register</a>
                         </div>
                     </li>
 
-                    <li class="hidden-xs-down">
+                    <!-- <li class="hidden-xs-down">
                         <a href="" data-ma-action="aside-open" data-ma-target=".chat" class="top-nav__notify">
                             <i class="zmdi zmdi-comment-alt-text"></i>
                         </a>
-                    </li>
+                    </li> -->
                 </ul>
             </header>

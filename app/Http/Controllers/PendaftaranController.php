@@ -15,4 +15,16 @@ class PendaftaranController extends Controller
         
         return view('daftarOnline', ['puskesmas'=>$puskesmas, 'rs'=>$rs, 'poli'=>$poli]);
     }
+
+    public function daftarOnSite(){
+        $poli = Poliklinik::all();
+
+        return view('daftarOnSite', ['poli'=>$poli]);
+    }
+
+    public function daftarBarcode(){
+        $poli = Poliklinik::all();
+
+        return view('daftarBarcode', ['poli'=>$poli]);
+    }
 }
