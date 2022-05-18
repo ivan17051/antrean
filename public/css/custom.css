@@ -52,8 +52,22 @@
     display: inline-block;
 }
 
+.legend-item.item-smaller:not(:last-child){    
+    margin-right: 12px;
+}
+
 .legend-item:not(:last-child){    
     margin-right: 32px;
+}
+
+.legend-item.item-smaller > span::before{
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -4px;
+    margin-right: 8px;
 }
 
 .legend-item > span::before{

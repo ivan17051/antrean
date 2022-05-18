@@ -1,5 +1,28 @@
 @extends('layouts.base')
 @section('content')
+<div class="modal fade p-0" id="menu" tabindex="-1" style="display: none;" data-backdrop="static" aria-hidden="false">
+    <div class="modal-dialog modal-lg" style="margin: 0;max-width: 100%;">
+        <div class="modal-content bg-purple text-white">
+            <div class="modal-header">
+                <h4 class="modal-title pull-left text-white">PILIH POLI</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" id="menu-list-poli">
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('umum')">UMUM</button></div>
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('gigi')">GIGI</button></div>
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('kia')">KIA</button></div>
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('gizi')">GIZI</button></div>
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('sanitasi')">SANITASI</button></div>
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('batra')">BATRA</button></div>
+                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('psikologi')">PSIKOLOGI</button></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link text-white" data-dismiss="modal">TUTUP</button>
+            </div>
+        </div>
+    </div>
+</div>
 <header class="content__title">
     <h1>Admin TV Poli</h1>
     <small>
@@ -10,12 +33,15 @@
     </small>
 
     <div class="actions">
-        <a href="" class="actions__item zmdi zmdi-check-all"></a>
+        <!-- <a href="" class="actions__item zmdi zmdi-check-all"></a> -->
     </div>
 </header>
 <div class="row content__title">
     <div class="col-md-12">
-        <h4>POLI UMUM</h4>
+        <h3>
+            <span id="poli-title">POLI UMUM</span>&nbsp;&nbsp;
+            <span ><button class="btn btn-light btn--icon" data-toggle="modal" data-target="#menu" style="font-size: large;"><i class="zmdi zmdi-more-vert"></i></button>
+        </span></h3>
     </div>
 </div>
 <div class="row">
@@ -28,14 +54,24 @@
                             <div class="text-center"><i class="zmdi zmdi-time"></i></div>
                             <h6>08:00</h6> 
                         </span>
-                        <h4 class="card-title">dr. Kemal Pahlevi</h4>
-                        <h6 class="text-secondary">menangani pasien:</h6>
-                        <h6 class="text-secondary">12. Aldo</h6>
+                        <h4 class="card-title">dr. Kemal</h4>
                         <hr>
-                        <div class="d-block text-right">
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-assignment-check"></i> Selesai</button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-volume-up"></i> Panggil</button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-forward"></i> Berikutnya</button>
+                        <div class="d-flex flex-row">
+                            <div style="flex: 1">
+                                <h6 class="text-secondary">Pasien:</h6>
+                                <h6 class="text-secondary mb-3">7. Suherman</h6>
+                            </div>
+                            <div>
+                                <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0 d-block" style="border: 1px solid;"><i class="zmdi zmdi-volume-up"></i></button>
+                                <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;"><i class="zmdi zmdi-assignment-check"></i></button>
+                            </div>
+                        </div>                        
+                        <h6 class="text-secondary">Berikutnya:</h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" style="border: 1px solid var(--purple);" readonly value="10. Ahmad Sofyan">
+                            <div class="input-group-append">
+                                <button class="btn text-white bg-purple rounded-0 btn--icon-text "  style="border: 1px solid;"><i class="zmdi zmdi-forward"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -47,14 +83,24 @@
                             <div class="text-center"><i class="zmdi zmdi-time"></i></div>
                             <h6>07:50</h6> 
                         </span>
-                        <h4 class="card-title">dr. Sigit Purnomo</h4>
-                        <h6 class="text-secondary">menangani pasien:</h6>
-                        <h6 class="text-secondary">11. Bambang</h6>
+                        <h4 class="card-title">dr. Budi</h4>
                         <hr>
-                        <div class="d-block text-right">
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-assignment-check"></i> Selesai</button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-volume-up"></i> Panggil</button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-forward"></i> Berikutnya</button>
+                        <div class="d-flex flex-row">
+                            <div style="flex: 1">
+                                <h6 class="text-secondary">Pasien:</h6>
+                                <h6 class="text-secondary mb-3">8. Jaidi</h6>
+                            </div>
+                            <div>
+                                <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0 d-block" style="border: 1px solid;"><i class="zmdi zmdi-volume-up"></i></button>
+                                <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;"><i class="zmdi zmdi-assignment-check"></i></button>
+                            </div>
+                        </div>                        
+                        <h6 class="text-secondary">Berikutnya:</h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" style="border: 1px solid var(--purple);" readonly value="10. Ahmad Sofyan">
+                            <div class="input-group-append">
+                                <button class="btn text-white bg-purple rounded-0 btn--icon-text "  style="border: 1px solid;"><i class="zmdi zmdi-forward"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -66,14 +112,24 @@
                             <div class="text-center"><i class="zmdi zmdi-time"></i></div>
                             <h6>08:05</h6> 
                         </span>
-                        <h4 class="card-title">dr. Ashil Muzzakki</h4>
-                        <h6 class="text-secondary">menangani pasien:</h6>
-                        <h6 class="text-secondary">13. Andini</h6>
+                        <h4 class="card-title">dr. Paksi</h4>
                         <hr>
-                        <div class="d-block text-right">
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-assignment-check"></i> Selesai</button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-volume-up"></i> Panggil</button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1"><i class="zmdi zmdi-forward"></i> Berikutnya</button>
+                        <div class="d-flex flex-row">
+                            <div style="flex: 1">
+                                <h6 class="text-secondary">Pasien:</h6>
+                                <h6 class="text-secondary mb-3">9. Marno</h6>
+                            </div>
+                            <div>
+                                <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0 d-block" style="border: 1px solid;"><i class="zmdi zmdi-volume-up"></i></button>
+                                <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;"><i class="zmdi zmdi-assignment-check"></i></button>
+                            </div>
+                        </div>                        
+                        <h6 class="text-secondary">Berikutnya:</h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" style="border: 1px solid var(--purple);" readonly value="10. Ahmad Sofyan">
+                            <div class="input-group-append">
+                                <button class="btn text-white bg-purple rounded-0 btn--icon-text "  style="border: 1px solid;"><i class="zmdi zmdi-forward"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,45 +139,71 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Sales Statistics</h4>
-                <h6 class="card-subtitle">Vestibulum purus quam scelerisque, mollis nonummy metus</h6>
-
-                <table class="table table-striped mb-0">
-                    <thead>
+                <h4 class="card-title">Daftar Antrian</h4>
+                <table style="card-subtitle">
+                    <tr><td style="width: 12em;">Pasien Terlayani</td><td>: -</td></tr>
+                    <tr><td>Pasien Belum Terlayani</td><td>: -</td></tr>
+                    <tr><td>Jumlah Antrian</td><td>: -</td></tr>
+                </table>
+                <br>
+                <table class="table table-antrian mb-0">
+                    <thead class="bg-purple text-white">
                     <tr>
-                        <th>No. Antrian</th>
+                        <th>Antrian</th>
                         <th>Nama</th>
+                        <th class="text-center">Status</th>
                         <th>Estimasi Masuk</th>
-                        <th>Status</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>07:00</td>
+                    <tr class="bg-warning">
+                        <th scope="row">10</th>
+                        <td>Ahmad Sofyan</td>
                         <td>Laboratorium</td>
+                        <td>07:00</td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Judy</td>
+                    <tr class="bg-light">
+                        <th scope="row">11</th>
+                        <td>Rudi Hariyanto</td>
+                        <td>Hadir</td>
                         <td>07:30</td>
-                        <td>Hadir</td>
                     </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
+                    <tr class="bg-warning">
+                        <th scope="row">12</th>
+                        <td>Sholeh Sholihun</td>
+                        <td>Hadir</td>
                         <td>08:00</td>
-                        <td>Hadir</td>
                     </tr>
-                    <tr>
-                        <th scope="row">4</th>
-                        <td>Deni</td>
-                        <td>08:30</td>
+                    <tr  class="bg-info text-white">
+                        <th scope="row">6K</th>
+                        <td>Supardi</td>
                         <td></td>
+                        <td>08:30</td>
+                    </tr>
+                    <tr class="bg-warning">
+                        <th scope="row">13</th>
+                        <td>Dewantari Putri A</td>
+                        <td>Hadir</td>
+                        <td>08:00</td>
                     </tr>
                     </tbody>
                 </table>
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center ">
+                        <li class="page-item pagination-prev disabled"><a class="page-link" href="#"></a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item pagination-next"><a class="page-link" href="#"></a></li>
+                    </ul>
+                </nav>
+                <div class="d-flex justify-content-center my-5">
+                    <h6 class="legend-item item-smaller"><span class="warning" ></span>Hadir</h6>
+                    <h6 class="legend-item item-smaller"><span class="danger" ></span>Batal</h6>
+                    <h6 class="legend-item item-smaller"><span class="light" ></span>Belum Datang</h6>
+                    <h6 class="legend-item item-smaller"><span class="success" ></span>Dilayani</h6>
+                    <h6 class="legend-item item-smaller"><span class="info" ></span>Konsultasi/Penunjang</h6>
+                </div>
             </div>
         </div>
     </div>
@@ -131,6 +213,9 @@
 
 @section('jsx')
 <script>
-    
+function setpoli(id) {
+    $('#poli-title').text('POLI '+id.toUpperCase())
+    $('#menu').modal('hide');
+}
 </script>
 @endsection
