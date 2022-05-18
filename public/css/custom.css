@@ -51,3 +51,78 @@
 .scrollable-row .row > div {
     display: inline-block;
 }
+
+.legend-item:not(:last-child){    
+    margin-right: 32px;
+}
+
+.legend-item > span::before{
+    content: "";
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -4px;
+    margin-right: 12px;
+}
+
+.legend-item > span.warning::before {
+    background-color: #fabb00;
+}
+
+.legend-item > span.success::before {
+    background-color: #2aa872;
+}
+
+.legend-item > span.info::before {
+    background-color: #03A9F4;
+}
+
+.legend-item > span.danger::before {
+    background-color: #ff4642;
+}
+
+.legend-item > span.light::before {
+    background-color: #f6f6f6;
+    border: 1px solid;
+}
+
+.table-antrian > thead th:first-child{
+    width: 0%;
+}
+
+.table-antrian > thead tr{
+    border: 2px solid var(--purple);
+}
+
+.table-antrian > thead th:last-child{
+    width: 0%;
+    white-space: nowrap;
+}
+
+.table-antrian > tbody td:last-child{
+    text-align: center;
+}
+
+.table-antrian > tbody tr{
+    border-top: none!important;
+    border: 2px solid var(--purple);
+}
+
+.table-antrian > tbody tr td:first-child::after {
+    content: "";
+    display: inline-block;
+    vertical-align: top;
+    min-height: 28px;
+ }
+
+ .table-antrian > tbody tr td:first-child {
+    font-weight: bold;
+ }
+
+ .marquee-tvpoli{
+    font-size: large;
+    border: 2px solid #e2e2e2;
+    border-left: 0;
+    border-right: 0;
+ }

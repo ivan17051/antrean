@@ -58,6 +58,11 @@
             </span>
         </div>
     </div>
+    <table style="font-size: larger;font-weight: 500;">
+        <tr><td style="width: 12em;">Pasien Terlayani</td><td>: -</td></tr>
+        <tr><td>Pasien Belum Terlayani</td><td>: -</td></tr>
+        <tr><td>Jumlah Antrian</td><td>: -</td></tr>
+    </table>
 </div>
 <br>
 <div class="row">
@@ -67,7 +72,7 @@
                 <h2 class="text-white antrian-dokter text-center">dr. Kemal</h2>
             </div>
             <div class="card-body">
-                <h4 class="antrian-nomor">1</h4>
+                <h4 class="antrian-nomor">7</h4>
                 <h3 class="antrian-nama">Suherman</h3>
             </div>
         </div>
@@ -78,7 +83,7 @@
                 <h2 class="text-white antrian-dokter text-center">dr. Budi</h2>
             </div>
             <div class="card-body">
-                <h4 class="antrian-nomor">2</h4>
+                <h4 class="antrian-nomor">8</h4>
                 <h3 class="antrian-nama">Jaidi</h3>
             </div>
         </div>
@@ -89,7 +94,7 @@
                 <h2 class="text-white antrian-dokter text-center">dr. Paksi</h2>
             </div>
             <div class="card-body">
-                <h4 class="antrian-nomor">3</h4>
+                <h4 class="antrian-nomor">9</h4>
                 <h3 class="antrian-nama">Marno</h3>
             </div>
         </div>
@@ -97,38 +102,57 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Daftar Antrian</h4>
-                <h6 class="card-subtitle">Vestibulum purus quam scelerisque, mollis nonummy metus</h6>
-
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-antrian mb-0" style="font-size: large;">
+                            <thead class="bg-purple text-white">
+                            <tr>
+                                <th>Antrian</th>
+                                <th>Nama</th>
+                                <th>Estimasi Masuk</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @for($i=0;$i<10;$i++)
+                            <tr>
+                                <td scope="row"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            @endfor
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-antrian mb-0" style="font-size: large;">
+                            <thead class="bg-purple text-white">
+                            <tr>
+                                <th>Antrian</th>
+                                <th>Nama</th>
+                                <th>Estimasi Masuk</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @for($i=0;$i<10;$i++)
+                            <tr>
+                                <td scope="row"></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            @endfor
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center my-5">
+                    <h5 class="legend-item"><span class="warning" ></span>Hadir</h5>
+                    <h5 class="legend-item"><span class="danger" ></span>Batal</h5>
+                    <h5 class="legend-item"><span class="light" ></span>Belum Datang</h5>
+                    <h5 class="legend-item"><span class="success" ></span>Dilayani</h5>
+                    <h5 class="legend-item"><span class="info" ></span>Konsultasi/Penunjang</h5>
+                </div>
             </div>
-            <div class="card-body">
-                <table class="table table-striped mb-0">
-                    <thead>
-                    <tr>
-                        <th>No. Antrian</th>
-                        <th>Nama</th>
-                        <th>Estimasi Masuk</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>07:00</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Judy</td>
-                        <td>07:30</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>08:00</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <marquee class="marquee-tvpoli bg-light py-2" >&vert;&nbsp;&nbsp; HUBUNGI PETUGAS APABILA TERDAPAT KENDALA 🙏 &nbsp;&nbsp;&vert;</marquee>
         </div>
     </div>
 </div>
@@ -137,12 +161,37 @@
 
 @section('jsx')
 <script>
+const data = [
+    ["10", "Ahmad Sofyan", "07:40", "warning"],
+    ["11", "Rudi Hariyanto", "08:15", "light"],
+    ["12", "Sholeh Sholihun", "08:30", "warning"],
+    ["6K", "Supardi", "08:45", "info"],
+    ["13", "Dewantari Putri A", "09:00", "warning"],
+    ["14", "Fauzi", "-", "danger"],
+    ["15", "Bambang Juwadi", "09:15", "warning"],
+    ["16", "Soleman", "09:30", "light"],
+];
+
 function setpoli(id) {
     $('#menu').modal('hide');
 }
 
 $(function () {
     $('#menu').modal('show');
+
+    //dummy
+    const tr = $('.table-antrian tbody tr');
+    if(tr){
+        for(var i in data){
+            let d = data[i]
+            let $elem = $(tr[i]);
+            $elem.html("<td>"+d[0]+"</td><td>"+d[1]+"</td><td>"+d[2]+"</td>")
+            if(d[3]!=="light"){
+                let elem_class = "bg-"+d[3] + (d[3]!=="warning" ? " text-white" : "")
+                $elem.addClass(elem_class);
+            }
+        }
+    }
 });
 </script>
 @endsection
