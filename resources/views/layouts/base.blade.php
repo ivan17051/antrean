@@ -70,6 +70,7 @@
 
         <!-- App functions and actions -->
         <script src="{{ asset('public/js/app.min.js') }}"></script>
+        <script src="{{ asset('public/js/custom.js') }}"></script>
         <script src="{{ asset('public/vendors/select2/js/select2.full.min.js') }}"></script>
 
         @yield('jsx')

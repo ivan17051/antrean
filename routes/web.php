@@ -28,4 +28,6 @@ Route::get('/resume', 'ResumeController@resume');
 
 Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
 
-Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('tvpoli');
+Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('admintvpoli');
+
+Route::get('/tv', function(){ return view('tv'); })->name('tv');
