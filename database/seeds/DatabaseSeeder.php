@@ -12,5 +12,15 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // $this->call(UserSeeder::class);
+        // $user = new App\User();
+        // $user->noid = 986;
+        // $user->password = Hash::make('1');
+        // $user->email = 'siannas@mail.com';
+        // $user->kode = 0;
+        // $user->username = 'siannas';
+        // $user->remembertoken = Hash::make('1');
+        // $user->idlevel = 1;
+        // $user->isactive = 1;
+        // $user->save();
     }
 }

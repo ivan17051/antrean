@@ -109,6 +109,7 @@
                             <tr>
                                 <th>Antrian</th>
                                 <th>Nama</th>
+                                <th>Status</th>
                                 <th>Estimasi Masuk</th>
                             </tr>
                             </thead>
@@ -129,6 +130,7 @@
                             <tr>
                                 <th>Antrian</th>
                                 <th>Nama</th>
+                                <th>Status</th>
                                 <th>Estimasi Masuk</th>
                             </tr>
                             </thead>
@@ -185,7 +187,16 @@ $(function () {
         for(var i in data){
             let d = data[i]
             let $elem = $(tr[i]);
-            $elem.html("<td>"+d[0]+"</td><td>"+d[1]+"</td><td>"+d[2]+"</td>")
+
+            let status=""
+            
+            if(d[3] == "warning") status = "Hadir";
+            else if(d[3] == "danger") status = "Batal";
+            else if(d[3] == "light") status = "Belum Datang";
+            else if(d[3] == "success") status = "Dilayani";
+            else if(d[3] == "info") status = "Konsultasi/Penunjang";
+
+            $elem.html("<td>"+d[0]+"</td><td>"+d[1]+"</td><td>"+status+"</td><td>"+d[2]+"</td>")
             if(d[3]!=="light"){
                 let elem_class = "bg-"+d[3] + (d[3]!=="warning" ? " text-white" : "")
                 $elem.addClass(elem_class);

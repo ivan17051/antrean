@@ -61,6 +61,7 @@
         <script src="{{ asset('public/vendors/moment/moment.min.js') }}"></script>
         <script src="{{ asset('public/vendors/fullcalendar/fullcalendar.min.js') }}"></script>
         <script src="{{ asset('public/vendors/draganddrop/draganddrop.js') }}"></script>
+        <script src="{{ asset('public/vendors/easy.qrcode/easy.qrcode.min.js') }}"></script>
 
         <!-- Charts and maps-->
         <script src="{{ asset('public/demo/js/flot-charts/curved-line.js') }}"></script>
@@ -76,5 +77,6 @@
         <script src="{{ asset('public/vendors/select2/js/select2.full.min.js') }}"></script>
 
         @yield('jsx')
+        @stack('script')
     </body>
 </html>
