@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="{{ asset('public/vendors/jquery-scrollbar/jquery.scrollbar.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/fullcalendar/fullcalendar.min.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/select2/css/select2.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/vendors/draganddrop/draganddrop.css') }}">
 
         <!-- App styles -->
         <link rel="stylesheet" href="{{ asset('public/css/app.min.css') }}">
@@ -59,6 +60,7 @@
         <script src="{{ asset('public/vendors/sparkline/jquery.sparkline.min.js') }}"></script>
         <script src="{{ asset('public/vendors/moment/moment.min.js') }}"></script>
         <script src="{{ asset('public/vendors/fullcalendar/fullcalendar.min.js') }}"></script>
+        <script src="{{ asset('public/vendors/draganddrop/draganddrop.js') }}"></script>
 
         <!-- Charts and maps-->
         <script src="{{ asset('public/demo/js/flot-charts/curved-line.js') }}"></script>

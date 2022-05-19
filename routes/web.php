@@ -31,3 +31,5 @@ Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
 Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('admintvpoli');
 
 Route::get('/tv', function(){ return view('tv'); })->name('tv');
+
+Route::get('/tvutama', function(){ return view('tvutama'); })->name('tvutama');

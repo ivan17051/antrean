@@ -30,7 +30,7 @@ function initSmoothScrolling(container,animationname){
 
     // count slides to determine animation speed
     // var slidesNumber = $('>div>div', container).length;
-    var speed = slidesNumber*4;
+    var speed = slidesNumber*7;
     
     // append the tail	
     $('>div>div',container).slice(0,slidesVisible+1).clone().appendTo($('>div',container));	
