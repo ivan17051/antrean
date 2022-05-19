@@ -228,3 +228,14 @@
 }
 
 /* END of BUTTON ADDITIONAL */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.width-100 {
+    width:100%;
+}
+.box-calendar {
+    padding-top:100%;
+}
