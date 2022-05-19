@@ -156,7 +156,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr class="bg-warning">
+                    <tr class="dragdrop bg-warning">
                         <th scope="row">10</th>
                         <td>Ahmad Sofyan</td>
                         <td>Laboratorium</td>
@@ -168,19 +168,19 @@
                         <td>Hadir</td>
                         <td>07:30</td>
                     </tr>
-                    <tr class="bg-warning">
+                    <tr class="dragdrop bg-warning">
                         <th scope="row">12</th>
                         <td>Sholeh Sholihun</td>
                         <td>Hadir</td>
                         <td>08:00</td>
                     </tr>
-                    <tr  class="bg-info text-white">
+                    <tr  class="dragdrop bg-info text-white">
                         <th scope="row">6K</th>
                         <td>Supardi</td>
                         <td></td>
                         <td>08:30</td>
                     </tr>
-                    <tr class="bg-warning">
+                    <tr class="dragdrop bg-warning">
                         <th scope="row">13</th>
                         <td>Dewantari Putri A</td>
                         <td>Hadir</td>
@@ -217,5 +217,17 @@ function setpoli(id) {
     $('#poli-title').text('POLI '+id.toUpperCase())
     $('#menu').modal('hide');
 }
+
+$(function(){
+    $('.dragdrop').draggable({
+        revert: true,
+        placeholder: true,
+        droptarget: '.drop',
+        drop: function(evt, droptarget) {
+            let children = $(this).children();
+            $('.drop').val(children[0].innerText+"."+children[1].innerText);
+        }
+    });
+});
 </script>
 @endsection

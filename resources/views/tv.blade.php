@@ -21,59 +21,29 @@
         </div>
     </div>
 </header>
-<div class="scrollable-row">
-    <div class="row-wrapper2 w-100">
-        <div class="row">
-            @php
-            $poli = ['UMUM', 'KIA', 'GIGI'];
-            @endphp
-            @foreach($poli as $i)
-            <div class="col-md-5 tv-antrian">
-                <div class="card flex-row">
-                    <div class="bg-purple d-inline-block position-relative" style="width: 37%;">
-                        <div class="" style="padding-top: 100%;">
-
-                        </div>
-                        <h2 class="centered-elem display-3 text-white"><strong>1</strong></h2>
-                    </div>
-                    <div class="d-flex flex-column justify-content-center" style="padding: 12px;width:63%;">
-                        <h4 class="font-2c25rem">{{$i}}</h4>
-                        <h5 class="card-text text-secondary">Nomor berikutnya : -</h5>
-                        <h5 class="card-text text-secondary">Estimasi jam dilayani : -</h5>
-                        <h5 class="card-text text-secondary">Jumlah antrean : -</h5>
-                    </div>
+<div class="row">
+    @php
+    $poli = ['UMUM', 'KIA', 'GIGI', 'GIZI', 'SANITASI', 'BATRA', 'PSIKOLOGI'];
+    @endphp
+    @foreach($poli as $i)
+    <div class="col-md-4 tv-antrian">
+        <div class="card flex-row">
+            <div class="bg-purple d-inline-block position-relative" style="width: 37%;">
+                <div class="" style="padding-top: 100%;">
 
                 </div>
+                <h2 class="centered-elem display-3 text-white"><strong>1</strong></h2>
             </div>
-            @endforeach
+            <div class="d-flex flex-column justify-content-center" style="padding: 12px;width:63%;">
+                <h4 class="font-2c25rem">{{$i}}</h4>
+                <h5 class="card-text text-secondary">Nomor berikutnya : -</h5>
+                <h5 class="card-text text-secondary">Estimasi jam dilayani : -</h5>
+                <h5 class="card-text text-secondary">Jumlah antrean : -</h5>
+            </div>
+
         </div>
     </div>
-    <div class="row-wrapper w-100">
-        <div class="row">
-            @php
-            $poli = ['GIZI', 'SANITASI', 'BATRA', 'PSIKOLOGI'];
-            @endphp
-            @foreach($poli as $i)
-            <div class="col-md-5 tv-antrian">
-                <div class="card flex-row">
-                    <div class="bg-purple d-inline-block position-relative" style="width: 37%;">
-                        <div class="" style="padding-top: 100%;">
-
-                        </div>
-                        <h2 class="centered-elem display-3 text-white"><strong>1</strong></h2>
-                    </div>
-                    <div class="d-flex flex-column justify-content-center" style="padding: 12px;width:63%;">
-                        <h4 class="font-2c25rem">{{$i}}</h4>
-                        <h5 class="card-text text-secondary">Nomor berikutnya : -</h5>
-                        <h5 class="card-text text-secondary">Estimasi jam dilayani : -</h5>
-                        <h5 class="card-text text-secondary">Jumlah antrean : -</h5>
-                    </div>
-
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
+    @endforeach
 </div>
 @endsection
 
