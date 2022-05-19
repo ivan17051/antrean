@@ -201,7 +201,7 @@ const filterFaskesOnChange = async function(e){
         $('#calendar').attr('hidden', true);
     }
     dt.forEach(e => {
-        str+=`<option value="${e.id}">${e.nama}</option>`;
+        str+=`<option value="${e.noid}">${e.nama}</option>`;
     });
     $('select[name=idunitkerja]').empty().html(str);
 }
@@ -209,6 +209,7 @@ const filterFaskesOnChange = async function(e){
 const filterPoliOnChange = async function(e){
     var val = e.value;
     var str = '<option value="" disabled selected>-- Pilih --</option>';
+    $('input[name=faskes]').attr('value', val);
     
     var dt;
     if(val){ //jika faskes sdh terisi
@@ -220,14 +221,14 @@ const filterPoliOnChange = async function(e){
         $('#calendar').attr('hidden', true);
     }
     dt.forEach(e => {
-        str+=`<option value="${e.id}">${e.nama}</option>`;
+        str+=`<option value="${e.noid}">${e.nama}</option>`;
     });
     $('select[name=idbppoli]').empty().html(str);
 }
 
 const filterTanggalOnChange = async function(e){
     var val = e.value;
-    
+    $('input[name=poli]').attr('value', val);
     var dt;
     if(val){ //jika poli sdh terisi
         $('#calendar').attr('hidden', false);
@@ -240,9 +241,7 @@ const filterTanggalOnChange = async function(e){
 function passData(e){
     var val = e.value;
     $('input[name=tanggal]').attr('value', val);
-    $('input[name=faskes]').attr('value', $('select[name=idunitkerja]').value);
-    $('input[name=poli]').attr('value', $('select[name=idbppoli]').value);
-    console.log($('select[name=idunitkerja]').value);
+    
 } 
 </script>
 @endsection

@@ -10,13 +10,8 @@
             <div class="modal-body">
                 <form action="">
                     <div class="form-group form-group--float">
-                        <input type="text" class="form-control" id="" name="">
+                        <input type="text" class="form-control" id="" name="" autofocus>
                         <label>NIK</label>
-                      <i class="form-group__bar"></i>
-                    </div>
-                    <div class="form-group form-group--float">
-                        <input type="text" class="form-control" id="" name="">
-                        <label>Nama</label>
                       <i class="form-group__bar"></i>
                     </div>
                     <div class="form-group">
@@ -71,12 +66,7 @@
               </div>
             @endforeach
           </div>
-          <div class="row">
-            <div class="col-12">
-              <div id="calendar"></div>
-              
-            </div>
-          </div>
+          
       </div>     
     </div>
 

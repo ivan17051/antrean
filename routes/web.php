@@ -14,30 +14,35 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Auth::routes();
-Route::get('/', function(){
-  return redirect('/home');
-});
-Route::get('/home', 'HomeController@index')->name('home');
+// Auth::routes();
+// Route::middleware(['auth'])->group(function () {
+//   Route::get('/home', 'HomeController@index')->name('home');
+  
+// });
+  Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/daftar', 'PendaftaranController@daftarOnline');
-Route::get('/daftaronsite', 'PendaftaranController@daftarOnSite');
-Route::get('/daftarbarcode', 'PendaftaranController@daftarBarcode');
+  Route::get('/daftar', 'PendaftaranController@daftarOnline');
+  Route::get('/daftaronsite', 'PendaftaranController@daftarOnSite');
+  Route::get('/daftarbarcode', 'PendaftaranController@daftarBarcode');
 
-Route::get('/resume', 'ResumeController@resume');
+  Route::get('/resume', 'ResumeController@resume');
 
-Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
+  Route::get('/tvpoli', function(){ return view('tvpoli'); })->name('tvpoli');
 
-Route::get('/tvpoli2', function(){ return view('tvpoli2'); })->name('tvpoli2');
+  Route::get('/tvpoli2', function(){ return view('tvpoli2'); })->name('tvpoli2');
 
-Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('admintvpoli');
+  Route::get('/admintvpoli', function(){ return view('admintvpoli'); })->name('admintvpoli');
 
-Route::get('/admintvpoli2', function(){ return view('admintvpoli2'); })->name('admintvpoli2');
+  Route::get('/admintvpoli2', function(){ return view('admintvpoli2'); })->name('admintvpoli2');
 
-Route::get('/tv', function(){ return view('tv'); })->name('tv');
+  Route::get('/tv', function(){ return view('tv'); })->name('tv');
 
-Route::get('/tvutama', function(){ return view('tvutama'); })->name('tvutama');
+  Route::get('/tvutama', function(){ return view('tvutama'); })->name('tvutama');
 
-Route::get('poli/getall', 'PoliController@getall')->name('poli.getall');
+  Route::get('poli/getall', 'PoliController@getall')->name('poli.getall');
 
-Route::resource('poli', PoliController::class);
+  Route::resource('poli', PoliController::class);
+  
+  Route::get('/tv', function(){ return view('tv'); })->name('tv');
+
+  Route::get('/tvutama', function(){ return view('tvutama'); })->name('tvutama');

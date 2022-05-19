@@ -21,7 +21,8 @@
             </div>
         </div>
     </div>
-
+    <form method="POST" action="{{ route('login') }}">
+    @csrf
     <div class="login__block__body">
         <div class="form-group form-group--float form-group--centered">
         <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
@@ -45,8 +46,9 @@
             @enderror
         </div>
 
-        <button href="{{url('/')}}" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-long-arrow-right"></i></button>
+        <button type="submit" class="btn btn--icon login__block__btn"><i class="zmdi zmdi-long-arrow-right"></i></button>
     </div>
+    </form>
 </div>
 
 <!-- Forgot Password -->
