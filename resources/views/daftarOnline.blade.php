@@ -58,12 +58,56 @@
               </div>
 
           </div>
-          <div class="row">
-            <div class="col-12">
-              <div id="calendar"></div>
-              
+         
+              <div id="calendar">
+                <label>Pilih Tanggal</label><br>
+                <div class="grid-container">
+                    @foreach($tanggal as $unit)
+                    @php
+                    $hari = $unit->translatedFormat('l');
+                    $tanggal = $unit->translatedFormat('d');
+                    $bulan = $unit->translatedFormat('F');
+                    $tahun = $unit->translatedFormat('Y');
+                    @endphp
+                    @if($hari=='Minggu')
+                    <div class="width-100 position-relative">
+                        <div class="box-calendar"></div>
+                        <div class="position-absolute" style="top:0; width:100%; height:100%;">
+                            <div class="btn btn-block btn-outline-danger" style="height:100%;">
+                                <div class="tile-object">
+                                    <div style="float: left; font-weight: bold;"><span>{{$hari}}</span></div>
+                                    <div style="float: right; font-weight: bold;"><span>0</span></div>
+                                </div>
+                                <div class="tile-body" style="overflow:initial; margin-top:20%;"><i style="font-style:normal; font-size:50px;">{{$tanggal}}</i></div>
+                                <div class="tile-object">
+                                    <div class="name" style="float: left;">{{$bulan}}</div>
+                                    <div style="float: right">{{$tahun}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @else
+                    <div class="width-100 position-relative">
+                        <div class="box-calendar"></div>
+                        <div class="position-absolute" style="top:0; width:100%; height:100%;">
+                            <div class="btn btn-block btn-outline-info" style="height:100%;">
+                                <div class="tile-object">
+                                    <div style="float: left; font-weight: bold;"><span>{{$hari}}</span></div>
+                                    <div style="float: right; font-weight: bold;"><span>0</span></div>
+                                </div>
+                                <div class="tile-body" style="overflow:initial; margin-top:20%;"><i style="font-style:normal; font-size:50px;">{{$tanggal}}</i></div>
+                                <div class="tile-object">
+                                    <div class="name" style="float: left;">{{$bulan}}</div>
+                                    <div style="float: right">{{$tahun}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    @endforeach
+              </div>
             </div>
-          </div>
+            
       </div>     
     </div>
 
@@ -81,18 +125,22 @@
     $('#poli').attr('hidden', true);
     $('#calendar').attr('hidden', true);
   });
-  
-  document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      locale: 'id',
-      initialView: 'dayGridMonth',
-      dateClick: function(info) {
-        alert('a day has been clicked!'+info.dateStr);
-      }
-    });
-    calendar.render();
-  });
+  var datenow = new Date();
+  var datelast = new Date(datenow.setMonth(datenow.getMonth()+3));
+//   console.log(datenow, datelast);   
+//   document.addEventListener('DOMContentLoaded', function() {
+//     var calendarEl = document.getElementById('calendar');
+//     var calendar = new FullCalendar.Calendar(calendarEl, {
+//       locale: 'id',
+//       initialView: 'dayGridMonth',
+      
+//       dateClick: function(info) {
+//         alert('a day has been clicked!'+info.dateStr);
+//       }
+//     });
+//     calendar.render();
+//   });
+
 
 const puskesmas = @json($puskesmas);
 const rs = @json($rs);
