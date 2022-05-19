@@ -21,7 +21,13 @@
 
         <div class="login__block__body">
             <div class="form-group form-group--float form-group--centered">
-                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
+                <input id="nik" type="text" class="form-control" name="nik" required autofocus>
+                <label>NIK</label>
+                <i class="form-group__bar"></i>
+                
+            </div>
+            <div class="form-group form-group--float form-group--centered">
+                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name">
                 <label>Nama</label>
                 <i class="form-group__bar"></i>
                 @error('name')
@@ -43,6 +49,22 @@
             </div>
 
             <div class="form-group form-group--float form-group--centered">
+                <input id="telp" type="text" class="form-control" name="telp" required autofocus>
+                <label>No. Telp</label>
+                <i class="form-group__bar"></i>
+                
+            </div>
+
+            <div class="form-group form-group--float form-group--centered">
+                <!-- <div class="input-group">
+           
+                    <input type="text" class="form-control" placeholder="Password">
+                    <div class="input-group-append">
+                        <button class="btn btn-sm btn-outline-light">00</button>
+                    </div>
+                    <i class="form-group__bar"></i>
+                                    
+                </div> -->
                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
                 <label>Password</label>
                 <i class="form-group__bar"></i>
