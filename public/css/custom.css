@@ -189,6 +189,45 @@
 .font-large , .font-large *{
     font-size: large;
 }
+
+/* BUTTON ADDITIONAL */
+
+.btn-purple.focus,
+.btn-purple:focus,
+.btn-purple:not(:disabled):not(.disabled).active:focus,
+.btn-purple:not(:disabled):not(.disabled):active:focus,
+.show>.btn-purple.dropdown-toggle:focus {
+    box-shadow: 0 0 0 0 rgba(66, 166, 245, .5)
+}
+
+.btn-purple {
+    color: #FFF;
+    background-color: #d066e2;
+    border-color: #d066e2
+}
+
+.btn-purple:hover {
+    color: #FFF;
+    background-color: #c64ddb;
+    border-color: #c955de
+}
+
+.btn-purple.disabled,
+.btn-purple:disabled {
+    color: #FFF;
+    background-color: #d066e2;
+    border-color: #d066e2
+}
+
+.btn-purple:not(:disabled):not(.disabled).active,
+.btn-purple:not(:disabled):not(.disabled):active,
+.show>.btn-purple.dropdown-toggle {
+    color: #FFF;
+    background-color: #d066e2;
+    border-color: #d066e2
+}
+
+/* END of BUTTON ADDITIONAL */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
