@@ -1,5 +1,43 @@
 @extends('layouts.tvbase')
 @section('content')
+<div id="modalkonfirm" class="modal fade" tabindex="-1" style="display:none;" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title pull-left">Konfirmasi</h5>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div class="form-group form-group--float">
+                        <input type="text" class="form-control" id="" name="">
+                        <label>NIK</label>
+                      <i class="form-group__bar"></i>
+                    </div>
+                    <div class="form-group form-group--float">
+                        <input type="text" class="form-control" id="" name="">
+                        <label>Nama</label>
+                      <i class="form-group__bar"></i>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="faskes" value="RS/PKM" readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="poli" value="POLI" readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="tanggal" value="" readonly>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link">Simpan</button>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>
 <header class="content__title">
     <h1>Pendaftaran Pasien On Site</h1>
     <small>Selamat Datang di Aplikasi Pendaftaran On Site!</small>
@@ -29,7 +67,7 @@
           <div class="row">
             @foreach($poli as $unit)
               <div class="col-md-3" style="margin-bottom:5px;">
-                <button class="btn btn-block btn-primary btn-daftar">{{$unit->nama}}</button>
+                <button class="btn btn-block btn-primary btn-daftar" data-toggle="modal" data-target="#modalkonfirm">{{$unit->nama}}</button>
               </div>
             @endforeach
           </div>

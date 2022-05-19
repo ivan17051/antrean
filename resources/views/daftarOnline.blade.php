@@ -1,5 +1,39 @@
 @extends('layouts.base')
 @section('content')
+<div id="modalkonfirm" class="modal fade" tabindex="-1" style="display:none;" aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title pull-left">Konfirmasi</h5>
+            </div>
+            <div class="modal-body">
+                <form action="">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="" value="NIK" readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="" value="NAMA" readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="faskes" value="RS/PKM" readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="poli" value="POLI" readonly>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="" name="tanggal" value="" readonly>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link">Simpan</button>
+                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>
 <header class="content__title">
     <h1>Pendaftaran Pasien Online</h1>
     <small>Selamat Datang di Aplikasi Pendaftaran Online!</small>
@@ -73,7 +107,7 @@
                     <div class="width-100 position-relative">
                         <div class="box-calendar"></div>
                         <div class="position-absolute" style="top:0; width:100%; height:100%;">
-                            <div class="btn btn-block btn-outline-danger" style="height:100%;">
+                            <div class="btn btn-block btn-danger" style="height:100%;border-color:grey !important;">
                                 <div class="tile-object">
                                     <div style="float: left; font-weight: bold;"><span>{{$hari}}</span></div>
                                     <div style="float: right; font-weight: bold;"><span>0</span></div>
@@ -90,7 +124,7 @@
                     <div class="width-100 position-relative">
                         <div class="box-calendar"></div>
                         <div class="position-absolute" style="top:0; width:100%; height:100%;">
-                            <div class="btn btn-block btn-outline-info" style="height:100%;">
+                            <button class="btn btn-block btn-info" style="height:100%;border-color:grey !important;" data-toggle="modal" data-target="#modalkonfirm" value="{{$unit->format('Y-m-d')}}" onclick="passData(this)">
                                 <div class="tile-object">
                                     <div style="float: left; font-weight: bold;"><span>{{$hari}}</span></div>
                                     <div style="float: right; font-weight: bold;"><span>0</span></div>
@@ -100,7 +134,7 @@
                                     <div class="name" style="float: left;">{{$bulan}}</div>
                                     <div style="float: right">{{$tahun}}</div>
                                 </div>
-                            </div>
+</button>
                         </div>
                     </div>
                     @endif
@@ -202,5 +236,13 @@ const filterTanggalOnChange = async function(e){
     }
     
 }
+
+function passData(e){
+    var val = e.value;
+    $('input[name=tanggal]').attr('value', val);
+    $('input[name=faskes]').attr('value', $('select[name=idunitkerja]').value);
+    $('input[name=poli]').attr('value', $('select[name=idbppoli]').value);
+    console.log($('select[name=idunitkerja]').value);
+} 
 </script>
 @endsection
