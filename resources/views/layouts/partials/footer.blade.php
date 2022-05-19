@@ -1,4 +1,4 @@
-<footer class="footer hidden-xs-down">
+<footer class="footer hidden-xs-down mt-auto">
                     <p>© Material Admin Responsive. All rights reserved.</p>
 
                     <ul class="nav footer__nav">

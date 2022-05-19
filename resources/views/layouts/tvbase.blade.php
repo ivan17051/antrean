@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <section class="content content--full" style="padding-top: 30px!important;">
+            <section class="content content--full d-flex flex-column" style="padding-top: 30px!important; min-height: 100vh;">
                  
                 @yield('content')
 
