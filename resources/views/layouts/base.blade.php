@@ -38,7 +38,7 @@
                  
                 @yield('content')
 
-                @include('layouts.partials.footer')
+                
             </section>
         </main>
 
@@ -62,6 +62,7 @@
         <script src="{{ asset('public/vendors/fullcalendar/fullcalendar.min.js') }}"></script>
         <script src="{{ asset('public/vendors/draganddrop/draganddrop.js') }}"></script>
         <script src="{{ asset('public/vendors/easy.qrcode/easy.qrcode.min.js') }}"></script>
+        <script src="{{ asset('public/vendors/datatables/jquery.dataTables.min.js') }}"></script>
 
         <!-- Charts and maps-->
         <script src="{{ asset('public/demo/js/flot-charts/curved-line.js') }}"></script>

@@ -33,6 +33,15 @@
             <li><a href="{{url('/resume')}}"><i class="zmdi zmdi-calendar"></i> Resume Medis</a></li>
 
             <li class="navigation__sub">
+                <a href=""><i class="zmdi zmdi-settings"></i> Pengaturan</a>
+
+                <ul>
+                    <li><a href="{{url('/nakes')}}">Nakes</a></li>
+                    <li><a href="{{url('/poli')}}">Poli</a></li>
+                </ul>
+            </li>
+
+            <li class="navigation__sub">
                 <a href=""><i class="zmdi zmdi-tv"></i> TV</a>
 
                 <ul>
