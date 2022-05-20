@@ -10,7 +10,7 @@
         <a href="" class="actions__item zmdi zmdi-check-all"></a>
     </div>
 </header>
-<div class="row flex-sm-column-reverse flex-md-row">
+<div class="row flex-column-reverse flex-md-row">
   <div class="col-lg-5 col-md-6">
     <div class="card">
       <div class="card-body">

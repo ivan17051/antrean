@@ -255,3 +255,9 @@
     width: inherit;
     height: inherit;
 }
+
+.barcode-input {
+    letter-spacing: 10px;
+    font-size: 20px;
+    text-align: center;
+}
