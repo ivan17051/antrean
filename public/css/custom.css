@@ -239,3 +239,19 @@
 .box-calendar {
     padding-top:100%;
 }
+
+.modal-fullscreen{
+    padding: 0;
+}
+
+.modal-fullscreen .modal-dialog{
+    width: 100%;
+    margin: 0;
+    max-width: unset;
+    height: 100%;
+}
+
+.modal-fullscreen .modal-content{
+    width: inherit;
+    height: inherit;
+}

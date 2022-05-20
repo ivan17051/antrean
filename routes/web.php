@@ -19,6 +19,8 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/home', 'HomeController@index')->name('home');
   Route::get('/', 'HomeController@index')->name('home');
 
+  Route::get('/profile', 'ProfileController@index')->name('profile');
+
   Route::get('/daftar', 'PendaftaranController@daftarOnline');
   Route::get('/daftaronsite', 'PendaftaranController@daftarOnSite');
   Route::get('/daftarbarcode', 'PendaftaranController@daftarBarcode');

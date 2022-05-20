@@ -58,6 +58,22 @@ function initSmoothScrolling(container,animationname){
     // });
 }
 
+function createQRCode(nik, idcontainer = "qrcode"){
+    const qrconfig={
+        text: nik,
+        width: 240,
+        height: 240,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.M,
+    }
+    idcontainer
+    document.getElementById("qrcode_nik").innerText = nik
+    const container = document.getElementById(idcontainer)
+    container.innerHTML = ''
+    new QRCode(container, qrconfig)
+}
+
 $(document).ready(function () {
     if($('.dateindo')[0]){
         date_indo( $('.dateindo') );
