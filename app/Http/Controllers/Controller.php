@@ -10,4 +10,13 @@ use Illuminate\Routing\Controller as BaseController;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    protected $datenow;
+    /**
+     * Instantiate a new Controller instance.
+     */
+    public function __construct()
+    {
+        $this->datenow = date('Y-m-d');
+   }
 }

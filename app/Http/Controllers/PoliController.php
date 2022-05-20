@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use App\Http\Requests\PoliRequest;
 use Illuminate\Support\Facades\DB;
 use App\UnitKerjaPoli;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class PoliController extends Controller
 {

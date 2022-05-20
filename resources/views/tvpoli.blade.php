@@ -7,14 +7,7 @@
                 <h4 class="modal-title pull-left text-white">PILIH POLI</h4>
             </div>
             <div class="modal-body">
-                <div class="row" id="menu-list-poli">
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('umum')">UMUM</button></div>
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('gigi')">GIGI</button></div>
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('kia')">KIA</button></div>
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('gizi')">GIZI</button></div>
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('sanitasi')">SANITASI</button></div>
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('batra')">BATRA</button></div>
-                    <div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('psikologi')">PSIKOLOGI</button></div>
+                <div class="row" id="listpoli">
                 </div>
             </div>
             <div class="modal-footer">
@@ -174,11 +167,42 @@ const data = [
     ["16", "Soleman", "09:30", "light"],
 ];
 
+function createlistmodal(data){
+    var i = 0;
+    console.log(data);
+    var box = data.map(function (poli) {
+        var x = $('<div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg w-100 mb-4" >'+poli.nama+'</button></div>');
+        x.on('click' , function(){
+            setpoli(poli.id)
+        });
+        return x;
+    })
+    $("#listpoli").html('').append(box);
+}
+
+function getpoliaktif(){
+    $.ajax({
+        type: 'GET',
+        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+        url: '{{route("getlistpoli")}}',
+        dataType: 'json',
+        async: false,
+        success: function (result) {
+            var data = result.data;
+            createlistmodal(data);
+        },
+        error: function (result) {
+            console.log(result.statusText);
+        }
+    })
+}
+
 function setpoli(id) {
     $('#menu').modal('hide');
 }
 
 $(function () {
+    getpoliaktif();
     $('#menu').modal('show');
 
     //dummy
