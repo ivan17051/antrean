@@ -239,3 +239,9 @@
 .box-calendar {
     padding-top:100%;
 }
+
+.barcode-input {
+    letter-spacing: 10px;
+    font-size: 20px;
+    text-align: center;
+}

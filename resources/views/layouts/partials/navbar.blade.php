@@ -215,12 +215,33 @@
                             </div>
                         </div>
                     </li> -->
+                    @if(Auth::user()->idlevel!=4)
+                    <li class="user hidden-xs-down" style="margin-top:20px;min-width:200px;">
+                        <div class="user__info" data-toggle="dropdown">
+                            <img class="user__img" src="public/demo/img/profile-pics/8.jpg" alt="">
+                            <div>
+                                <div class="user__name">{{Auth::user()->username}}</div>
+                                <div class="user__email">{{Auth::user()->email}}</div>
+                            </div>
+                        </div>
 
-                    <li class="dropdown hidden-xs-down">
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="">View Profile</a>
+                            <a class="dropdown-item" href="">Settings</a>
+                            
+                            <button class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</button>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
+                    </li>
+                    @endif
+
+                    <!-- <li class="dropdown hidden-xs-down">
                         <a href="" data-toggle="dropdown"><i class="zmdi zmdi-more-vert"></i></a>
 
                         <div class="dropdown-menu dropdown-menu-right">
-                            <!-- <div class="dropdown-item theme-switch">
+                            <div class="dropdown-item theme-switch">
                                 Theme Switch
 
                                 <div class="btn-group btn-group-toggle btn-group--colors" data-toggle="buttons">
@@ -238,11 +259,11 @@
                                     <label class="btn bg-indigo"><input type="radio" value="indigo" autocomplete="off"></label>
                                     <label class="btn bg-brown"><input type="radio" value="brown" autocomplete="off"></label>
                                 </div>
-                            </div> -->
+                            </div>
                             <a href="{{url('/login')}}" class="dropdown-item">Login</a>
                             <a href="{{url('/register')}}" class="dropdown-item">Register</a>
                         </div>
-                    </li>
+                    </li> -->
 
                     <!-- <li class="hidden-xs-down">
                         <a href="" data-ma-action="aside-open" data-ma-target=".chat" class="top-nav__notify">

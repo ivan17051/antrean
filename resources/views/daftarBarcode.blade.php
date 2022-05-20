@@ -31,7 +31,7 @@
               </div>
               <div class="col-md-6">
                   <div class="form-group">
-                      <input class="form-control" type="text" autofocus>
+                      <input class="form-control barcode-input" type="text" autofocus maxlength="16">
                   </div>
               </div>
               <div class="col-md-3">

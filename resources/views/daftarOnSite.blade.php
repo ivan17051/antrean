@@ -5,29 +5,37 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title pull-left">Konfirmasi</h5>
+                <h5 class="modal-title pull-left">Silahkan Konfirmasi Pilihan Anda Dengan Scan Barcode</h5>
             </div>
             <div class="modal-body">
                 <form action="">
                     <div class="form-group form-group--float">
-                        <input type="text" class="form-control" id="" name="" autofocus>
+                        <input type="text" class="form-control" style="letter-spacing:5px;" id="nik" name="nik" maxlength="16">
                         <label>NIK</label>
                       <i class="form-group__bar"></i>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" id="" name="faskes" value="RS/PKM" readonly>
+                        <label>Fasilitas Kesehatan</label>
+                        <input type="text" class="form-control" id="" name="faskes" value="" readonly>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" id="" name="poli" value="POLI" readonly>
+                        <label>Pilihan Poli</label>
+                        <input type="text" class="form-control" id="" name="poli" value="" readonly>
                     </div>
                     <div class="form-group">
+                        <label>Tanggal</label>
                         <input type="text" class="form-control" id="" name="tanggal" value="" readonly>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-link">Simpan</button>
-                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            <div class="row modal-footer ">
+                <div class="col">
+                    <button type="button" class="btn btn-purple btn-block">Simpan</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Tutup</button>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -62,7 +70,7 @@
           <div class="row">
             @foreach($poli as $unit)
               <div class="col-md-3" style="margin-bottom:5px;">
-                <button class="btn btn-block btn-primary btn-daftar" data-toggle="modal" data-target="#modalkonfirm">{{$unit->nama}}</button>
+                <button class="btn btn-block btn-primary btn-daftar" data-toggle="modal" data-target="#modalkonfirm" value="{{$unit->noid}}" onclick="passData(this)">{{$unit->nama}}</button>
               </div>
             @endforeach
           </div>
@@ -76,6 +84,15 @@
 
 @section('jsx')
 <script>
+  function passData(e){
+    var val = e.value;
+    var datenow = new Date();
+    var tanggal = datenow.getFullYear()+'-'+datenow.getMonth()+'-'+datenow.getDate();
+    $('input[name=tanggal]').attr('value', tanggal);
+    $('input[name=faskes]').attr('value', '{{Auth::user()->idunitkerja}}');
+    $('input[name=poli]').attr('value', val);
+    $('input[name=nik]').focus();
+  } 
   
 </script>
 @endsection

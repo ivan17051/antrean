@@ -5,30 +5,47 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title pull-left">Konfirmasi</h5>
+                <h5 class="modal-title pull-left">Silahkan Konfirmasi Pilihan Anda</h5>
             </div>
             <div class="modal-body">
                 <form action="">
-                    <div class="form-group">
-                        <input type="text" class="form-control" id="" name="nik" value="{{$pasien->nik}}" readonly>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label>NIK Pasien</label><br>
+                                <input type="text" class="form-control" id="" name="nik" value="{{$pasien->nik}}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <label>Nama Pasien</label><br>
+                                <input type="text" class="form-control" id="" name="" value="{{$pasien->nama}}" readonly>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="form-group">
-                        <input type="text" class="form-control" id="" name="" value="{{$pasien->nama}}" readonly>
-                    </div>
-                    <div class="form-group">
+                        <label>Pilihan Fasilitas Kesehatan</label><br>
                         <input type="text" class="form-control" id="" name="faskes" value="RS/PKM" readonly>
                     </div>
                     <div class="form-group">
+                        <label>Pilihan Poli</label><br>
                         <input type="text" class="form-control" id="" name="poli" value="POLI" readonly>
                     </div>
                     <div class="form-group">
+                        <label>Pilihan Tanggal Antrian</label><br>
                         <input type="text" class="form-control" id="" name="tanggal" value="" readonly>
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-link btn-primary">Simpan</button>
-                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            <div class="modal-footer row">
+                <div class="col">
+                    <button type="button" class="btn btn-purple btn-block">Simpan</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-secondary btn-block" data-dismiss="modal">Batal</button>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -66,7 +83,7 @@
                       <label>Pilih RS/Puskesmas</label><br>
 
                       <select class="select2 select2-hidden-accessible" style="width:100%;" tabindex="-1" aria-hidden="true" onchange="filterFaskesOnChange(this)">
-                        <option value="">-- Pilih --</option>
+                        <option value="" selected>-- Pilih --</option>
                         <option value="rs">Rumah Sakit</option>
                         <option value="pkm">Puskesmas</option>
                       </select>
@@ -150,7 +167,7 @@
 @endsection
 
 @section('jsx')
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+
 <script>
   $(document).ready(function() {
     $('.select2').select2();
