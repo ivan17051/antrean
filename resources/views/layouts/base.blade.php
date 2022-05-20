@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="{{ asset('public/vendors/fullcalendar/fullcalendar.min.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/draganddrop/draganddrop.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/vendors/flatpickr/flatpickr.min.css') }}">
 
         <!-- App styles -->
         <link rel="stylesheet" href="{{ asset('public/css/app.min.css') }}">
@@ -63,6 +64,7 @@
         <script src="{{ asset('public/vendors/draganddrop/draganddrop.js') }}"></script>
         <script src="{{ asset('public/vendors/easy.qrcode/easy.qrcode.min.js') }}"></script>
         <script src="{{ asset('public/vendors/datatables/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('public/vendors/flatpickr/flatpickr.min.js')}}"></script>
 
         <!-- Charts and maps-->
         <script src="{{ asset('public/demo/js/flot-charts/curved-line.js') }}"></script>
