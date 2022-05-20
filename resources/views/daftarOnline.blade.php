@@ -78,7 +78,7 @@
           <h6 class="card-subtitle">Silahkan Pilih Fasilitas Kesehatan yang Ingin Dituju.</h6>
 
           <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-3">
                   <div class="form-group">
                       <label>Pilih RS/Puskesmas</label><br>
 
@@ -98,12 +98,24 @@
                       </select>
                   </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-3">
                   <div class="form-group" id="poli">
                       <label>Pilih Poli</label><br>
 
                       <select class="select2 select2-hidden-accessible" style="width:100%;" tabindex="-1" aria-hidden="true" name="idbppoli" onchange="filterTanggalOnChange(this)">
                           <option value="">-- Pilih --</option>
+                      </select>
+                  </div>
+              </div>
+              <div class="col-md-2">
+                  <div class="form-group" id="kepesertaan">
+                      <label>Pilih Kepesertaan</label><br>
+
+                      <select class="select2 select2-hidden-accessible" style="width:100%;" tabindex="-1" aria-hidden="true" name="kepesertaan">
+                          <option value="">-- Pilih --</option>
+                          <option value="bpjs">BPJS</option>
+                          <option value="umum">Umum</option>
+                          <option value="lain">Asuransi Lain</option>
                       </select>
                   </div>
               </div>
@@ -175,6 +187,7 @@
     $('#faskes').attr('hidden', true);
     $('#poli').attr('hidden', true);
     $('#calendar').attr('hidden', true);
+    $('#kepesertaan').attr('hidden', true);
   });
   var datenow = new Date();
   var datelast = new Date(datenow.setMonth(datenow.getMonth()+3));
@@ -233,8 +246,10 @@ const filterPoliOnChange = async function(e){
         dt=poli;
         $('select[name=idbppoli]').empty().html(poli);
         $('#poli').attr('hidden', false);
+        $('#kepesertaan').attr('hidden', false);
     } else{
         $('#poli').attr('hidden', true);
+        $('#kepesertaan').attr('hidden', false);
         $('#calendar').attr('hidden', true);
     }
     dt.forEach(e => {
