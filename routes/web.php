@@ -14,12 +14,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-// Auth::routes();
-// Route::middleware(['auth'])->group(function () {
-//   Route::get('/home', 'HomeController@index')->name('home');
-  
-// });
+Auth::routes();
+Route::middleware(['auth'])->group(function () {
   Route::get('/home', 'HomeController@index')->name('home');
+  Route::get('/', 'HomeController@index')->name('home');
 
   Route::get('/daftar', 'PendaftaranController@daftarOnline');
   Route::get('/daftaronsite', 'PendaftaranController@daftarOnSite');
@@ -42,7 +40,10 @@ use Illuminate\Support\Facades\Route;
   Route::get('poli/getall', 'PoliController@getall')->name('poli.getall');
 
   Route::resource('poli', PoliController::class);
-  
+
   Route::get('/tv', function(){ return view('tv'); })->name('tv');
 
   Route::get('/tvutama', function(){ return view('tvutama'); })->name('tvutama');
+});
+
+

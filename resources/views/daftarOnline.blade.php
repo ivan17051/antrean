@@ -10,10 +10,10 @@
             <div class="modal-body">
                 <form action="">
                     <div class="form-group">
-                        <input type="text" class="form-control" id="" name="" value="NIK" readonly>
+                        <input type="text" class="form-control" id="" name="nik" value="{{$pasien->nik}}" readonly>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" id="" name="" value="NAMA" readonly>
+                        <input type="text" class="form-control" id="" name="" value="{{$pasien->nama}}" readonly>
                     </div>
                     <div class="form-group">
                         <input type="text" class="form-control" id="" name="faskes" value="RS/PKM" readonly>
@@ -27,7 +27,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-link">Simpan</button>
+                <button type="button" class="btn btn-link btn-primary">Simpan</button>
                 <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
             </div>
         </div>
