@@ -46,6 +46,13 @@ Route::middleware(['auth'])->group(function () {
   Route::get('/tv', function(){ return view('tv'); })->name('tv');
 
   Route::get('/tvutama', function(){ return view('tvutama'); })->name('tvutama');
+
+  //ANTRIAN AJAX REQUEST
+
+  Route::get('getlistpoli', 'Antrian@getListPoli' )->name('getlistpoli');
+
+  Route::get('getnomor', 'Antrian@getNomor')->name('get-nomor');
+
 });
 
 
