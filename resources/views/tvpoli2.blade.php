@@ -25,7 +25,7 @@
 </div>
 <header class="content__title">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="navbar-wrapper" style="">
                 <div class="navbar-minimize">
                 </div>
@@ -34,13 +34,12 @@
                 <label class="text-secondary" id="namaunitkerja" >Puskesmas Asemrowo</label></h3>
             </div>
         </div>
-        <div class="col-md-6 d-flex justify-content-end align-items-center">
+        <div class="col-md-7 d-flex justify-content-end align-items-center">
             <!-- <h2 class="display-2 text-right fweight-400">Poli Umum</h2> -->
-            
-                <button class="btn btn-light font-2c5rem"><i class="zmdi zmdi-volume-up"></i></button>
-            
-                <button class="btn btn-light font-2c5rem" data-toggle="modal" data-target="#menu" ><i class="zmdi zmdi-menu"></i></button>
-            
+            <div class="btn-group-vertical">
+                <button class="btn btn-outline-dark" style="font-size:20px;border:0;"><i class="zmdi zmdi-volume-up"></i></button>
+                <button class="btn btn-outline-dark" style="font-size:20px;margin-bottom:25px;border:0;" data-toggle="modal" data-target="#menu" ><i class="zmdi zmdi-menu"></i></button>
+            </div>
             <div class="widget-time bg-purple">
                 <div class="time">
                     <span class="dateindo" style="font-size:15px;"></span>
@@ -54,15 +53,15 @@
     </div>
 </header>
 <div class="content__title" style="padding-top:0!important">
-    <div class="d-flex justify-content-between align-items-center">
-        <!-- <span class="nav-item">
+    <!-- <div class="d-flex justify-content-between align-items-center">
+        <span class="nav-item">
             <div>
                 <p class="time" id="date_time" style="margin-bottom: 0px!important; font-size: 20px; font-weight: 400; ">
                     <span class="dateindo"></span>
                     <span class="time__hours"></span>:<span class="time__min"></span>:<span class="time__sec"></span>
                 </p>
             </div>
-        </span> -->
+        </span>
         <div>
             <span class="nav-item">
                 <button class="btn btn-light font-2c5rem"><i class="zmdi zmdi-volume-up"></i></button>
@@ -71,7 +70,7 @@
                 <button class="btn btn-light font-2c5rem" data-toggle="modal" data-target="#menu" ><i class="zmdi zmdi-menu"></i></button>
             </span>
         </div>
-    </div>
+    </div> -->
 </div>
 <br>
 <div class="row">

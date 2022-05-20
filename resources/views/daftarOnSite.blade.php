@@ -70,7 +70,7 @@
           <div class="row">
             @foreach($poli as $unit)
               <div class="col-md-3" style="margin-bottom:5px;">
-                <button class="btn btn-block btn-primary btn-daftar" data-toggle="modal" data-target="#modalkonfirm" value="{{$unit->noid}}" onclick="passData(this)">{{$unit->nama}}</button>
+                <button class="btn btn-block btn-purple btn-daftar" value="{{$unit->noid}}" onclick="passData(this)">{{$unit->nama}}</button>
               </div>
             @endforeach
           </div>
@@ -91,7 +91,12 @@
     $('input[name=tanggal]').attr('value', tanggal);
     $('input[name=faskes]').attr('value', '{{Auth::user()->idunitkerja}}');
     $('input[name=poli]').attr('value', val);
-    $('input[name=nik]').focus();
+    
+    console.log($('input[name=nik]'));
+    $input = $("#modalkonfirm").find("input[name='nik']");
+    $('#modalkonfirm').on('shown.bs.modal', function (e) {
+       $input.focus();
+    }).modal('show');
   } 
   
 </script>

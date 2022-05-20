@@ -2,27 +2,33 @@
 @section('content')
 <header class="content__title">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="navbar-wrapper" style="">
-                <img src="{{asset('public/img/pemkot.png')}}" alt="Logo" style="height:100px; ">
-                <h3 class="navbar-brand" style="padding-left: 32px;" href="{{url('/')}}">Dinas Kesehatan Kota
+                <img src="{{asset('public/img/pemkot.png')}}" alt="Logo" style="height:100px; margin-bottom:30px;">
+                <h3 class="navbar-brand" style="padding-top:30px;padding-left: 32px;" href="{{url('/')}}">Dinas Kesehatan Kota
                     Surabaya<br>
                     <label class="text-secondary" id="namaunitkerja">Puskesmas Asemrowo</label>
                 </h3>
             </div>
         </div>
-        <div class="col-md-6 d-flex justify-content-end align-items-center">
-            <div class="text-right fweight-400">
-                <p class="time" id="date_time" style="margin-bottom: 0px!important; font-size: 20px; ">
-                    <span class="dateindo"></span>
-                    <span class="time__hours"></span>:<span class="time__min"></span>:<span class="time__sec"></span>
-                </p>
+        <div class="col-md-7 d-flex justify-content-end align-items-center">
+            <div class="btn-group-vertical">
+                <button class="btn btn-outline-dark" style="font-size:20px;border:0;"><i class="zmdi zmdi-volume-up"></i></button>
+                <button class="btn btn-outline-dark" style="font-size:20px;margin-bottom:25px;border:0;" data-toggle="modal" data-target="#menu" ><i class="zmdi zmdi-menu"></i></button>
+            </div>
+            <div class="widget-time bg-purple">
+                <div class="time">
+                    <span class="dateindo" style="font-size:15px;"></span>
+                    <span class="time__hours" style="font-size:20px;">12</span>
+                    <span class="time__min" style="font-size:20px;">46</span>
+                    <span class="time__sec" style="font-size:20px;">14</span>
+                </div>
             </div>
         </div>
     </div>
 </header>
 <div class="row" style="flex:1;">
-    <div class="col-lg-5">
+    <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-body d-flex flex-column">
                 <h4 class="card-title font-1c5rem" >Pasien Belum Datang</h4>
@@ -49,7 +55,7 @@
             </div>
         </div>
     </div>
-    <div class="col-lg-7">
+    <div class="col-lg-6">
         <div class="card h-100">
             <div class="card-body">
                 <h4 class="card-title font-1c5rem" >Dokter Jaga</h4>
