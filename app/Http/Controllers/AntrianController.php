@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class Antrian extends Controller
+class AntrianController extends Controller
 {
     /**
      * Ambil list poli yang aktif pada unit kerja
