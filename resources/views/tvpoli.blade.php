@@ -2,7 +2,7 @@
 @section('content')
 <div class="modal fade p-0" id="menu" tabindex="-1" style="display: none;" data-backdrop="static" aria-hidden="false">
     <div class="modal-dialog modal-lg" style="margin: 0;max-width: 100%;">
-        <div class="modal-content bg-purple text-white">
+        <div class="modal-content bg-purple text-white" style="height:100vh;">
             <div class="modal-header">
                 <h4 class="modal-title pull-left text-white">PILIH POLI</h4>
             </div>
@@ -96,28 +96,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <table class="table table-antrian mb-0" style="font-size: large;">
-                            <thead class="bg-purple text-white">
-                            <tr>
-                                <th>Antrian</th>
-                                <th>Nama</th>
-                                <th>Status</th>
-                                <th>Estimasi Masuk</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @for($i=0;$i<10;$i++)
-                            <tr>
-                                <td scope="row"></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            @endfor
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <table class="table table-antrian mb-0" style="font-size: large;">
                             <thead class="bg-purple text-white">
                             <tr>
@@ -169,9 +148,8 @@ const data = [
 
 function createlistmodal(data){
     var i = 0;
-    console.log(data);
     var box = data.map(function (poli) {
-        var x = $('<div class="col-2 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg w-100 mb-4" >'+poli.nama+'</button></div>');
+        var x = $('<div class="col-4 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg w-100 mb-4" >'+poli.nama+'</button></div>');
         x.on('click' , function(){
             setpoli(poli.id)
         });

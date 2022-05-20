@@ -7,14 +7,7 @@
                 <h4 class="modal-title pull-left text-white">PILIH POLI</h4>
             </div>
             <div class="modal-body">
-                <div class="row" id="menu-list-poli">
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('umum')">UMUM</button></div>
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('gigi')">GIGI</button></div>
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('kia')">KIA</button></div>
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('gizi')">GIZI</button></div>
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('sanitasi')">SANITASI</button></div>
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('batra')">BATRA</button></div>
-                    <div class="col-3 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg" onclick="setpoli('psikologi')">PSIKOLOGI</button></div>
+                <div class="row" id="listpoli">
                 </div>
             </div>
             <div class="modal-footer">
@@ -107,28 +100,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-6">
-                        <table class="table table-antrian mb-0" style="font-size: large;">
-                            <thead class="bg-purple text-white">
-                            <tr>
-                                <th>Antrian</th>
-                                <th>Nama</th>
-                                <th>Status</th>
-                                <th>Estimasi Masuk</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @for($i=0;$i<10;$i++)
-                            <tr>
-                                <td scope="row"></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            @endfor
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <table class="table table-antrian mb-0" style="font-size: large;">
                             <thead class="bg-purple text-white">
                             <tr>
@@ -178,11 +150,41 @@ const data = [
     ["16", "Soleman", "09:30", "light"],
 ];
 
+function createlistmodal(data){
+    var i = 0;
+    var box = data.map(function (poli) {
+        var x = $('<div class="col-4 item-poli"><button type="button" class="btn btn-light btn--raised btn-lg w-100 mb-4" >'+poli.nama+'</button></div>');
+        x.on('click' , function(){
+            setpoli(poli.id)
+        });
+        return x;
+    })
+    $("#listpoli").html('').append(box);
+}
+
+function getpoliaktif(){
+    $.ajax({
+        type: 'GET',
+        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+        url: '{{route("getlistpoli")}}',
+        dataType: 'json',
+        async: false,
+        success: function (result) {
+            var data = result.data;
+            createlistmodal(data);
+        },
+        error: function (result) {
+            console.log(result.statusText);
+        }
+    })
+}
+
 function setpoli(id) {
     $('#menu').modal('hide');
 }
 
 $(function () {
+    getpoliaktif();
     $('#menu').modal('show');
 
     //dummy
@@ -191,6 +193,7 @@ $(function () {
         for(var i in data){
             let d = data[i]
             let $elem = $(tr[i]);
+
             let status=""
             
             if(d[3] == "warning") status = "Hadir";

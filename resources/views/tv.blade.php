@@ -45,6 +45,7 @@
 </div>
 </script>
 <script>
+var $elements;
 function getPoliUtama(){
     $('#listpoliutama').empty();
     $.ajax({
@@ -54,14 +55,14 @@ function getPoliUtama(){
         dataType: 'json',
         success: function (result) {
             var data = result.data;
-        
+            $elements = {};
             for (const d of data) {
                 var templatepoli = document.getElementById("templatepoli").innerHTML;
                 var polihtml = templatepoli.replace(/\{poli\}/, d['nama']);
-                $('#listpoli').append(polihtml);
+                var $poli = $(polihtml);
+                $('#listpoli').append($poli);
+                $elements[d.id] = $poli;
             }
-            // Poli.push({ id: data[i].id, nama: data[i].nama, no: 0 });
-            // }
         },
         error: function(responsedata){
             var errors = responsedata.statusText;
@@ -75,35 +76,30 @@ function getPoliUtama(){
 var streamnomor = new EventSource('{{route("getnomorstream")}}');
 
 streamnomor.onmessage = function(event){
-    var data = JSON.parse(event.data);
-    var datanow = data.now;
-    console.log("datanow",datanow)
-    // for (i = 0; i < datanow.length; i++) {
-    //     if(datanow[i]['idbppoli']){
-    //         var ip = Poli.findIndex(x => x.id === datanow[i]['idbppoli']);
-    //         $("#poli"+datanow[i]['idbppoli']).html(datanow[i]['noantrian']);
-    //         $("#poli"+datanow[i]['idbppoli']).removeClass('bg-blue bg-red');
-    //         if(ip !== -1){
-    //             var bgcolor = (Poli[ip].no !== datanow[i]['noantrian']) ? 'bg-red' : 'bg-blue';
-    //             $("#poli"+datanow[i]['idbppoli']).addClass(bgcolor);
-    //             Poli[ip].no = datanow[i]['noantrian'];
-    //         }
-    //     }
-    // }
-    var datanext = data.next;
-    // for (i = 0; i < datanext.length; i++) {
-    //     $("#polin"+datanext[i]['idbppoli']).html(datanext[i]['noantrian']);
-    //     $("#estimasi"+datanext[i]['idbppoli']).html(datanext[i]['jamestimasi']);
-	// 	$("#jumlah"+datanext[i]['idbppoli']).html(datanext[i]['servesmax']);
-    //     //$("#estimasilayanan"+datanext[i]['idbppoli']).html(datanext[i]['waktunontindakan'] + ' menit');
-    //     //$("#estimasilayanantindakan"+datanext[i]['idbppoli']).html(parseInt(datanext[i]['waktutindakan']) + ' menit');
-    // }
+    if(!$elements) return;
+
+    var data = JSON.parse(event.data)
+    console.log(data)
+    var datanow = data.now
+    var datanext = data.next
+
+    for (const i in datanow) {
+        let idpoli = datanext[i]['idbppoli']
+        let $poli = $elements[idpoli]
+
+        if (datanow[i]['idbppoli']) {
+            $poli.find('.antrian-current').text(datanow[i]['noantrian'])
+            $poli.find('.antrian-next').text(datanext[i]['noantrian'])
+            $poli.find('.antrian-time-est').text(datanext[i]['jamestimasi'])
+            $poli.find('.antrian-total').text(datanext[i]['servesmax'])
+        }
+    }
 }
 
 $(function () {
     getPoliUtama();
-    initSmoothScrolling('.row-wrapper','smoothscroll');
-    initSmoothScrolling('.row-wrapper2','smoothscroll2');
+    // initSmoothScrolling('.row-wrapper','smoothscroll');
+    // initSmoothScrolling('.row-wrapper2','smoothscroll2');
 });
 </script>
 @endsection
