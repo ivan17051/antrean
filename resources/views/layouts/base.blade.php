@@ -11,7 +11,8 @@
         <link rel="stylesheet" href="{{ asset('public/vendors/fullcalendar/fullcalendar.min.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/select2/css/select2.min.css') }}">
         <link rel="stylesheet" href="{{ asset('public/vendors/draganddrop/draganddrop.css') }}">
-        <link rel="stylesheet" href="{{ asset('public/vendors/flatpickr/flatpickr.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('public/vendors/flatpickr/flatpickr.css') }}">
+        <!-- <link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/default.css"> -->
 
         <!-- App styles -->
         <link rel="stylesheet" href="{{ asset('public/css/app.min.css') }}">
