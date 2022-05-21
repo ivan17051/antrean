@@ -35,7 +35,7 @@ class TVPoli extends Controller {
         $d['subtitle'] = "antrean";
         $d['idunitkerja'] = $idunitkerja;
         
-        return View::make('tvpoli2', compact('d'));
+        return View::make('tvpoli3', compact('d'));
         // print_r($d);
     }
 }
