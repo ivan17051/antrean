@@ -1,15 +1,3 @@
 <footer class="footer hidden-xs-down mt-auto">
-                    <p>© Material Admin Responsive. All rights reserved.</p>
-
-                    <ul class="nav footer__nav">
-                        <a class="nav-link" href="">Homepage</a>
-
-                        <a class="nav-link" href="">Company</a>
-
-                        <a class="nav-link" href="">Support</a>
-
-                        <a class="nav-link" href="">News</a>
-
-                        <a class="nav-link" href="">Contacts</a>
-                    </ul>
-                </footer>
+    <p>© IT DKK Surabaya. All rights reserved.</p>
+</footer>

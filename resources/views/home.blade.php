@@ -2,7 +2,7 @@
 @section('content')
 <header class="content__title">
     <h1>Dashboard</h1>
-    <small>Selamat Datang di Aplikai e-Health!</small>
+    <small>Selamat Datang di Aplikasi e-Health!</small>
 
     <div class="actions">
         <a href="" class="actions__item zmdi zmdi-trending-up"></a>
