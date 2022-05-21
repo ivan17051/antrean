@@ -24,16 +24,14 @@
     <div class="card">
 
       <div class="card-body">
-          <h4 class="card-title">Rujukan Pasien</h4>
-          <h6 class="card-subtitle">Silahkan Isi No Rujukan.</h6>
           <div class="row">
             <div class="col-12 d-flex">
-              <div class="search-inner" style="background-color:#d066e2;flex:1;">
-                
-                <input type="text" class="search__text" placeholder="Masukkan NIK">
-                        <i class="zmdi zmdi-search search__helper" data-ma-action="search-close" style="margin-left:15px;"></i>
+              <div class="widget-search widget-search--inverse bg-purple" style="background-color:#d066e2;flex:1;">
+                <i class="zmdi zmdi-search"></i>
+                <input type="text" class="widget-search__input barcode-input text-left" maxlength="16" placeholder="Masukkan NIK">
+                        
               </div>
-              <button title="cetak QR Code" data-toggle="modal" data-target="#modal-qrcode"  onclick="createQRCode('3578272503990003')" class="ml-2 btn text-white bg-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;padding: 0.575rem 0.85rem;margin-bottom: 0!important;">
+              <button title="cetak QR Code" data-toggle="modal" data-target="#modal-qrcode"  onclick="createQRCode('3578272503990003')" class="ml-2 btn btn-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;height:54px;">
                 <i class="zmdi zmdi-receipt"></i>
               </button>
             </div>

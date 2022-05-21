@@ -70,7 +70,7 @@
           <div class="row">
             @foreach($poli as $unit)
               <div class="col-md-3" style="margin-bottom:5px;">
-                <button class="btn btn-block btn-purple btn-daftar" value="{{$unit->noid}}" onclick="passData(this)">{{$unit->nama}}</button>
+                <button class="btn btn-block btn-purple btn-daftar" value="{{$unit->noid}}" onclick="passData(this)">{{$unit->policaption}}</button>
               </div>
             @endforeach
           </div>
