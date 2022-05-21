@@ -273,3 +273,15 @@
 .user .user__email{
     color: var(--light)!important;
 }
+
+.tbody-mimic.height-full .scrollbar-inner{
+    height: calc(100% - 58px)!important;
+}
+
+.tbody-mimic.height-full .scroll-y{
+    height: calc(100% - 58px)!important;
+}
+
+#waiting-pasien  .tr-mimic:nth-child(odd) {
+    background: #fbe6ff;
+}

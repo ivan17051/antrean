@@ -30,7 +30,7 @@
 <div class="row" style="flex:1;">
     <div class="col-lg-6">
         <div class="card h-100">
-            <div class="card-body d-flex flex-column">
+            <div class="card-body d-flex flex-column" id="waiting-pasien">
                 <h4 class="card-title font-1c5rem" >Pasien Belum Datang</h4>
                 <div class="font-large" style="flex: auto;display: block;height: 0;">
                     <div class="tr-mimic text-white bg-purple">
@@ -38,7 +38,7 @@
                         <h6 >Nama</h6>
                         <h6 >Keterangan</h6>
                     </div>
-                    <div class="tbody-mimic border-purple" id="pasien" style="height: calc(100% - 58px); overflow: scroll;">
+                    <div class="scrollbar-inner tbody-mimic height-full border-purple" id="pasien" style="overflow-y: scroll;" >
                     </div>
                 </div>
                 <!-- <table class="table table-antrian mb-0 table-block h-100" style="font-size: large;" id="pasien">
@@ -94,13 +94,66 @@
         $('#dokter tbody').html(htmlstr)
     }
 
+    const allpasien = [
+        ['27','Joanne Dominguez'],
+        ['28','Conrad Baker'],
+        ['29','Magdalena Casey'],
+        ['30','Fionnuala Hicks'],
+        ['31','Salim Rosales'],
+        ['32','Cinar Beech'],
+        ['33','Ayra Martin'],
+        ['34','Elias Pearson'],
+        ['35','Marian David'],
+        ['36','Theodore Denton'],
+        ['37','Jakob Walton'],
+        ['38','Isma Allison'],
+        ['39','Reagan Bernal'],
+        ['40','Sanjay Beck'],
+        ['41','Martyna Lord'],
+        ['42','Anja Gray'],
+        ['43','Daniele Arnold'],
+        ['44','Zena Legge'],
+        ['45','Jaye Chen'],
+        ['46','Courteney Fulton'],
+        ['47','Letitia Rahman'],
+        ['48','Anya Black'],
+        ['49','Matteo Mcdaniel'],
+        ['50','Aayan Blackmore'],
+        ['51','Stanley Appleton'],
+        ['52','Antoinette Enriquez'],
+        ['53','Jason Suarez'],
+        ['54','Pola Mercado'],
+        ['55','Iolo King'],
+        ['56','Anisa Neal'],
+        ['57','Rees Lacey'],
+        ['58','Debra Keller'],
+        ['59','Adriana Crowther'],
+        ['60','Isaac Mccray'],
+        ['61','Lily-May Shea'],
+        ['62','Anand Partridge'],
+        ['63','Maverick Raymond'],
+        ['64','Ffion Lucero'],
+        ['65','Kaiden Holloway'],
+        ['66','Floyd Ball'],
+        ['67','Manahil Crossley'],
+        ['68','Oran Berger'],
+        ['69','Eva-Rose Nolan'],
+        ['70','Randy Roth'],
+        ['71','India Caldwell'],
+        ['72','Ilayda Crouch'],
+        ['73','Olivia-Mae Best'],
+        ['74','Chad Hoffman'],
+        ['75','Lizzie Hogan'],
+        ['76','Ellie Wheeler'],
+    ]
+
     function setPasien(){
 
         let htmlstr = ''
-        for (let i = 1; i < 20; i++) {
+        for (const pasien of allpasien) {
             htmlstr += '<div class="tr-mimic ">'+
-                    '<p>'+i+'</p>'+
-                    '<p>SI FULAN</p>'+
+                    '<p>'+pasien[0]+'</p>'+
+                    '<p>'+pasien[1]+'</p>'+
                     '<p>-</p>'+
                 '</div>';
         }
@@ -111,6 +164,20 @@
     $(function () {
         setDokter()
         setPasien()
+
+        var $scrollcontainer = $($('#waiting-pasien .tbody-mimic')[1]);
+        var allpasienElem = $scrollcontainer.find('.tr-mimic');
+        var allpasienElem_length = allpasienElem.length;
+        var lastbound = allpasienElem[allpasienElem_length-2].offsetTop - $scrollcontainer.innerHeight();
+
+        var index=0;
+        var interval = setInterval(function() { 
+            let posY = allpasienElem[index].offsetTop;
+            $scrollcontainer.scrollTop(posY)
+            if(index < allpasienElem_length-1 ||  posY < lastbound) index++;
+            else index=0;
+        }, 1000);
+
     });
 </script>
 @endsection
