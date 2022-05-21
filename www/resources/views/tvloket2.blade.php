@@ -1,6 +1,6 @@
 @extends('layouts.tvlayout')
 @section('content')
-<div style="height:calc(100vh - 81px);" class="d-flex flex-column">
+<div style="height:calc(100vh - 81px);max-height:calc(100vh - 81px);" class="">
 <div class="row" style="padding: 12px 20px;">
     <div class="col-sm-7">
         <img class="d-inline-block" src="./img/pemkot.png" alt="Logo" style="height:100px; margin-bottom:30px;">
@@ -32,64 +32,30 @@
         </div>
     </div>
 </div>
-<div class="row flex-1 " style="padding: 12px 20px;">
-    <div class="box h-100">
+<div class="row" style="padding: 12px 20px 0 20px">
+    <div class="box m-0">
         <div class="box-body with-border p-0">
-        
-            <div class="col-sm-12 p-0">
-                <table class="table table-bordered m-0 font-large">
-                    <thead>
-                        <tr class="bg-gray-light">
-                            <th class="text-center" style="width: 15%">ANTRIAN</th>
-                            <th class="text-center">NAMA</th>
-                            <th class="text-center" style="width: 20%">POLI</th>
-                            <th class="text-center" style="width: 10%">ESTIMASI</th>
-                            <th class="text-center" style="width: 18%">STATUS</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="col-sm-12 p-0">
-                <table class="table table-bordered m-0 font-large table-antrian-poli">
-                    <tbody>
-                        <tr class="my-bg-warning">
-                            <td class="text-center" style="width: 15%">211</td>
-                            <td class="text-center">AHMAD IRFAN RIFAI  SDR</td>
-                            <td class="text-center" style="width: 20%">PENYAKIT DALAM</td>
-                            <td class="text-center" style="width: 10%">10:11:46</td>
-                            <td class="text-center" style="width: 18%">HADIR</td>
-                        </tr>
-                        <tr class="my-bg-success">
-                            <td class="text-center" style="width: 15%">211</td>
-                            <td class="text-center">AHMAD IRFAN RIFAI  SDR</td>
-                            <td class="text-center" style="width: 20%">PENYAKIT DALAM</td>
-                            <td class="text-center" style="width: 10%">10:11:46</td>
-                            <td class="text-center" style="width: 18%">DILAYANI</td>
-                        </tr>
-                        <tr class="my-bg-info">
-                            <td class="text-center" style="width: 15%">211</td>
-                            <td class="text-center">AHMAD IRFAN RIFAI  SDR</td>
-                            <td class="text-center" style="width: 20%">PENYAKIT DALAM</td>
-                            <td class="text-center" style="width: 10%">10:11:46</td>
-                            <td class="text-center" style="width: 18%">KONSUL/PENUNJANG</td>
-                        </tr>
-                        <tr class="my-bg-danger">
-                            <td class="text-center" style="width: 15%">211</td>
-                            <td class="text-center">AHMAD IRFAN RIFAI  SDR</td>
-                            <td class="text-center" style="width: 20%">PENYAKIT DALAM</td>
-                            <td class="text-center" style="width: 10%">10:11:46</td>
-                            <td class="text-center" style="width: 18%">BATAL</td>
-                        </tr>
-                        <tr class="my-bg-light">
-                            <td class="text-center" style="width: 15%">211</td>
-                            <td class="text-center">AHMAD IRFAN RIFAI  SDR</td>
-                            <td class="text-center" style="width: 20%">PENYAKIT DALAM</td>
-                            <td class="text-center" style="width: 10%">10:11:46</td>
-                            <td class="text-center" style="width: 18%">BELUM DATANG</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <table class="table table-bordered m-0 font-large">
+                <thead>
+                    <tr class="bg-gray-light">
+                        <th class="text-center" style="width: 15%">ANTRIAN</th>
+                        <th class="text-center">NAMA</th>
+                        <th class="text-center" style="width: 20%">POLI</th>
+                        <th class="text-center" style="width: 10%">ESTIMASI</th>
+                        <th class="text-center" style="width: 18%">STATUS</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
+    <div class="box" style="display: block;overflow: auto;height: 100%;">
+        <div class="box-body p-0 antrian-poli-container" >
+            <table class="table table-bordered m-0 font-large ">
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -107,5 +73,73 @@
 @section('jsx')
 <script type="text/javascript">
 
+function templatePasien(d){
+    let datenow = new Date();
+    let time = new Date(d.tanggaleta) 
+    let minutesDifference = (datenow-time)/ (1000*60);
+    let status, statusText;
+
+    if(d.isdone){
+        statusStyle = "my-bg-success"
+        status = "Dilayani"
+    }
+    else if(d.isconsul){
+        statusStyle = "my-bg-info"
+        status = "Konsultasi/Penunjang"
+    }
+    else if(d.isconfirm){
+        statusStyle = "my-bg-warning"
+        status = "Hadir"
+    }
+    else if(minutesDifference > 30){       //telat >30 menit
+        statusStyle = "my-bg-danger"
+        status = "Batal"
+    }else{
+        statusStyle = "my-bg-light"
+        status = "Belum Datang"
+    }
+    // iscall
+    // isrecall
+    // isserved
+    // isskipped
+
+    time = time.toLocaleTimeString('uk')
+    return $('<tr class="'+statusStyle+'">'+
+            '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
+            '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
+            '<td class="text-center" style="width: 20%">'+d.poli+'</td>'+
+            '<td class="text-center" style="width: 10%">'+time+'</td>'+
+            '<td class="text-center" style="width: 18%">'+status+'</td>'+
+            '</tr>');
+}
+
+function getListPasien(){
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: '{{route("get-pasien")}}',
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+            let $tbodypasien = $('.antrian-poli-container table tbody')
+            if(result.data){
+                var data = result.data;
+                for (const d of data.listpasien) {
+                    $tbodypasien.append(templatePasien(d));
+                } 
+            } else {
+                // toast("info", respon);
+            }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
+    });
+}
+
+$(function () {
+    getListPasien();
+});
 </script>
 @endsection

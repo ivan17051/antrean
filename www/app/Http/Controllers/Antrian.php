@@ -165,11 +165,11 @@ class Antrian extends Controller
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
 		
-        $pasien = DB::connection('mysql')->select("SELECT A.*
+        $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, P.nama as poli
 			FROM mantrian A
-        	
+            INNER JOIN mbppoli P ON P.noid = A.idbppoli
 			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.pasiennoantrian");
-        // dd($tanggal, $wherepoli, $idunitkerja, $pasien);
+            
         $data = array("listpasien" => $pasien);
         
         return Response::json(array('data' => $data));

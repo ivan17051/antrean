@@ -95,11 +95,11 @@
     color: whitesmoke;
 }
 
-.table-antrian-poli{
+.antrian-poli-container table{
     table-layout: fixed;
 }
 
-.table-antrian-poli td{
+.antrian-poli-container table td{
     overflow-x: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
