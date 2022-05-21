@@ -1,0 +1,59 @@
+/* DISPLAY */
+
+.d-inline-block{
+    display: inline-block;
+}
+
+/* TEXT ALIGNMENT */
+
+.text-center{
+    text-align: center;
+}
+
+/* FONT WEIGHT */
+.text-bold{
+    font-weight: bold!important;
+}
+
+/* MARGIN */
+
+.m-o{
+    margin: 0!important;
+}
+
+/* PADDING */
+
+.p-12px{
+    padding: 12px;
+}
+
+/* BACKGROUND */
+
+.bg-darker{
+    background: rgba(0,0,0,0.1)!important;
+}
+
+/* SPECIFIC CLASS */
+
+.dateclock-container{
+    display: inline-block;
+    text-align: right;
+}
+
+.dateclock-container > *:first-child{
+    padding: 16px;
+    width: fit-content;
+    display: inline-block;
+    border-radius: 12px 0 0 12px;
+}
+
+.dateclock-container::after{
+    content: "";
+    background-color: #dd4b39 !important;
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: calc(-100% + 16px);
+}

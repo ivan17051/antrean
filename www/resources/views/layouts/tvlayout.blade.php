@@ -52,6 +52,9 @@
     <script src="{{asset('theme/plugins/ionsound/ion.sound.min.js')}}"></script>
     <script src="{{asset('theme/plugins/sweetalert/sweetalert.min.js')}}"></script>
 
+    <!-- custom -->
+    <link rel="stylesheet" href="{{asset('theme/dist/css/custom.css')}}">
+
 
     <style type="text/css">
         #loading {
@@ -249,7 +252,7 @@
 
             </section>
         </div>
-        <footer class="main-footer" style="margin-left: 0;">
+        <footer class="main-footer bg-red text-black" style="margin-left: 0;">
             <div class="pull-right hidden-xs" id="date_time">
                 <b>IT</b> Dinkes
             </div>
@@ -265,6 +268,8 @@
 
 <script src="{{asset('js/myapp.js?1')}}"></script>
 <script src="{{asset('js/suaraantrian.js?2')}}"></script>
+
+<script src="{{asset('theme/dist/js/custom.js')}}"></script>
 
 <script>
     $(window).on('load', function(){
