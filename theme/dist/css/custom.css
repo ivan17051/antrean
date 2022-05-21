@@ -4,10 +4,32 @@
     display: inline-block;
 }
 
-/* TEXT ALIGNMENT */
+.d-flex{
+    display: flex;
+}
+
+.flex-column{
+    flex-direction: column;
+}
+
+.flex-1{
+    flex: 1;
+}
+
+/* FONT PROPERTIES */
+
+.font-large{
+    font-size: large;
+}
+
+/* ALIGNMENT */
 
 .text-center{
     text-align: center;
+}
+
+.justify-content-center{
+    justify-content: center;
 }
 
 /* FONT WEIGHT */
@@ -17,7 +39,7 @@
 
 /* MARGIN */
 
-.m-o{
+.m-0{
     margin: 0!important;
 }
 
@@ -25,6 +47,15 @@
 
 .p-12px{
     padding: 12px;
+}
+
+.p-0{
+    padding: 0!important;
+}
+
+/* HEIGHT */
+.h-100{
+    height: 100%!important;
 }
 
 /* BACKGROUND */
@@ -56,4 +87,90 @@
     height: 100%;
     top: 0;
     right: calc(-100% + 16px);
+}
+
+.big-title{
+    font-size: 4rem!important;
+    font-weight: bolder;
+    color: whitesmoke;
+}
+
+.table-antrian-poli{
+    table-layout: fixed;
+}
+
+.table-antrian-poli td{
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* LEGEND ANTRIAN */
+
+.legend-item.item-smaller:not(:last-child){    
+    margin-right: 12px;
+}
+
+.legend-item:not(:last-child){    
+    margin-right: 32px;
+}
+
+.legend-item.item-smaller > span::before{
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -4px;
+    margin-right: 8px;
+}
+
+.legend-item > span::before{
+    content: "";
+    width: 1.5em;
+    height: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: -4px;
+    margin-right: 12px;
+    border: 2px solid gray;
+    border-radius: 50%;
+}
+
+.legend-item > span.warning::before {
+    background-color: #ffca2d!important;
+}
+
+.legend-item > span.success::before {
+    background-color: #3bd995!important;
+}
+
+.legend-item > span.info::before {
+    background-color: #4cc7ff!important;
+}
+
+.legend-item > span.danger::before {
+    background-color: #ff8b89;
+}
+
+.legend-item > span.light::before {
+    background-color: #f6f6f6;
+}
+
+/* BACKGROUND CUSTOM */
+
+.my-bg-warning {
+    background-color: #ffca2d!important;
+}
+.my-bg-success {
+    background-color: #3bd995!important;
+}
+.my-bg-info {
+    background-color: #4cc7ff!important;
+}
+.my-bg-danger {
+    background-color: #ff8b89!important;
+}
+.my-bg-light {
+    background-color: #f6f6f6!important;
 }
