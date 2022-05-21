@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\UnitKerja;
-use App\Poliklinik;
+use App\UnitKerjaPoli;
 use App\Pasien;
 use Carbon;
 
@@ -22,19 +22,23 @@ class PendaftaranController extends Controller
         
         $puskesmas = UnitKerja::where('nama','LIKE','Puskesmas%')->get();
         $rs = UnitKerja::where('nama','LIKE','RSUD%')->get();
-        $poli = Poliklinik::all();
+        $poli = UnitKerjaPoli::where('idunitkerja', Auth::user()->idunitkerja)->get();
         
         return view('daftarOnline2', ['pasien'=>$pasien, 'puskesmas'=>$puskesmas, 'rs'=>$rs, 'poli'=>$poli]);
     }
 
-    public function daftarOnSite(){
-        $poli = Poliklinik::all();
+    public function daftar(Request $request) {
 
+    }
+
+    public function daftarOnSite(){
+        $poli = UnitKerjaPoli::where('idunitkerja', Auth::user()->idunitkerja)->get();
+        // dd($poli);
         return view('daftarOnSite', ['poli'=>$poli]);
     }
 
     public function daftarBarcode(){
-        $poli = Poliklinik::all();
+        $poli = UnitKerjaPoli::where('idunitkerja', Auth::user()->idunitkerja)->get();
 
         return view('daftarBarcode', ['poli'=>$poli]);
     }

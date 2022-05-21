@@ -71,6 +71,8 @@
 </header>
 <div class="row">
   <div class="col-md-12">
+    <form action="" method="">
+    @csrf
     <div class="card">
 
       <div class="card-body">
@@ -78,6 +80,18 @@
         <h6 class="card-subtitle">Silahkan Pilih Fasilitas Kesehatan yang Ingin Dituju.</h6>
 
         <div class="row">
+          <div class="col-md-4">
+              <div class="form-group">
+                  <label>Pilih Kepesertaan</label><br>
+
+                  <select class="select2 select2-hidden-accessible" style="width:100%;" tabindex="-1" aria-hidden="true" name="kepesertaan">
+                      <option value="">-- Pilih --</option>
+                      <option value="bpjs">BPJS</option>
+                      <option value="umum">Umum</option>
+                      <option value="lain">Asuransi Lain</option>
+                  </select>
+              </div>
+          </div>
           <div class="col-md-4">
               <div class="form-group">
                   <label>Pilih RS/Puskesmas</label><br>
@@ -98,6 +112,8 @@
                   </select>
               </div>
           </div>
+        </div>
+        <div class="row">
           <div class="col-md-4">
               <div class="form-group" id="poli">
                   <label>Pilih Poli</label><br>
@@ -107,8 +123,6 @@
                   </select>
               </div>
           </div>
-        </div>
-        <div class="row">
           <div class="col-md-4" id="calendar">
           <label>Pilih Tanggal</label><br>
               <div class="input-group">
@@ -118,18 +132,7 @@
                   <input class="form-control date-picker flatpickr-input" type="text" name="tanggal" Placeholder="Pilih Tanggal" readonly onchange="filterAntrianOnChange(this)">
               </div>
           </div>
-          <div class="col-md-4">
-              <div class="form-group" id="kepesertaan">
-                  <label>Pilih Kepesertaan</label><br>
-
-                  <select class="select2 select2-hidden-accessible" style="width:100%;" tabindex="-1" aria-hidden="true" name="kepesertaan">
-                      <option value="">-- Pilih --</option>
-                      <option value="bpjs">BPJS</option>
-                      <option value="umum">Umum</option>
-                      <option value="lain">Asuransi Lain</option>
-                  </select>
-              </div>
-          </div>
+          
           <div class="col-md-4">
             <div id=antrian>
               <label>Jumlah Antrian:</label><br>
@@ -137,8 +140,9 @@
             </div>
           </div>
       </div>
-      <div class="btn btn-lg btn-block btn-purple">Simpan</div>     
+      <button type="submit" class="btn btn-lg btn-block btn-purple" id="btnsimpan">Simpan</button>
     </div>
+    </form>
 
   </div>
 </div>
@@ -153,7 +157,7 @@
     $('#faskes').attr('hidden', true);
     $('#poli').attr('hidden', true);
     $('#calendar').attr('hidden', true);
-    $('#kepesertaan').attr('hidden', true);
+    $('#btnsimpan').attr('hidden', true);
     $('#antrian').attr('hidden', true);
   });
 
@@ -197,14 +201,13 @@ const filterPoliOnChange = async function(e){
         dt=poli;
         $('select[name=idbppoli]').empty().html(poli);
         $('#poli').attr('hidden', false);
-        $('#kepesertaan').attr('hidden', false);
     } else{
         $('#poli').attr('hidden', true);
-        $('#kepesertaan').attr('hidden', false);
+        $('#btnsimpan').attr('hidden', false);
         $('#calendar').attr('hidden', true);
     }
     dt.forEach(e => {
-        str+=`<option value="${e.noid}">${e.nama}</option>`;
+        str+=`<option value="${e.noid}">${e.policaption}</option>`;
     });
     $('select[name=idbppoli]').empty().html(str);
 }
@@ -225,8 +228,9 @@ const filterAntrianOnChange = async function(e){
     var val = e.value;
     console.log(e);
     var dt;
-    if(val){ //jika poli sdh terisi
+    if(val){ //jika tanggal sdh terisi
         $('#antrian').attr('hidden', false);
+        $('#btnsimpan').attr('hidden', false);
     } else{
         $('#antrian').attr('hidden', true);
     }
