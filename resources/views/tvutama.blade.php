@@ -168,13 +168,13 @@
         var $scrollcontainer = $($('#waiting-pasien .tbody-mimic')[1]);
         var allpasienElem = $scrollcontainer.find('.tr-mimic');
         var allpasienElem_length = allpasienElem.length;
-        var lastbound = allpasienElem[allpasienElem_length-2].offsetTop - $scrollcontainer.innerHeight();
+        var lastbound = allpasienElem[allpasienElem_length-1].offsetTop - $scrollcontainer.innerHeight();
 
         var index=0;
         var interval = setInterval(function() { 
             let posY = allpasienElem[index].offsetTop;
             $scrollcontainer.scrollTop(posY)
-            if(index < allpasienElem_length-1 ||  posY < lastbound) index++;
+            if(index < allpasienElem_length-1 && posY < lastbound) index++;
             else index=0;
         }, 1000);
 
