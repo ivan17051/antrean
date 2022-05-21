@@ -38,7 +38,7 @@
             <table class="table table-bordered m-0 font-large">
                 <thead>
                     <tr class="bg-gray-light">
-                        <th class="text-center" style="width: 15%">ANTRIAN</th>
+                        <th class="text-center" style="width: 15%">ANTREAN</th>
                         <th class="text-center">NAMA</th>
                         <th class="text-center" style="width: 20%">POLI</th>
                         <th class="text-center" style="width: 10%">ESTIMASI</th>
@@ -50,8 +50,8 @@
     </div>
 </div>
 <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
-    <div class="box" style="display: block;overflow: auto;height: 100%;">
-        <div class="box-body p-0 antrian-poli-container" >
+    <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+        <div class="box-body p-0 " >
             <table class="table table-bordered m-0 font-large ">
                 <tbody>
                 </tbody>
@@ -72,6 +72,13 @@
 @endsection
 @section('jsx')
 <script type="text/javascript">
+
+var antreanPoliState={
+    "container":null,
+    "elemheight": null,
+    "$bottomElem":null
+};
+var intervalInstance;
 
 function templatePasien(d){
     let datenow = new Date();
@@ -114,13 +121,13 @@ function templatePasien(d){
 }
 
 function getListPasien(){
-    $.ajax({
+    return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url: '{{route("get-pasien")}}',
         type: 'GET',
         dataType: 'json',
         success: function (result) {
-            let $tbodypasien = $('.antrian-poli-container table tbody')
+            let $tbodypasien = $('.antrean-poli-container table tbody')
             if(result.data){
                 var data = result.data;
                 for (const d of data.listpasien) {
@@ -138,8 +145,36 @@ function getListPasien(){
     });
 }
 
-$(function () {
-    getListPasien();
+function scrollLoop(dom, step)
+{
+    if(antreanPoliState.container.scrollTop() > antreanPoliState.$bottomElem[0].offsetTop + antreanPoliState.$bottomElem[0].offsetHeight){
+        antreanPoliState.container[0].scroll(0,0)
+    }
+    dom.scrollBy(0,step);
+}
+
+function checkScrollCapability()
+{
+    let elemheight = antreanPoliState.container.find('tr:first').height();
+    antreanPoliState.elemheight = elemheight;
+    let slidesVisible = antreanPoliState.container.outerHeight() / elemheight;
+    antreanPoliState.$bottomElem = antreanPoliState.container.find('tr:last');
+
+    if( slidesVisible < antreanPoliState.container.find('tr').length){
+        antreanPoliState.container.find('tr').slice(0, Math.ceil(slidesVisible)).clone().appendTo(antreanPoliState.container.find('tbody'));	
+        return true;
+    }
+    return false;
+}
+
+
+$(async function () {
+    await getListPasien();
+    antreanPoliState.container=$('.antrean-poli-container');
+
+    if(checkScrollCapability()){
+        intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 1);
+    }
 });
 </script>
 @endsection
