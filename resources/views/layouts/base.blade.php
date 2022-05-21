@@ -35,11 +35,11 @@
 
             @include('layouts.partials.chat')   
 
-            <section class="content">
+            <section class="content d-flex flex-column" style="min-height: 100vh;">
                  
                 @yield('content')
 
-                
+                @include('layouts.partials.footer')
             </section>
         </main>
 

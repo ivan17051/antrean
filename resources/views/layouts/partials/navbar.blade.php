@@ -215,7 +215,6 @@
                             </div>
                         </div>
                     </li> -->
-                    @if(Auth::user()->idlevel!=4)
                     <li class="user hidden-xs-down" style="margin-top:20px;min-width:200px;">
                         <div class="user__info" data-toggle="dropdown">
                             <img class="user__img" src="public/demo/img/profile-pics/8.jpg" alt="">
@@ -235,7 +234,6 @@
                             </form>
                         </div>
                     </li>
-                    @endif
 
                     <!-- <li class="dropdown hidden-xs-down">
                         <a href="" data-toggle="dropdown"><i class="zmdi zmdi-more-vert"></i></a>
