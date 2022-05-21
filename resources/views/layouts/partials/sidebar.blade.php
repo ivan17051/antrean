@@ -3,9 +3,9 @@
 
         <ul class="navigation">
             <li class="navigation__active"><a href="{{url('/home')}}"><i class="zmdi zmdi-home"></i> Beranda</a></li>
-
+            @if(Auth::user()->idpasien)
             <li><a href="{{url('/daftar')}}"><i class="zmdi zmdi-calendar"></i> Pendaftaran (Pasien)</a></li>
-
+            @elseif(Auth::user()->idunitkerja)
             <li class="navigation__sub">
                 <a href=""><i class="zmdi zmdi-collection-text"></i> Pendaftaran (Faskes)</a>
 
@@ -36,7 +36,7 @@
                     <li><a href="{{url('/tvpoli')}}">TV Poli</a></li>
                 </ul>
             </li>
-            
+            @endif
         </ul>
     </div>
 </aside>

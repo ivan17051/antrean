@@ -132,6 +132,7 @@
 }
 .flatpickr-months .flatpickr-month {
   background: transparent;
+  background-color: #d066e2;
   color: rgba(0,0,0,0.9);
   fill: rgba(0,0,0,0.9);
   height: 28px;
