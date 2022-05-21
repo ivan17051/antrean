@@ -44,7 +44,7 @@
         </span>
         <div>
             <span class="nav-item">
-                <button class="btn btn-light font-2c5rem"><i class="zmdi zmdi-volume-up"></i></button>
+                <button class="btn btn-light font-2c5rem" id="tombolsuara" onclick="setsuara()"><i class="zmdi zmdi-volume-up"></i></button>
             </span>
             <span class="nav-item">
                 <button class="btn btn-light font-2c5rem" data-toggle="modal" data-target="#menu" ><i class="zmdi zmdi-menu"></i></button>
@@ -135,6 +135,10 @@
 
 @section('jsx')
 <script>
+var listpoli = [];
+var suaraaktif = parseInt (localStorage.getItem("suaraantrian"));
+suaraaktif = (suaraaktif == null) ? 1 : suaraaktif;
+
 const data = [
     ["10", "Ahmad Sofyan", "07:40", "warning"],
     ["11", "Rudi Hariyanto", "08:15", "light"],
@@ -179,8 +183,22 @@ function setpoli(id) {
     $('#menu').modal('hide');
 }
 
+function setsuara(){
+    if (suaraaktif == 1) {
+        localStorage.setItem("suaraantrian", 0);
+        $("#tombolsuara").html('<i class="zmdi zmdi-volume-off"></i>');
+        suaraaktif = 0;
+    } else {
+        localStorage.setItem("suaraantrian", 1);
+        $("#tombolsuara").html('<i class="zmdi zmdi-volume-up"></i>');
+        suaraaktif = 1;
+    }
+}
+
 $(function () {
     getpoliaktif();
+    suaraaktif=!suaraaktif; //dibalik dulu supaya function setsuara yg menyesuaikan
+    setsuara(suaraaktif);
     $('#menu').modal('show');
 
     //dummy
