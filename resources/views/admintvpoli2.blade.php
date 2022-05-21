@@ -57,16 +57,28 @@
                         <h4 class="card-title">POLI UMUM</h4>
                         <hr>
                         <div class="d-flex justify-content-end">
-                            <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0 d-block" style="border: 1px solid;margin-right:8px;"><i class="zmdi zmdi-volume-up"></i></button>
-                            <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;"><i class="zmdi zmdi-assignment-check"></i></button>
+                            <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0 d-block" style="border: 1px solid;margin-right:8px;"><i class="zmdi zmdi-volume-up"></i> PANGGIL ULANG</button>
+                            <button class="btn text-white bg-purple btn--icon-text mb-1 rounded-0" style="border: 1px solid;"><i class="zmdi zmdi-skip-next"></i> TUNDA</button>
                         </div>
                         <h6 class="text-secondary">Berikutnya:</h6>
                         <div class="input-group mb-3">
                             <input type="text" class="form-control" style="border: 1px solid var(--purple);" readonly value="10. Ahmad Sofyan">
                             <div class="input-group-append">
-                                <button class="btn text-white bg-purple rounded-0 btn--icon-text "  style="border: 1px solid;"><i class="zmdi zmdi-forward"></i></button>
+                                <button class="btn text-white bg-purple rounded-0 btn--icon-text "  style="border: 1px solid;"><i class="zmdi zmdi-forward"></i> BERIKUTNYA</button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 d-flex flex-column">
+                <div class="card flex-grow-1">
+                    <div class="card-body">
+                        <h4 class="card-title">Status Antrian</h4>
+                        <table style="card-subtitle">
+                            <tr><td style="width: 12em;">Pasien Terlayani</td><td>: -</td></tr>
+                            <tr><td>Pasien Belum Terlayani</td><td>: -</td></tr>
+                            <tr><td>Jumlah Antrian</td><td>: -</td></tr>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -76,12 +88,6 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Daftar Antrian Tertunda</h4>
-                <table style="card-subtitle">
-                    <tr><td style="width: 12em;">Pasien Terlayani</td><td>: -</td></tr>
-                    <tr><td>Pasien Belum Terlayani</td><td>: -</td></tr>
-                    <tr><td>Jumlah Antrian</td><td>: -</td></tr>
-                </table>
-                <br>
                 <table class="table table-antrian mb-0">
                     <thead class="bg-purple text-white">
                     <tr>
@@ -110,8 +116,6 @@
                     <ul class="pagination justify-content-center ">
                         <li class="page-item pagination-prev disabled"><a class="page-link" href="#"></a></li>
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item pagination-next"><a class="page-link" href="#"></a></li>
                     </ul>
                 </nav>
@@ -129,12 +133,6 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Daftar Antrian</h4>
-                <table style="card-subtitle">
-                    <tr><td style="width: 12em;">Pasien Terlayani</td><td>: -</td></tr>
-                    <tr><td>Pasien Belum Terlayani</td><td>: -</td></tr>
-                    <tr><td>Jumlah Antrian</td><td>: -</td></tr>
-                </table>
-                <br>
                 <table class="table table-antrian mb-0">
                     <thead class="bg-purple text-white">
                     <tr>
