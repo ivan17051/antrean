@@ -19,6 +19,48 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="modal-konfirmasi-selesai" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Pilih Aksi</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <select name="pasiennoantrian" class="form-control" style="width: 100%;" required>
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="tipe1">SELESAI</label>
+          <div class="iradio checked">
+            <input type="radio" name="tipe" id="tipe1"  value="SELESAI" checked>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tipe2">KE FARMASI</label>
+          <div class="iradio checked">
+            <input type="radio" name="tipe" id="tipe2" value="FARMASI"  >
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tipe3">KE LAB</label>
+          <div class="iradio checked">
+            <input type="radio" name="tipe" id="tipe3" value="LAB"  >
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default batal" data-dismiss="modal">BATAL</button>
+          <button type="submit" class="btn btn-success">LAKUKAN</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 <style type="text/css">
   .box-info-number {
     border-top-left-radius: 2px;
@@ -130,7 +172,7 @@
                 <div class="box-info-content">
 
                   <div class="btn-group-vertical btn-group-lg" role="group">
-                    <button type="button" class="btn btn-primary" onclick="nextno(1);"><i class="fa fa-arrow-right"></i>
+                    <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
                       Panggil</button>
                     <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
                         class="fa  fa-arrow-circle-o-right"></i> Skip</button>
@@ -138,17 +180,10 @@
                       Ulang</button>
                   </div>
 
-                  <div class="btn-group-vertical btn-group-lg" role="group" aria-label="Basic example">
+                  <!-- <div class="btn-group-vertical btn-group-lg" role="group" aria-label="Basic example">
                     <button type="button" class="btn btn-success"><i class="fa fa-check"></i> Hadir</button>
                     <button type="button" class="btn btn-danger"><i class="fa  fa-times"></i> Tidak</button>
-                  </div>
-
-                  <!-- <div><button class="btn btn-lg bg-green tombolaksi" onclick="nextno(1);"><i
-                        class="fa fa-arrow-right"></i></button><span>Panggil</span></div>
-                  <div><button class="btn btn-lg bg-green tombolaksi" onclick="nextno(2);"><i
-                        class="fa  fa-arrow-circle-o-right"></i></button><span>Skip</span></div>
-                  <div><button class="btn btn-lg bg-green tombolaksi" onclick="recall();"><i
-                        class="fa fa-volume-up"></i></button><span>Panggil Ulang</span></div> -->
+                  </div> -->
                 </div>
               </div>
 
@@ -415,7 +450,7 @@
     $("#loading").hide();
   }
 
-  function nextno(tipe) {
+  function nextno(tipe, pasiennoantrian=null) {
     if (tipe == 1) distombol(2500);
     else distombol(1700);
 
@@ -429,7 +464,7 @@
       type: 'POST',
       data: {
         idunitkerja: idunitkerja,
-        pasiennoantrian: noantrian,
+        pasiennoantrian: pasiennoantrian || noantrian,
         idbppoli: idbppoli,
         tipe: tipe
       },
@@ -672,6 +707,87 @@
       }); 
       $(this).unbind('submit');
     });
+  }
+
+  function getPasienSedangDiperiksa(){
+    return $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url: '{{route("get-pasien")}}',
+      type: 'GET',
+      data: {
+        'poli[]': idbppoli,
+        where: 'AND ((iscall=1 AND isdone=0 AND isconsul=0 AND isskipped=0) OR (isrecall=1 AND isskipped=1 AND isdone=0) OR (isrecall=1 AND isconsul=1 AND isdone=0)) ',
+      },
+      dataType: 'json'
+    }); 
+  }
+
+  async function beforePanggilBerikutnya(){
+    $('#loading').show();
+    let $modal = $('#modal-konfirmasi-selesai')
+    try {
+      const res = await getPasienSedangDiperiksa();
+
+      let $pasienSelect2 = $modal.find('[name=pasiennoantrian]')
+      $pasienSelect2.empty()
+      $pasienSelect2.select2({
+        placeholder: 'Pasien',
+        allowClear: true
+      });
+      
+      var data = res.data;
+      for (const d of data.listpasien) {
+        $pasienSelect2.append($("<option />").val(d.pasiennoantrian).text(d.NAMA_LGKP));
+      }
+      $pasienSelect2.val(null).trigger("change");
+      
+      $modal.modal('show')
+
+      // ON SUBMIT 
+      $modal.find('form').submit(function(e) {
+        event.preventDefault();
+        let param = getFormData($(this))
+        console.log(param)
+
+        if(param.tipe == 'SELESAI'){
+          nextno(1, param.pasiennoantrian)
+        }else{
+          goToFarmasiLab($(this).serialize(), param.pasiennoantrian);
+        }
+
+        $modal.modal('hide')
+        $(this).unbind('submit');
+      });
+    } catch(errors) {
+      toast("error", errors);
+    }
+    $('#loading').hide();
+  }
+
+  function goToFarmasiLab(param, pasiennoantrian){
+    $('#loading').show();
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url: '{{route("gotofarmasilab")}}?'+param,
+      type: 'POST',
+      data: {
+        'poli[]': idbppoli,
+
+      },
+      dataType: 'json',
+      success: function (result) {
+        console.log(result);
+        toast("success", 'Berhasil');
+        nextno(1, pasiennoantrian)
+      },
+      error: function(responsedata){
+          var errors = responsedata.statusText;
+          toast("error", errors);
+      },
+      complete: function(){
+        $('#loading').hide();
+      }
+    }); 
   }
 
   $(function () {

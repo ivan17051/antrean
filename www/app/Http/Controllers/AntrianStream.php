@@ -50,6 +50,8 @@ class AntrianStream extends Controller
     
         if(isset($now[0]->noantrian)){
             $pasien= DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+                ->where('idunitkerja', $idunitkerja)
+                ->whereDate('tanggaleta', '=',$tanggal)
                 ->where('pasiennoantrian','>=', $now[0]->noantrian)
                 ->orderBy('pasiennoantrian','ASC')
                 ->take(4)->get();
