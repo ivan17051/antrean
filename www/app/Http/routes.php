@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('poli2', ['uses' => 'Poli@index2']);
 
 	Route::post('layaniantrian', ['uses' => 'Antrian@layaniantrian', 'as' => 'layaniantrian']);
+	Route::post('layanikembali', ['uses' => 'Antrian@layanikembali', 'as' => 'layanikembali']);
 
 	Route::get('setpoli', ['uses' => 'Setpoli@index']);
 	Route::get('getpoliunit', ['uses' => 'Setpoli@getPoliUnit', 'as' => 'getpoliunit']);

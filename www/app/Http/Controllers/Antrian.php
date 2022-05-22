@@ -291,50 +291,52 @@ class Antrian extends Controller
 
     public function layanikembali(Request $request)
     {
-		
-        DB::enableQueryLog();
-        DB::beginTransaction();
-        $idreturn = '';
-        try {
-            $tanggal     = date('Y-m-d');
-            $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
-            $noantrian   = $request->input('pasiennoantrian');
-            $idbppoli    = $request->input('idbppoli');
+        $pasiennoantrian = $request->input('pasiennoantrian');
+        $idbppoli = $request->input('idbppoli');
+		return 1;
+        // DB::enableQueryLog();
+        // DB::beginTransaction();
+        // $idreturn = '';
+        // try {
+        //     $tanggal     = date('Y-m-d');
+        //     $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
+        //     $noantrian   = $request->input('pasiennoantrian');
+        //     $idbppoli    = $request->input('idbppoli');
 
-            $res = DB::table('munitkerjapolidaily')
-                ->where('idunitkerja', $idunitkerja)
-                ->where('idbppoli', $idbppoli)
-                ->where('servesdate', $tanggal)
-                ->take(1)->first();
+        //     $res = DB::table('munitkerjapolidaily')
+        //         ->where('idunitkerja', $idunitkerja)
+        //         ->whereIn('idbppoli', $idbppoli)
+        //         ->where('servesdate', $tanggal)
+        //         ->take(1)->first();
             
-            $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
-                ->where('pasiennoantrian',$noantrian )
-                ->where('idbppoli',$idbppoli)
-                ->whereDate('tanggaleta',  $tanggal)
-                ->first();
+        //     $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+        //         ->where('pasiennoantrian',$noantrian )
+        //         ->whereIn('idbppoli',$idbppoli)
+        //         ->whereDate('tanggaleta',  $tanggal)
+        //         ->first();
 
-            if ($res AND $antrian) {
-                $dt = [
-                    "tanggal" => $tanggal,
-                    "idbppoli" => $idbppoli,
-                    "idunitkerja" => $idunitkerja,
-                    "pasiennoantrian" => $res->servesno + 1,
-                    "text" => $antrian->NAMA_LGKP,
-                ];
+        //     if ($res AND $antrian) {
+        //         $dt = [
+        //             "tanggal" => $tanggal,
+        //             "idbppoli" => $idbppoli,
+        //             "idunitkerja" => $idunitkerja,
+        //             "pasiennoantrian" => $res->servesno + 1,
+        //             "text" => $antrian->NAMA_LGKP,
+        //         ];
 
-                $addantriansuara = $this->addAntrianSuara(new Request($dt));
+        //         $addantriansuara = $this->addAntrianSuara(new Request($dt));
 
-                $idreturn = 1;
-            } else {
-                throw new Exception("Antrian selanjutnya tidak ditemukan");
-            }
-        } catch (Exception $e) {
-            DB::rollback();
-            $idreturn = $e->getMessage();
-        }
-        DB::commit();
+        //         $idreturn = 1;
+        //     } else {
+        //         throw new Exception("Antrian selanjutnya tidak ditemukan");
+        //     }
+        // } catch (Exception $e) {
+        //     DB::rollback();
+        //     $idreturn = $e->getMessage();
+        // }
+        // DB::commit();
 
-        return $idreturn;
+        // return $idreturn;
     }
 
     public function addhistory($tipe, Request $request)
