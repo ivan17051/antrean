@@ -128,6 +128,7 @@ function getListPasien(){
         dataType: 'json',
         success: function (result) {
             let $tbodypasien = $('.antrean-poli-container table tbody')
+            $tbodypasien.empty()
             if(result.data){
                 var data = result.data;
                 for (const d of data.listpasien) {
@@ -172,9 +173,11 @@ $(async function () {
     await getListPasien();
     antreanPoliState.container=$('.antrean-poli-container');
 
-    if(checkScrollCapability()){
-        intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 1);
-    }
+    setTimeout(function(){
+        if(checkScrollCapability()){
+            intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 2);
+        }
+    }, 1000)
 });
 </script>
 @endsection

@@ -24,7 +24,7 @@
           <div class="bg-red">
               <h4 class="text-bold dateindo" >Sabtu, 21-02-2022</h4>
               <div class="inner bg-darker text-center p-12px " style="border-radius: 12px;">
-                  <h3 class="m-o text-bold time" ><span class="time__hours"></span> : <span class="time__min"></span> : <span class="time__sec"></span></h3>
+                  <h3 class="m-0 text-bold time" ><span class="time__hours"></span> : <span class="time__min"></span> : <span class="time__sec"></span></h3>
               </div>
               <!-- <div class="icon">
                   <i class="ion ion-person-add"></i>
@@ -45,10 +45,11 @@
               <table class="table table-bordered m-0 font-large">
                   <thead>
                       <tr class="bg-gray-light">
-                          <th class="text-center" style="width: 15%">ANTREAN</th>
-                          <th class="text-center">NAMA</th>
-                          <th class="text-center" style="width: 10%">ESTIMASI</th>
-                          <th class="text-center" style="width: 20%">STATUS</th>
+                        <th class="text-center" style="width: 15%">ANTREAN</th>
+                        <th class="text-center">NAMA</th>
+                        <th class="text-center" style="width: 20%">POLI</th>
+                        <th class="text-center" style="width: 10%">ESTIMASI</th>
+                        <th class="text-center" style="width: 18%">STATUS</th>
                       </tr>
                   </thead>
               </table>
@@ -81,6 +82,9 @@
 
 @section('jsx')
 <script>
+var streamnomor;
+var listpasienNeedUpdate = true;
+
 $(window).on('load', function(){
     $(".loader").fadeOut("slow");
 });
@@ -184,17 +188,20 @@ function createlistmodal(data){
     // showmodalsetup();
 }
 
-function setpoli(id) {
+async function setpoli(id) {
+    if(streamnomor) streamnomor.close()
     $("#loading").show();
     $("#boxlistpoli").hide('slow');
     $("#viewantrian").show('slow');
   
     listpoli[0] = id;
-    // console.log(listpoli);
-    getlistpoli();
-    setTimeout(getNomor, 2000);
+    await getlistpoli();
     setTimeout(ceksuara, 2000);
-    setTimeout(getDokter, 2000);
+
+    getDokter();
+    getNomor();
+
+    // setTimeout(getDokter, 2000);
     // setTimeout(cekPanggilan, 2000, listpoli);
     // setTimeout(getNomor, 2000);
     $("#loading").hide();
@@ -209,46 +216,44 @@ function kembali(){
 function getlistpoli(){
     $('#listpoliutama').empty();
     
-    if(listpoli !== undefined && listpoli.length) {
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: Settings.baseurl+'/getlistpoli',
-            type: 'GET',
-            data: {poli: listpoli},
-            dataType: 'json',
-            success: function (result) {
-                var data = result.data;
-                console.log(data);
-                for (i = 0; i < data.length; i++) {
-                    var color = (i%2 == 0) ? 'red' : 'red';
-                    $('#listpoliutama').append('<div class="row"><div class="col-md-4">'+
-                        '<div class="box box-danger bg-red text-center" style="font-size:200px;" id="poli'+data[i]['id']+'">-<p style="font-size:50px;padding-bottom:50px;">Adam Rahmat</p></div>'+
-                        '</div>'+
-                        '<div class="col-md-8">'+
-                        '<div class="box box-danger">'+
-                            '<div class="policaption" style="font-size:70px;padding:10px;"> POLI '+data[i]['nama']+'</div>'+
-                            '<div class="marquee-container"><p id="marquee"></p></div>'+
-                        '</div><div class="row"><div class="col-md-4">'+
-                            '<div class="antrianpoli box box-danger text-center" id="polin'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">Adam Rahmat</p></div>'+
-                            '</div><div class="col-md-4">'+
-                            '<div class="antrianpoli box box-danger text-center" id="polin'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">Adam Rahmat</p></div>'+
-                            '</div><div class="col-md-4">'+
-                            '<div class="antrianpoli box box-danger text-center" id="polin'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">Adam Rahmat</p></div>'+
-                            '</div><div class="col-md-4">'+
-                        //     '<span class="antrianpoli">Estimasi jam dilayani : <span id="estimasi'+data[i]['id']+'" style="font-weight: bold;">-</span></span>'+
-                        // '</div>'+
-                        '</div></div>'
-                    );
-                    // idbppoli.
-                }
-            },
-            error: function(responsedata){
-                var errors = responsedata.statusText;
-                $('#loading').hide();
-                toast("error", errors);
+    return  $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: Settings.baseurl+'/getlistpoli',
+        type: 'GET',
+        data: {poli: listpoli},
+        dataType: 'json',
+        success: function (result) {
+            var data = result.data;
+            console.log(data);
+            for (i = 0; i < data.length; i++) {
+                var color = (i%2 == 0) ? 'red' : 'red';
+                $('#listpoliutama').append('<div class="row"><div class="col-md-4">'+
+                    '<div class="box box-danger bg-red text-center poli'+data[i]['id']+'" style="font-size:200px;" >-<p style="font-size:50px;padding-bottom:50px;">-</p></div>'+
+                    '</div>'+
+                    '<div class="col-md-8">'+
+                    '<div class="box box-danger">'+
+                        '<div class="policaption" style="font-size:70px;padding:10px;"> POLI '+data[i]['nama']+'</div>'+
+                        '<div class="marquee-container"><p id="marquee"></p></div>'+
+                    '</div><div class="row"><div class="col-md-4">'+
+                        '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
+                        '</div><div class="col-md-4">'+
+                        '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
+                        '</div><div class="col-md-4">'+
+                        '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
+                        '</div><div class="col-md-4">'+
+                    //     '<span class="antrianpoli">Estimasi jam dilayani : <span id="estimasi'+data[i]['id']+'" style="font-weight: bold;">-</span></span>'+
+                    // '</div>'+
+                    '</div></div>'
+                );
+                // idbppoli.
             }
-        });
-    }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
+    });
 }
 
 function templatePasien(d){
@@ -293,13 +298,14 @@ function templatePasien(d){
 function getListPasien(){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: Settings.baseurl+'/getlistpasien',
+        url: '{{route("get-pasien")}}?poli[]='+listpoli,
         type: 'GET',
         data: {poli: listpoli},
         dataType: 'json',
         success: function (result) {
           console.log(result.data);
             let $tbodypasien = $('.antrean-poli-container table tbody')
+            $tbodypasien.empty()
             if(result.data){
                 var data = result.data;
                 for (const d of data.listpasien) {
@@ -339,40 +345,6 @@ function checkScrollCapability()
     return false;
 }
 
-function getNomor(){
-    // $("#loading").show();
-    if(listpoli !== undefined && listpoli.length) {
-        $.ajax({
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: Settings.baseurl+'/getnomor',
-            type: 'GET',
-            data: {poli: listpoli},
-            dataType: 'json',
-            success: function (result) {
-                var datanow = result.data.now;
-                // console.log(data);
-                for (i = 0; i < datanow.length; i++) {
-                    $("#poli"+datanow[i]['idbppoli']).html(datanow[i]['noantrian']);
-                }
-                // getListPasien();
-                var datanext = result.data.next;
-                for (i = 0; i < datanext.length; i++) {
-                    $("#polin"+datanext[i]['idbppoli']).html(datanext[i]['noantrian']);
-                    $("#estimasi"+datanext[i]['idbppoli']).html(datanext[i]['jamestimasi']);
-                    //$("#estimasilayanan"+datanext[i]['idbppoli']).html(datanext[i]['waktunontindakan'] + ' menit');
-                    //$("#estimasilayanantindakan"+datanext[i]['idbppoli']).html(parseInt(datanext[i]['waktutindakan']) + ' menit');
-                }
-            },
-            complete:function(data){
-               setTimeout(getNomor, 5000);
-            }
-        });
-    } else {
-        setTimeout(getNomor, 5000);
-    }
-    // $("#loading").hide();
-}
-
 function getDokter(){
     if(listpoli !== undefined && listpoli.length) {
         $.ajax({
@@ -383,6 +355,7 @@ function getDokter(){
             dataType: 'json',
             success: function (result) {
                 var datanow = result.data.dokter;
+                console.log("dokter",datanow)
                 let listdokterhtml = "";
                 if (!datanow.length){
                     listdokterhtml="<tr><td>Dokter: &nbsp</td><td><b>-</b></td></tr>";
@@ -488,13 +461,65 @@ $(function () {
     }
 
 });
-$(async function () {
-    await getListPasien();
-    antreanPoliState.container=$('.antrean-poli-container');
 
-    if(checkScrollCapability()){
-        intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 1);
+function getNomor(){
+    if(streamnomor) streamnomor.close();
+    console.log("listpoli",listpoli)
+    streamnomor = new EventSource('{{route("getnomors")}}?poli[]='+listpoli);
+
+    streamnomor.onmessage = async function(event){
+        // if(!$elements) return;
+    
+        var data = JSON.parse(event.data)
+        console.log(data)
+        var datanow = data.now
+        var datanext = data.next
+        let nama, noantrian;
+
+        const searchPasien = function(nomor){
+            return data.pasien.find(obj => {
+                return obj.pasiennoantrian == nomor
+            })
+        }
+        
+        let $elements = $(".poli"+datanow[0]['idbppoli']);
+        console.log($elements)
+        let antriannow = 0;
+
+        for (i = 0; i < datanow.length; i++) {
+            if(datanow[i]['noantrian'] == 0) nama='-'
+            else nama = searchPasien(datanow[i]['noantrian']).NAMA_LGKP
+            antriannow = datanow[i]['noantrian']
+            noantrian = datanow[i]['noantrian']
+            $($elements[0]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+        }
+        for (i = 1; i < 4; i++) {       //karena menampilkan tiga antrian berikutnya
+            noantrian = '-'
+            nama = '-'
+            if(datanext.length && i < data.pasien.length){       
+                noantrian = antriannow+i 
+                nama = searchPasien(antriannow+i ).NAMA_LGKP
+            }
+            $($elements[i]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+        }
+
+        if(listpasienNeedUpdate){
+            await getListPasien();
+
+            setTimeout(function(){
+                if(checkScrollCapability()){
+                    intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 2);
+                }
+            }, 1000)
+
+            listpasienNeedUpdate = false;
+        }
     }
+}
+
+
+$(async function () {
+    antreanPoliState.container=$('.antrean-poli-container');
 });
 
 </script>

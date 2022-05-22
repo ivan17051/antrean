@@ -23,7 +23,8 @@ class AntrianStream extends Controller
         header("Connection: keep-alive");
         $idunitkerja = Auth::user()->idunitkerja;
         $tanggal = date('Y-m-d');
-        // $tanggal = '2019-08-07';
+        // COBA DEV
+        // $tanggal = '2021-01-16';
 
         $wherepoli = "";
         $filterpoli = $request->input('poli');
@@ -46,9 +47,18 @@ class AntrianStream extends Controller
                     WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
             ) X ON A.idbppoli = X.idbppoli
             WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
-
+    
+        if(isset($now[0]->noantrian)){
+            $pasien= DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+                ->where('pasiennoantrian','>=', $now[0]->noantrian)
+                ->orderBy('pasiennoantrian','ASC')
+                ->take(4)->get();
+        }else{
+            $pasien = null;
+        }
+        
         echo "retry: 3000\n";
-        $data = json_encode(["now" => $now, "next" => $next]);
+        $data = json_encode(["now" => $now, "next" => $next, "pasien" => $pasien ]);
 
         echo "data: " . $data. "\n\n";
 
