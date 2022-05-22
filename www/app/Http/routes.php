@@ -50,6 +50,9 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::post('ssetpoli', ['uses' => 'Setpoli@simpan', 'as' => 'ssetpoli']);
 
 	Route::get('loket', ['uses' => 'Loket@index']);
+	Route::get('loket2', ['uses' => 'Loket@index2']);
+	Route::post('loket2/{noid?}', ['uses' => 'Loket@update', 'as' => 'antrian.hadir']);
+
 	Route::get('kasir', ['uses' => 'Kasir@index']);
 	Route::get('aplab', ['uses' => 'Aplab@index']);
 
