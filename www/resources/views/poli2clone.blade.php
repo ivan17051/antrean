@@ -40,7 +40,7 @@
             <input type="radio" name="tipe" id="tipe1"  value="SELESAI" checked>
           </div>
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="tipe2">KE FARMASI</label>
           <div class="iradio checked">
             <input type="radio" name="tipe" id="tipe2" value="FARMASI"  >
@@ -51,7 +51,7 @@
           <div class="iradio checked">
             <input type="radio" name="tipe" id="tipe3" value="LAB"  >
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default batal" data-dismiss="modal">BATAL</button>
@@ -174,8 +174,8 @@
                   <div class="btn-group-vertical btn-group-lg" role="group">
                     <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
                       Panggil</button>
-                    <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
-                        class="fa  fa-arrow-circle-o-right"></i> Skip</button>
+                    <!-- <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
+                        class="fa  fa-arrow-circle-o-right"></i> Skip</button> -->
                     <button type="button" class="btn btn-secondary" onclick="recall();"><i class="fa fa-volume-up"></i>
                       Ulang</button>
                   </div>
@@ -188,7 +188,7 @@
               </div>
 
               <!-- Tabel Pasien Skip & Pelayanan -->
-              <div class="nav-tabs-custom">
+              <!-- <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                   <li class="active"><a href="#tab_1" data-toggle="tab" aria-expanded="true">Pasien Skip</a></li>
                   <li class=""><a href="#tab_2" data-toggle="tab" aria-expanded="false">Pasien Konsul</a></li>
@@ -251,7 +251,7 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> -->
 
             </div>
             <div class="col-md-7">
@@ -409,8 +409,8 @@
     // setTimeout(getNomor, 2000);
     getDataPoli();
     getListPasien();
-    getListPasienSkip();
-    getListPasienKonsul();
+    // getListPasienSkip();
+    // getListPasienKonsul();
     $("#loading").hide();
   }
 
@@ -485,8 +485,8 @@
       complete: function (data) {
         setTimeout(getDataPoli, 1000);
         getListPasien();
-        getListPasienSkip();
-        getListPasienKonsul();
+        // getListPasienSkip();
+        // getListPasienKonsul();
       }
     });
     $("#loading").hide();
@@ -583,7 +583,7 @@
       data: {
         'poli[]': idbppoli,
         limit: 10,
-        where: 'AND iscall=1 ',
+        where: 'AND iscall=0 ',
       },
       dataType: 'json',
       success: function (result) {
@@ -736,7 +736,7 @@
       });
       
       var data = res.data;
-      
+
       if(data.listpasien.length == 0){
         nextno(1)
         return
@@ -811,7 +811,10 @@
 
     $("#viewantrian").hide();
 
-    getpoliaktif();
+    var listpoli = <?php echo json_encode($d['listpoli']); ?>;
+    createlistpoli(listpoli);
+
+    // getpoliaktif();
 
     // $("#idbppoli").select2({
     //   placeholder: 'Pilih Poli',

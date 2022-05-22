@@ -29,6 +29,28 @@ class Poli extends Controller {
         return View::make('poli2', compact('d'));
     }
 
+    // Clone dari tampilan kontrol antrian POLI
+    public function lab() {
+        $idunitkerja = Auth::user()->idunitkerja;
+        $d = array();
+        $d['title'] = "Daftar Antrean";
+        $d['subtitle'] = "antrean";
+        $d['idunitkerja'] = $idunitkerja;
+        $d['listpoli'] = DB::select("SELECT idbppoli as id, policaption as nama FROM munitkerjapoli WHERE idbppoli = 39 AND idunitkerja = $idunitkerja AND isactive = 1");
+        return View::make('poli2clone', compact('d'));
+    }
+
+    // Clone dari tampilan kontrol antrian POLI
+    public function farmasi() {
+        $idunitkerja = Auth::user()->idunitkerja;
+        $d = array();
+        $d['title'] = "Daftar Antrean";
+        $d['subtitle'] = "antrean";
+        $d['idunitkerja'] = $idunitkerja;
+        $d['listpoli'] = DB::select("SELECT idbppoli as id, policaption as nama  FROM munitkerjapoli WHERE idbppoli = 31 AND idunitkerja = $idunitkerja AND isactive = 1");
+        return View::make('poli2clone', compact('d'));
+    }
+
     public function getPoliUtama($tipe,$idunitkerja){
         $idUnit = 1;//Input::get('idunitkerja');
         if ($tipe == 1) {
