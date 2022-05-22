@@ -303,7 +303,6 @@ function getListPasien(){
         data: {poli: listpoli},
         dataType: 'json',
         success: function (result) {
-          console.log(result.data);
             let $tbodypasien = $('.antrean-poli-container table tbody')
             $tbodypasien.empty()
             if(result.data){
@@ -355,7 +354,6 @@ function getDokter(){
             dataType: 'json',
             success: function (result) {
                 var datanow = result.data.dokter;
-                console.log("dokter",datanow)
                 let listdokterhtml = "";
                 if (!datanow.length){
                     listdokterhtml="<tr><td>Dokter: &nbsp</td><td><b>-</b></td></tr>";
@@ -464,14 +462,12 @@ $(function () {
 
 function getNomor(){
     if(streamnomor) streamnomor.close();
-    console.log("listpoli",listpoli)
     streamnomor = new EventSource('{{route("getnomors")}}?poli[]='+listpoli);
 
     streamnomor.onmessage = async function(event){
         // if(!$elements) return;
     
         var data = JSON.parse(event.data)
-        console.log(data)
         var datanow = data.now
         var datanext = data.next
         let nama, noantrian;
@@ -483,7 +479,6 @@ function getNomor(){
         }
         
         let $elements = $(".poli"+datanow[0]['idbppoli']);
-        console.log($elements)
         let antriannow = 0;
 
         for (i = 0; i < datanow.length; i++) {
