@@ -1,10 +1,10 @@
 @extends('layouts.tvlayout')
 @section('content')
-
+<div style="height:calc(100vh - 81px);max-height:calc(100vh - 81px);" class="">
 <div id="boxlistpoli">
     <div class="row" id="listpoli"></div>
 </div>
-<div id="viewantrian">
+<div id="viewantrian" style="height:calc(100% - 481px);">
     <div class="row">
         <div class="col-md-12 " id="barisbutton">
             <button type="button" class="btn btn-default" onclick="kembali();"><i class="fa fa-reply"></i></button>
@@ -39,41 +39,44 @@
             <div id="listpoliutama" style="margin-top: 20px;"></div>
         <!-- </div> -->
     <!-- </div> -->
-    <div class="row">
-      <div class="col-md-12">
-        <div class="box box-danger">
-          <div class="box-header">
-            <h3 class="box-title" style="font-size:18px;">Pasien Terdaftar</h3>
-          </div>
-
-          <div class="box-body no-padding">
-            <table class="table table-striped" style="font-size:16px;">
-              <tbody>
-                <tr>
-                  <th style="width: 100px">No. Antrian</th>
-                  <th>Nama</th>
-                  <th>Estimasi</th>
-                  <th style="width: 150px">Keterangan</th>
-                </tr>
-                @php
-                $coba = ['','','','','','','','','','','','','','','','','','','','']
-                @endphp
-                @foreach($coba as $unit)
-                <tr>
-                  <td>10</td>
-                  <td>Abdul Jagakarto</td>
-                  <td>11.12</td>
-                  <td>Hadir</td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
+    <div class="row" style="padding: 12px 20px 0 20px">
+      <div class="box m-0">
+          <div class="box-body with-border p-0">
+              <table class="table table-bordered m-0 font-large">
+                  <thead>
+                      <tr class="bg-gray-light">
+                          <th class="text-center" style="width: 15%">ANTREAN</th>
+                          <th class="text-center">NAMA</th>
+                          <th class="text-center" style="width: 10%">ESTIMASI</th>
+                          <th class="text-center" style="width: 20%">STATUS</th>
+                      </tr>
+                  </thead>
+              </table>
           </div>
       </div>
-    </div>
+  </div>
+  <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
+      <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+          <div class="box-body p-0 " >
+              <table class="table table-bordered m-0 font-large ">
+                  <tbody>
+                  </tbody>
+              </table>
+          </div>
+      </div>
+  </div>
+  <div class="row" style="padding: 12px 20px;">
+      <div class="d-flex justify-content-center my-5">
+          <h5 class="legend-item"><span class="warning" ></span>Hadir</h5>
+          <h5 class="legend-item"><span class="danger" ></span>Batal</h5>
+          <h5 class="legend-item"><span class="light" ></span>Belum Datang</h5>
+          <h5 class="legend-item"><span class="success" ></span>Dilayani</h5>
+          <h5 class="legend-item"><span class="info" ></span>Konsultasi/Penunjang</h5>
+      </div>
+  </div>
   </div>
 </div>
-
+</div>
 @endsection
 
 @section('jsx')
@@ -82,9 +85,12 @@ $(window).on('load', function(){
     $(".loader").fadeOut("slow");
 });
 
-// $(window).load(function(){
-//     $(".loader").fadeOut("slow");
-// });
+var antreanPoliState={
+    "container":null,
+    "elemheight": null,
+    "$bottomElem":null
+};
+var intervalInstance;
 
 $(document).ready(function () {
     var url = document.URL;
@@ -184,10 +190,11 @@ function setpoli(id) {
     $("#viewantrian").show('slow');
   
     listpoli[0] = id;
-    console.log(listpoli);
+    // console.log(listpoli);
     getlistpoli();
     setTimeout(getNomor, 2000);
     setTimeout(ceksuara, 2000);
+    setTimeout(getDokter, 2000);
     // setTimeout(cekPanggilan, 2000, listpoli);
     // setTimeout(getNomor, 2000);
     $("#loading").hide();
@@ -201,7 +208,7 @@ function kembali(){
 
 function getlistpoli(){
     $('#listpoliutama').empty();
-    console.log(listpoli);
+    
     if(listpoli !== undefined && listpoli.length) {
         $.ajax({
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -215,11 +222,12 @@ function getlistpoli(){
                 for (i = 0; i < data.length; i++) {
                     var color = (i%2 == 0) ? 'red' : 'red';
                     $('#listpoliutama').append('<div class="row"><div class="col-md-4">'+
-                        '<div class="box box-danger bg-red text-center" style="font-size:200px;" id="poli'+data[i]['id']+'">100<p style="font-size:50px;padding-bottom:50px;">Adam Rahmat</p></div>'+
+                        '<div class="box box-danger bg-red text-center" style="font-size:200px;" id="poli'+data[i]['id']+'">-<p style="font-size:50px;padding-bottom:50px;">Adam Rahmat</p></div>'+
                         '</div>'+
                         '<div class="col-md-8">'+
-                        '<div class="box box-danger" style="height:50%;">'+
+                        '<div class="box box-danger">'+
                             '<div class="policaption" style="font-size:70px;padding:10px;"> POLI '+data[i]['nama']+'</div>'+
+                            '<div class="marquee-container"><p id="marquee"></p></div>'+
                         '</div><div class="row"><div class="col-md-4">'+
                             '<div class="antrianpoli box box-danger text-center" id="polin'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">Adam Rahmat</p></div>'+
                             '</div><div class="col-md-4">'+
@@ -243,6 +251,94 @@ function getlistpoli(){
     }
 }
 
+function templatePasien(d){
+    let datenow = new Date();
+    let time = new Date(d.tanggaleta) 
+    let minutesDifference = (datenow-time)/ (1000*60);
+    let status, statusText;
+
+    if(d.isdone){
+        statusStyle = "my-bg-success"
+        status = "Dilayani"
+    }
+    else if(d.isconsul){
+        statusStyle = "my-bg-info"
+        status = "Konsultasi/Penunjang"
+    }
+    else if(d.isconfirm){
+        statusStyle = "my-bg-warning"
+        status = "Hadir"
+    }
+    else if(minutesDifference > 30){       //telat >30 menit
+        statusStyle = "my-bg-danger"
+        status = "Batal"
+    }else{
+        statusStyle = "my-bg-light"
+        status = "Belum Datang"
+    }
+    // iscall
+    // isrecall
+    // isserved
+    // isskipped
+
+    time = time.toLocaleTimeString('uk')
+    return $('<tr class="'+statusStyle+'">'+
+            '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
+            '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
+            '<td class="text-center" style="width: 20%">'+d.poli+'</td>'+
+            '<td class="text-center" style="width: 10%">'+time+'</td>'+
+            '<td class="text-center" style="width: 18%">'+status+'</td>'+
+            '</tr>');
+}
+function getListPasien(){
+    return $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: Settings.baseurl+'/getlistpasien',
+        type: 'GET',
+        data: {poli: listpoli},
+        dataType: 'json',
+        success: function (result) {
+          console.log(result.data);
+            let $tbodypasien = $('.antrean-poli-container table tbody')
+            if(result.data){
+                var data = result.data;
+                for (const d of data.listpasien) {
+                    $tbodypasien.append(templatePasien(d));
+                } 
+            } else {
+                // toast("info", respon);
+            }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
+    });
+}
+
+function scrollLoop(dom, step)
+{
+    if(antreanPoliState.container.scrollTop() > antreanPoliState.$bottomElem[0].offsetTop + antreanPoliState.$bottomElem[0].offsetHeight){
+        antreanPoliState.container[0].scroll(0,0)
+    }
+    dom.scrollBy(0,step);
+}
+
+function checkScrollCapability()
+{
+    let elemheight = antreanPoliState.container.find('tr:first').height();
+    antreanPoliState.elemheight = elemheight;
+    let slidesVisible = antreanPoliState.container.outerHeight() / elemheight;
+    antreanPoliState.$bottomElem = antreanPoliState.container.find('tr:last');
+
+    if( slidesVisible < antreanPoliState.container.find('tr').length){
+        antreanPoliState.container.find('tr').slice(0, Math.ceil(slidesVisible)).clone().appendTo(antreanPoliState.container.find('tbody'));	
+        return true;
+    }
+    return false;
+}
+
 function getNomor(){
     // $("#loading").show();
     if(listpoli !== undefined && listpoli.length) {
@@ -258,6 +354,7 @@ function getNomor(){
                 for (i = 0; i < datanow.length; i++) {
                     $("#poli"+datanow[i]['idbppoli']).html(datanow[i]['noantrian']);
                 }
+                // getListPasien();
                 var datanext = result.data.next;
                 for (i = 0; i < datanext.length; i++) {
                     $("#polin"+datanext[i]['idbppoli']).html(datanext[i]['noantrian']);
@@ -274,6 +371,34 @@ function getNomor(){
         setTimeout(getNomor, 5000);
     }
     // $("#loading").hide();
+}
+
+function getDokter(){
+    if(listpoli !== undefined && listpoli.length) {
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: Settings.baseurl+'/getdokter',
+            type: 'GET',
+            data: {poli: listpoli},
+            dataType: 'json',
+            success: function (result) {
+                var datanow = result.data.dokter;
+                let listdokterhtml = "";
+                if (!datanow.length){
+                    listdokterhtml="<tr><td>Dokter: &nbsp</td><td><b>-</b></td></tr>";
+                }
+                for (i = 0; i < datanow.length; i++) {
+                    if(i==0){
+                        listdokterhtml+=datanow[i]['nakes'];
+                    }else{
+                        listdokterhtml+=" - "+datanow[i]['nakes'];
+                    }
+                }
+                $('#marquee').html(listdokterhtml)
+            },
+            
+        });
+    } 
 }
 
 function getDataUnitkerja(){
@@ -298,17 +423,7 @@ function getDataUnitkerja(){
             toast("error", errors);
         }
     });
-    // if (iscall == 0) {
-    //     $.get(Settings.baseurl+'/getdataunitkerja', {idunitkerja:idunitkerja},function(respon){
-    //         if(respon.data){
-    //             var du = respon.data;
-    //             $("#namaunitkerja").html(du.nama);
-    //             $("#alamatunitkerja").html(du.alamat1);
-    //         } else {
-    //             // toast("info", respon);
-    //         }
-    //     });
-    // }
+    
 }
 
 function date_time(id) {
@@ -372,10 +487,14 @@ $(function () {
         settombolsuara();
     }
 
-    // ceksetuppoli();
+});
+$(async function () {
+    await getListPasien();
+    antreanPoliState.container=$('.antrean-poli-container');
 
-    // setTimeout(getNomor, 2000);
-    // setTimeout(cekPanggilan, 2000, listpoli);
+    if(checkScrollCapability()){
+        intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 1);
+    }
 });
 
 </script>
