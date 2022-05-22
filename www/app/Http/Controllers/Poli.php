@@ -18,6 +18,16 @@ class Poli extends Controller {
         return View::make('poli', compact('d'));
         // print_r($d);
     }
+    // Update 2
+    public function index2() {
+        $idunitkerja = Auth::user()->idunitkerja;
+        $d = array();
+        $d['title'] = "Daftar Antrean";
+        $d['subtitle'] = "antrean";
+        $d['idunitkerja'] = $idunitkerja;
+        $d['listpoli'] = DB::select("SELECT idbppoli, policaption FROM munitkerjapoli WHERE idunitkerja = $idunitkerja AND isactive = 1 AND isdirectqueue = 1");
+        return View::make('poli2', compact('d'));
+    }
 
     public function getPoliUtama($tipe,$idunitkerja){
         $idUnit = 1;//Input::get('idunitkerja');

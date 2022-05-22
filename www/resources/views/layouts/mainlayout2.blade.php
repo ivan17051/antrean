@@ -40,6 +40,9 @@
   <link rel="stylesheet" href="{{asset('theme/plugins/select2/select2.css')}}">
   <link rel="stylesheet" href="{{asset('theme/plugins/bootstrap-toastr/toastr.min.css')}}"/>
 
+  <!-- custom -->
+  <link rel="stylesheet" href="{{asset('theme/dist/css/custom.css')}}">
+
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
