@@ -161,14 +161,18 @@ class Antrian extends Controller
         // $tanggal = '2022-05-12';
 		
         $wherepoli = "";
+        $limit ="";
 		$wheretanggal = "AND A.tanggaleta >= '{$tanggalawal} 00:00:00' AND A.tanggaleta < '{$tanggalakhir} 00:00:00'";
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
+        if ($limit = $request->input('limit')) $limit = " LIMIT {$limit} ";
+
+        if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
 		
         $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, P.nama as poli
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
-			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.pasiennoantrian");
+			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.pasiennoantrian {$limit} ");
             
         $data = array("listpasien" => $pasien);
         
@@ -273,6 +277,54 @@ class Antrian extends Controller
 
                     $idreturn = 1;
                 }
+            } else {
+                throw new Exception("Antrian selanjutnya tidak ditemukan");
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $idreturn = $e->getMessage();
+        }
+        DB::commit();
+
+        return $idreturn;
+    }
+
+    public function layanikembali(Request $request)
+    {
+		
+        DB::enableQueryLog();
+        DB::beginTransaction();
+        $idreturn = '';
+        try {
+            $tanggal     = date('Y-m-d');
+            $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
+            $noantrian   = $request->input('pasiennoantrian');
+            $idbppoli    = $request->input('idbppoli');
+
+            $res = DB::table('munitkerjapolidaily')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('idbppoli', $idbppoli)
+                ->where('servesdate', $tanggal)
+                ->take(1)->first();
+            
+            $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+                ->where('pasiennoantrian',$noantrian )
+                ->where('idbppoli',$idbppoli)
+                ->whereDate('tanggaleta',  $tanggal)
+                ->first();
+
+            if ($res AND $antrian) {
+                $dt = [
+                    "tanggal" => $tanggal,
+                    "idbppoli" => $idbppoli,
+                    "idunitkerja" => $idunitkerja,
+                    "pasiennoantrian" => $res->servesno + 1,
+                    "text" => $antrian->NAMA_LGKP,
+                ];
+
+                $addantriansuara = $this->addAntrianSuara(new Request($dt));
+
+                $idreturn = 1;
             } else {
                 throw new Exception("Antrian selanjutnya tidak ditemukan");
             }

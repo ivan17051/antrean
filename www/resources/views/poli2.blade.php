@@ -147,6 +147,7 @@
                               <tr class="bg-gray-light">
                                 <th class="text-center" style="width: 15%">ANTREAN</th>
                                 <th class="text-center">NAMA</th>
+                                <th class="text-center" style="width: 20%">AKSI</th>
                               </tr>
                             </thead>
                           </table>
@@ -154,7 +155,7 @@
                       </div>
                     </div>
                     <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
-                      <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+                      <div class="box antrean-poli-container skip" style="display: block;overflow: auto;height: 100%;">
                         <div class="box-body p-0 ">
                           <table class="table table-bordered m-0">
                             <tbody>
@@ -174,6 +175,7 @@
                               <tr class="bg-gray-light">
                                 <th class="text-center" style="width: 15%">ANTREAN</th>
                                 <th class="text-center">NAMA</th>
+                                <th class="text-center" style="width: 20%">AKSI</th>
                               </tr>
                             </thead>
                           </table>
@@ -181,7 +183,7 @@
                       </div>
                     </div>
                     <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
-                      <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+                      <div class="box antrean-poli-container konsul" style="display: block;overflow: auto;height: 100%;">
                         <div class="box-body p-0 ">
                           <table class="table table-bordered m-0">
                             <tbody>
@@ -241,9 +243,9 @@
                     </div>
                   </div>
                   <div class="row" style="padding: 0 30px 12px 30px;height: calc(100% - 410px);">
-                    <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+                    <div class="box antrean-poli-container original" style="display: block;overflow: auto;height: 100%;">
                       <div class="box-body p-0 ">
-                        <table class="table table-bordered m-0 font-large ">
+                        <table class="table table-bordered m-0">
                           <tbody>
                           </tbody>
                         </table>
@@ -251,7 +253,7 @@
                     </div>
                   </div>
                   <div class="row" style="padding: 12px 20px;">
-                    <div class="d-flex justify-content-center my-5">
+                    <div class="d-flex justify-content-center my-5" style="flex-wrap: wrap;">
                       <h5 class="legend-item"><span class="warning"></span>Hadir</h5>
                       <h5 class="legend-item"><span class="danger"></span>Batal</h5>
                       <h5 class="legend-item"><span class="light"></span>Belum Datang</h5>
@@ -344,6 +346,9 @@ function setpoli(id) {
     idbppoli = id;
     // setTimeout(getNomor, 2000);
     getDataPoli();
+    getListPasien();
+    getListPasienSkip();
+    getListPasienKonsul();
     $("#loading").hide();
 }
 
@@ -410,6 +415,9 @@ function nextno(tipe){
         },
         complete:function(data){
            setTimeout(getDataPoli, 1000);
+           getListPasien();
+           getListPasienSkip();
+           getListPasienKonsul();
         }
     });
     $("#loading").hide();
@@ -432,6 +440,152 @@ function addantriansuara(noantrian, idbppoli, text){
     	type: 'POST',
     	data: {idunitkerja:idunitkerja,pasiennoantrian:noantrian,idbppoli:idbppoli, text:text},
     	success: function(respon){console.log(respon)},
+    });
+}
+
+function templatePasien(d){
+    let datenow = new Date();
+    let time = new Date(d.tanggaleta) 
+    let minutesDifference = (datenow-time)/ (1000*60);
+    let status, statusText;
+
+    if(d.isdone){
+        statusStyle = "my-bg-success"
+        status = "Dilayani"
+    }
+    else if(d.isconsul){
+        statusStyle = "my-bg-info"
+        status = "Konsultasi/Penunjang"
+    }
+    else if(d.isconfirm){
+        statusStyle = "my-bg-warning"
+        status = "Hadir"
+    }
+    else if(minutesDifference > 30){       //telat >30 menit
+        statusStyle = "my-bg-danger"
+        status = "Batal"
+    }else{
+        statusStyle = "my-bg-light"
+        status = "Belum Datang"
+    }
+    // iscall
+    // isrecall
+    // isserved
+    // isskipped
+
+    time = time.toLocaleTimeString('uk')
+    return $('<tr class="'+statusStyle+'">'+
+                '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
+                '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
+                '<td class="text-center" style="width: 20%">'+time+'</td>'+
+                '<td class="text-center" style="width: 18%">'+status+'</td>'+
+            '</tr>');
+}
+
+function templatePasienSkip(d){
+  return $('<tr>'+
+      '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
+      '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
+      '<td class="text-center" style="width: 20%"><button class="btn btn-info"><i class="fa fa-arrow-right"></i></button></td>'+
+  '</tr>');
+}
+
+function templatePasienKonsul(d){
+  return $('<tr>'+
+      '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
+      '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
+      '<td class="text-center" style="width: 20%"><button class="btn btn-info"><i class="fa fa-arrow-right"></i></button></td>'+
+  '</tr>');
+}
+
+function getListPasien(){
+    return $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: '{{route("get-pasien")}}',
+        type: 'GET',
+        data: {
+          'poli[]': idbppoli, 
+          limit:10,
+          where: 'AND iscall=1 ',
+        },
+        dataType: 'json',
+        success: function (result) {
+            let $tbodypasien = $('.antrean-poli-container.original table tbody')
+            $tbodypasien.empty()
+            if(result.data){
+                var data = result.data;
+                for (const d of data.listpasien) {
+                    $tbodypasien.append(templatePasien(d));
+                } 
+            } else {
+                // toast("info", respon);
+            }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
+    });
+}
+
+function getListPasienSkip(){
+    return $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: '{{route("get-pasien")}}',
+        type: 'GET',
+        data: {
+          'poli[]': idbppoli, 
+          where: 'AND isskipped=1 AND isrecall=0  AND isdone=0 ',
+        },
+        dataType: 'json',
+        success: function (result) {
+            let $tbodypasien = $('.antrean-poli-container.skip table tbody')
+            $tbodypasien.empty()
+            if(result.data){
+                var data = result.data;
+                for (const d of data.listpasien) {
+                    $tbodypasien.append(templatePasienSkip(d));
+                } 
+            } else {
+                // toast("info", respon);
+            }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
+    });
+}
+
+function getListPasienKonsul(){
+    return $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: '{{route("get-pasien")}}',
+        type: 'GET',
+        data: {
+          'poli[]': idbppoli, 
+          where: 'AND isconsul=1 AND isrecall=0  AND isdone=0 ',
+        },
+        dataType: 'json',
+        success: function (result) {
+            let $tbodypasien = $('.antrean-poli-container.konsul table tbody')
+            $tbodypasien.empty()
+            if(result.data){
+                var data = result.data;
+                for (const d of data.listpasien) {
+                    $tbodypasien.append(templatePasienKonsul(d));
+                } 
+            } else {
+                // toast("info", respon);
+            }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
     });
 }
 
