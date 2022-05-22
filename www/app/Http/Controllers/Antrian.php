@@ -186,6 +186,7 @@ class Antrian extends Controller
         $idunitkerja = $request->input('idunitkerja');
         $idbppoli = $request->input('idbppoli');
         $idpolireq = $request->input('idpolireq');
+        $isconfirm = $request->input('isconfirm');
 
         $noantrian = 0;
 
@@ -193,6 +194,12 @@ class Antrian extends Controller
             $wherepoli = "";
         } else {
             $wherepoli = " AND idbppoli = " . $idbppoli . " ";
+        }
+        
+        if($isconfirm == 0) {
+            $whereisconfirm = " AND isconfirm = 0";
+        }else {
+            $whereisconfirm = "";
         }
 
         // if ($idpolireq == 0 || $idpolireq == 31 || $idpolireq == 39) {
@@ -211,12 +218,13 @@ class Antrian extends Controller
         }
 
 		
-        $data = DB::connection('mysql')->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
+        $data = DB::connection('mysql')->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli $whereisconfirm AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
             UNION
             SELECT A.noid, idunitkerja, idbppoli,  B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP FROM mantrianserve A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory ORDER BY pasiennoantrian ");
+        
         return Response::json(array('data' => $data));
     }
-
+    
     public function layaniantrian(Request $request)
     {
 		

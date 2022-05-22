@@ -40,7 +40,7 @@ $(function () {
     // $("#idbppoli").val("1").trigger("change");
     // idbppoli = $("#idbppoli").val();
     $('#tbpasien').dataTable({
-        ajax: {url:"getpasienpoli", data:function(d){d.idunitkerja = idunitkerja; d.idbppoli = idbppoli; d.idpolireq = 0;}}, 
+        ajax: {url:"getpasienpoli", data:function(d){d.idunitkerja = idunitkerja; d.idbppoli = idbppoli; d.idpolireq = 0;d.isconfirm = 0}}, 
         // "sAjaxDataProp": "aData",
         processing: true,
         "iDisplayLength": 10,
@@ -52,7 +52,9 @@ $(function () {
         "aoColumnDefs": [ {
             "aTargets": [ 3 ],
             "mRender": function (data, type, row) { 
-                return '<a href="javascript:void(0);"  title="Ambil Antrian" class="btn btn-primary" onclick="hadir(\''+row['noid']+'\',\''+row['idbppoli']+'\',\''+row['idunitkerja']+'\',\''+row['pasiennoantrian']+'\',\''+row['tanggallayanan']+'\');">Hadir</a>'; 
+                // return '<a href="javascript:void(0);"  title="Ambil Antrian" class="btn btn-primary" onclick="hadir(\''+row['noid']+'\',\''+row['idbppoli']+'\',\''+row['idunitkerja']+'\',\''+row['pasiennoantrian']+'\',\''+row['tanggallayanan']+'\');">Hadir</a>'; 
+                return '<button type="button" class="btn btn-primary" onclick="konfirm('+row['noid']+')">Hadir</button>'
+                
             }
         }],
         "order": [[2, "asc"]],
