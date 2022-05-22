@@ -5,7 +5,7 @@
     <ul class="sidebar-menu" data-widget="tree">
       <?php 
         function display_menu($parent) {
-          $level = Auth::user()->idlevel;
+          $level = Auth::user()->level;
           
           $result = DB::select("SELECT a.id, a.nama, a.link,a.idparent, a.icon, a.isdivider, COALESCE(c.Count, 0) as count FROM mmenu a
             RIGHT OUTER JOIN mmenulevel b on a.id = b.idmenu
