@@ -164,6 +164,7 @@
 <script src="{{asset('theme/dist/js/demo.js')}}"></script>
 
 <script src="{{asset('js/myapp.js')}}"></script>
+<script src="{{asset('theme/dist/js/custom.js')}}"></script>
 
 <script>
     $(window).on('load', function(){

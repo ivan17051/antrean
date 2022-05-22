@@ -56,16 +56,7 @@ class Antrian extends Controller
 			) X ON A.idbppoli = X.idbppoli
 			WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
 
-        // edited by siannas 
-        $panggilanantrian=DB::table('panggilanantrian')
-            ->select('text')
-            ->where('idunitkerja',$idunitkerja)
-            ->where('idbppoli',$filterpoli)
-            ->where('noantrian',$now[0]->noantrian)
-            ->first();
-
-        $data = array("now" => $now, "next" => $next, "panggilanantrian" => $panggilanantrian);
-        // end
+        $data = array("now" => $now, "next" => $next);
 
         return Response::json(array('data' => $data));
     }
@@ -263,7 +254,29 @@ class Antrian extends Controller
                             $dt["text"] = $data[0]->nama;
                         }
 
+                        //DONE
+                        DB::table('mantrian')
+                        ->where('idunitkerja', $idunitkerja)
+                        ->where('pasiennoantrian',$noantrian )
+                        ->where('idbppoli',$idbppoli)
+                        ->whereDate('tanggaleta', '=', $tanggal)
+                        ->update([
+                            'isdone' => 1,
+                            "dodone" => date('Y-m-d H:i:s')
+                        ]);
+
                         $addantriansuara = $this->addAntrianSuara(new Request($dt));
+                    }else if($tipe == 2){
+                        //SKIPPED
+                        DB::table('mantrian')
+                        ->where('idunitkerja', $idunitkerja)
+                        ->where('pasiennoantrian',$noantrian )
+                        ->where('idbppoli',$idbppoli)
+                        ->whereDate('tanggaleta', '=', $tanggal)
+                        ->update([
+                            'isskipped' => 1,
+                            "doskipped" => date('Y-m-d H:i:s')
+                        ]);
                     }
 
                     $dthistory = array(
@@ -289,6 +302,89 @@ class Antrian extends Controller
         return $idreturn;
     }
 
+    public function goToFarmasiLab(Request $request)
+    {
+        $idunitkerja = Auth::user()->idunitkerja;
+        $pasiennoantrian = $request->input('pasiennoantrian');
+        $idbppoli = $request->input('poli');
+        $tipe = $request->input('tipe');
+        $tanggal = date('Y-m-d');
+        
+        if($tipe=='FARMASI'){
+            $idbppoli_baru= 31;
+        }else if($tipe=='LAB'){
+            $idbppoli_baru = 39;
+        }else{
+            return response()->json(['message' => 'Not Found!'], 404);
+        }
+
+        DB::enableQueryLog();
+        DB::beginTransaction();
+        try {
+            $antrian = DB::table('mantrian')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('pasiennoantrian',$pasiennoantrian )
+                ->whereIn('idbppoli',$idbppoli)
+                ->whereDate('tanggaleta', '=', $tanggal)
+                ->first();
+            if ($antrian) {
+                $params=[
+                    $antrian->iddevice,
+                    $antrian->idtypepasien,
+                    $antrian->kodekartu,
+                    $antrian->pasienkode,
+                    $antrian->idunitkerja,
+                    $idbppoli_baru,
+                    $antrian->idunitkerjaasal,
+                    $idbppoli[0],
+                    $tanggal,
+                    $antrian->NO_KK,
+                    $antrian->RFID,
+                    $antrian->NIK,
+                    $antrian->NAMA_LGKP,
+                    $antrian->JENIS_KELAMIN,
+                    $antrian->TMPT_LHR,
+                    $antrian->TGL_LAHIR,
+                    $antrian->AGAMA,
+                    $antrian->STATUS_KWIN,
+                    $antrian->HUB_KELUARGA,
+                    $antrian->PENDIDIKAN,
+                    $antrian->PEKERJAAN,
+                    $antrian->GOL_GARAH,
+                    $antrian->BER_AKTA_LAHIR,
+                    $antrian->TGL_PJG_KTP,
+                    $antrian->NO_KEL,
+                    $antrian->NAMA_KEL,
+                    $antrian->NO_KEC,
+                    $antrian->NAMA_KEC,
+                    $antrian->NO_KAB,
+                    $antrian->NAMA_KAB,
+                    $antrian->NO_PROP,
+                    $antrian->NAMA_PROP,
+                    $antrian->ALAMAT,
+                    $antrian->NO_RT,
+                    $antrian->NO_RW,
+                    $antrian->GAKIN,
+                    $antrian->KATEGORI_GAKIN,
+                    $antrian->LUAR_SBY,
+                    $antrian->NO_TLP,
+                    $antrian->NIKSIMDUK,
+                    $antrian->statusnik,
+                ];
+
+                DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+
+                $idreturn = 1;
+            } else {
+                throw new Exception("Data antrean tidak ditemukan");
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $idreturn = $e->getMessage();
+        }
+        DB::commit();
+        return $idreturn;
+    }
     public function layanikembali(Request $request)
     {
         $pasiennoantrian = $request->input('pasiennoantrian');
@@ -310,9 +406,10 @@ class Antrian extends Controller
         //         ->take(1)->first();
             
         //     $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+        //         ->where('idunitkerja', $idunitkerja)            
         //         ->where('pasiennoantrian',$noantrian )
         //         ->whereIn('idbppoli',$idbppoli)
-        //         ->whereDate('tanggaleta',  $tanggal)
+        //         ->whereDate('tanggaleta', '=', $tanggal)
         //         ->first();
 
         //     if ($res AND $antrian) {
