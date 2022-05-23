@@ -39,7 +39,7 @@
     <div class="row">
       <div class="col-md-4">
         <div class="box box-danger">
-          <div class="policaption" style="font-size:50px;padding:10px;"> POLI PSIKOLOGI</div>
+          <div class="policaption" style="font-size:50px;padding:10px;"> POLI BATRA</div>
           <div class="marquee-container">
             <div id="marquee" style="width:max-content;"></div>
           </div>
@@ -83,7 +83,7 @@
       </div>
       <div class="col-md-4">
         <div class="box box-danger">
-          <div class="policaption" style="font-size:50px;padding:10px;"> POLI PSIKOLOGI</div>
+          <div class="policaption" style="font-size:50px;padding:10px;"> POLI GIGI</div>
           <div class="marquee-container">
             <div id="marquee" style="width:max-content;"></div>
           </div>
