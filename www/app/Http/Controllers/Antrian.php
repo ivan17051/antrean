@@ -393,6 +393,98 @@ class Antrian extends Controller
         DB::commit();
         return $idreturn;
     }
+
+    public function goToPoliRujukan(Request $request)
+    {
+        $idunitkerja = Auth::user()->idunitkerja;
+        $pasiennoantrian = $request->input('pasiennoantrian');
+        $idbppoli = $request->input('poli');
+        $idbppoli_baru = $request->input('polirujukan');
+        $tipe = $request->input('tipe');
+        $tanggal = date('Y-m-d');
+        
+        DB::enableQueryLog();
+        DB::beginTransaction();
+        try {
+            $antrian = DB::table('mantrian')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('pasiennoantrian',$pasiennoantrian )
+                ->whereIn('idbppoli',$idbppoli)
+                ->whereDate('tanggaleta', '=', $tanggal)
+                ->first();
+            if ($antrian) {
+                $params=[
+                    $antrian->iddevice,
+                    $antrian->idtypepasien,
+                    $antrian->kodekartu,
+                    $antrian->pasienkode,
+                    $antrian->idunitkerja,
+                    $idbppoli_baru,
+                    $antrian->idunitkerjaasal,
+                    $idbppoli[0],
+                    $tanggal,
+                    $antrian->NO_KK,
+                    $antrian->RFID,
+                    $antrian->NIK,
+                    $antrian->NAMA_LGKP,
+                    $antrian->JENIS_KELAMIN,
+                    $antrian->TMPT_LHR,
+                    $antrian->TGL_LAHIR,
+                    $antrian->AGAMA,
+                    $antrian->STATUS_KWIN,
+                    $antrian->HUB_KELUARGA,
+                    $antrian->PENDIDIKAN,
+                    $antrian->PEKERJAAN,
+                    $antrian->GOL_GARAH,
+                    $antrian->BER_AKTA_LAHIR,
+                    $antrian->TGL_PJG_KTP,
+                    $antrian->NO_KEL,
+                    $antrian->NAMA_KEL,
+                    $antrian->NO_KEC,
+                    $antrian->NAMA_KEC,
+                    $antrian->NO_KAB,
+                    $antrian->NAMA_KAB,
+                    $antrian->NO_PROP,
+                    $antrian->NAMA_PROP,
+                    $antrian->ALAMAT,
+                    $antrian->NO_RT,
+                    $antrian->NO_RW,
+                    $antrian->GAKIN,
+                    $antrian->KATEGORI_GAKIN,
+                    $antrian->LUAR_SBY,
+                    $antrian->NO_TLP,
+                    $antrian->NIKSIMDUK,
+                    $antrian->statusnik,
+                ];
+
+                DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+
+                // UPDATE ANTRIAN RUJUKAN/KONSUL
+                DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
+                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
+                    ->where('idbppoli',$idbppoli_baru)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'isconsul' => 1,
+                        'doconsul' => date('Y-m-d H:i:s'),
+                        'isconfirm' => 1,
+                        'doconfirm' => date('Y-m-d H:i:s')
+                    ]);
+
+                $idreturn = 1;
+            } else {
+                throw new Exception("Data antrean tidak ditemukan");
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $idreturn = $e->getMessage();
+        }
+        DB::commit();
+        return $idreturn;
+    }
+
     public function layanikembali(Request $request)
     {
         $pasiennoantrian = $request->input('pasiennoantrian');

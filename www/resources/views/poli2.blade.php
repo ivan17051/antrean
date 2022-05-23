@@ -61,6 +61,35 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="modal-rujukan" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Rujuk Internal Pasien</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <select name="pasiennoantrian" class="form-control" style="width: 100%;" required>
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select name="polirujukan" class="form-control" style="width: 100%;" required>
+            <option></option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default batal" data-dismiss="modal">BATAL</button>
+          <button type="submit" class="btn btn-success">RUJUK</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 <style type="text/css">
   .box-info-number {
     border-top-left-radius: 2px;
@@ -174,6 +203,8 @@
                   <div class="btn-group-vertical btn-group-lg" role="group">
                     <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
                       Panggil</button>
+                    <button type="button" class="btn btn-info" onclick="beforePanggilBerikutnya(true);"><i class="fa fa-arrow-right"></i>
+                      Rujuk Internal</button>
                     <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
                         class="fa  fa-arrow-circle-o-right"></i> Skip</button>
                     <button type="button" class="btn btn-secondary" onclick="recall();"><i class="fa fa-volume-up"></i>
@@ -384,7 +415,6 @@
   function createlistpoli(data) {
     // $("#boxpoliantrian").empty()
     var i = 0;
-    console.log(data);
     var box = data.map(function (poli) {
       var x = $('<div class="col-md-6" style="margin-top:10px;">' +
         '<button type="button" class="btn btn-block btn-lg btn-danger buttonpoli" style="font-size: 32px;">' +
@@ -397,6 +427,8 @@
       return x;
     })
     $("#listpoli").html('').append(box);
+
+    setDropDownListPoliRujukan(data)
     // showmodalsetup();
   }
 
@@ -431,7 +463,6 @@
         dataType: 'json',
         success: function (result) {
           var data = result.data[0];
-          console.log(data);
           noantrian = data['noantrian'];
           textpanggilan = data['pasien'];
           var maxantrian = data['servesmax'];
@@ -681,7 +712,6 @@
 
       event.preventDefault();
       let param = $(this).serialize()
-      console.log(param)
       //continue with ajax request
       $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -692,7 +722,6 @@
           type: 'POST',
           dataType: 'json',
           success: function (result) {
-              console.log(result);
               toast("success", 'Memanggil '+nama);
           },
           error: function(responsedata){
@@ -722,9 +751,13 @@
     }); 
   }
 
-  async function beforePanggilBerikutnya(){
+  async function beforePanggilBerikutnya(isRujukan=false){
     $('#loading').show();
-    let $modal = $('#modal-konfirmasi-selesai')
+    let $modal;
+
+    if(isRujukan) $modal = $('#modal-rujukan');
+    else $modal = $('#modal-konfirmasi-selesai');
+
     try {
       const res = await getPasienSedangDiperiksa();
 
@@ -749,21 +782,39 @@
       
       $modal.modal('show')
 
-      // ON SUBMIT 
-      $modal.find('form').submit(function(e) {
-        event.preventDefault();
-        let param = getFormData($(this))
-        console.log(param)
+      if(isRujukan){
+        // ON SUBMIT UNTUK RUJUKAN
+        $modal.find('form').submit(function(e) {
+          event.preventDefault();
+          let param = getFormData($(this))
 
-        if(param.tipe == 'SELESAI'){
-          nextno(1, param.pasiennoantrian)
-        }else{
-          goToFarmasiLab($(this).serialize(), param.pasiennoantrian);
-        }
+          if(param.polirujukan == idbppoli){
+            alert("Poli tidak boleh sama.");
+            return;
+          }
 
-        $modal.modal('hide')
-        $(this).unbind('submit');
-      });
+          goToPoliRujukan($(this).serialize(), param.pasiennoantrian);
+
+          $modal.modal('hide')
+          $(this).unbind('submit');
+        });
+      }else{
+        // ON SUBMIT 
+        $modal.find('form').submit(function(e) {
+          event.preventDefault();
+          let param = getFormData($(this))
+
+          if(param.tipe == 'SELESAI'){
+            nextno(1, param.pasiennoantrian)
+          }else{
+            goToFarmasiLab($(this).serialize(), param.pasiennoantrian);
+          }
+
+          $modal.modal('hide')
+          $(this).unbind('submit');
+        });
+      }
+      
     } catch(errors) {
       toast("error", errors);
     }
@@ -782,7 +833,6 @@
       },
       dataType: 'json',
       success: function (result) {
-        console.log(result);
         toast("success", 'Berhasil');
         nextno(1, pasiennoantrian)
       },
@@ -794,6 +844,45 @@
         $('#loading').hide();
       }
     }); 
+  }
+
+  function goToPoliRujukan(param, pasiennoantrian){
+    $('#loading').show();
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url: '{{route("gotopolirujukan")}}?'+param,
+      type: 'POST',
+      data: {
+        'poli[]': idbppoli,
+      },
+      dataType: 'json',
+      success: function (result) {
+        toast("success", 'Berhasil');
+        nextno(1, pasiennoantrian)
+      },
+      error: function(responsedata){
+          var errors = responsedata.statusText;
+          toast("error", errors);
+      },
+      complete: function(){
+        $('#loading').hide();
+      }
+    }); 
+  }
+
+  function setDropDownListPoliRujukan(data){
+    let $poliSelect2 = $('[name=polirujukan]')
+    $poliSelect2.empty()
+    $poliSelect2.select2({
+      placeholder: 'Poli Rujukan',
+      allowClear: true
+    });
+
+    for (const d of data) {
+      $poliSelect2.append($("<option />").val(d.id).text(d.nama));
+    }
+    $poliSelect2.val(null).trigger("change");
+      
   }
 
   $(function () {
