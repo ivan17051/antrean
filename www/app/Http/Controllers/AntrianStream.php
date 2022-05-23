@@ -37,7 +37,7 @@ class AntrianStream extends Controller
                     WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
             ) X ON A.idbppoli = X.idbppoli
             WHERE isactive = 1 
-                -- AND isdirectqueue = 1 
+                AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
                 AND idunitkerja = $idunitkerja $wherepoli ");
 
         $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
@@ -49,7 +49,7 @@ class AntrianStream extends Controller
                     WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
             ) X ON A.idbppoli = X.idbppoli
             WHERE isactive = 1 
-                -- AND isdirectqueue = 1 
+                AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
                 AND idunitkerja = $idunitkerja $wherepoli ");
     
         if(isset($now[0]->noantrian)){
