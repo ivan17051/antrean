@@ -176,17 +176,17 @@
 }
 
 .marquee-container {
-    background-color: #dd4b39;
-    color: #fff;
+    background-color: #f7f7f7;
+    border-top: 2px solid #dd4b39;
     padding: 5px;
     overflow-x: hidden;
 }
 #marquee {
     margin: 0;
     font-size: 25px;
-    -moz-animation: marquee 10s linear infinite;
-    -webkit-animation: marquee 10s linear infinite;
-    animation: marquee 10s linear infinite;
+    -moz-animation: marquee 20s linear infinite;
+    -webkit-animation: marquee 20s linear infinite;
+    animation: marquee 20s linear infinite;
 }
 @-moz-keyframes marquee {
     0% {

@@ -233,7 +233,7 @@ function getlistpoli(){
                     '<div class="col-md-8">'+
                     '<div class="box box-danger">'+
                         '<div class="policaption" style="font-size:70px;padding:10px;"> POLI '+data[i]['nama']+'</div>'+
-                        '<div class="marquee-container"><p id="marquee" style="width:max-content;"></p></div>'+
+                        '<div class="marquee-container"><div id="marquee" style="width:max-content;"></div></div>'+
                     '</div><div class="row"><div class="col-md-4">'+
                         '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
                         '</div><div class="col-md-4">'+
@@ -360,9 +360,19 @@ function getDokter(){
                 }
                 for (i = 0; i < datanow.length; i++) {
                     if(i==0){
-                        listdokterhtml+=datanow[i]['nakes'];
+                        if(datanow[i]['isavailable']==1){
+                            listdokterhtml += '<span style="color:#00a65a;">' + datanow[i]['nakes'] + '/Ada</span>';
+                        } else {
+                            listdokterhtml += '<span style="color:#dd4b39;">' + datanow[i]['nakes'] + '/Tidak Ada</span>';
+                        }
+                        
                     }else{
-                        listdokterhtml+=" - "+datanow[i]['nakes'];
+                        if(datanow[i]['isavailable']==1){
+                            listdokterhtml+=' - <span style="color:#00a65a;">' + datanow[i]['nakes'] + '/Ada</span>';
+                        } else {
+                            listdokterhtml+=' - <span style="color:#dd4b39;">' + datanow[i]['nakes'] + '/Tidak Ada</span>';
+                        }
+                        
                     }
                 }
                 $('#marquee').html(listdokterhtml)
