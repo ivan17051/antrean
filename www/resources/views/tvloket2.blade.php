@@ -79,6 +79,8 @@ var antreanPoliState={
     "$bottomElem":null
 };
 var intervalInstance;
+var idunitkerja = "{{$d['idunitkerja']}}";
+
 
 function templatePasien(d){
     let datenow = new Date();
@@ -194,6 +196,7 @@ function getDataUnitkerja(){
 }
 
 $(async function () {
+    getDataUnitkerja();
     await getListPasien();
     antreanPoliState.container=$('.antrean-poli-container');
 
