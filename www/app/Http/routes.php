@@ -81,6 +81,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('getdokter', ['uses' => 'Antrian@getDokter', 'as' => 'get-dokter']);
 	Route::get('getlistpasien', ['uses' => 'Antrian@getListPasien', 'as' => 'get-pasien']);
 	Route::get('tvpoli2', ['uses' => 'TVPoli@index2', 'as' => 'tvpoli2']);
+	Route::get('tvpoli3', ['uses' => 'TVPoli@index3', 'as' => 'tvpoli3']);
 	
 	Route::get('tvloket', ['uses' => 'TV@tvloket', 'as' => 'tvloket']);
 	Route::get('tvloket2', ['uses' => 'TV@tvloket2', 'as' => 'tvloket2']);
