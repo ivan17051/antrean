@@ -163,7 +163,7 @@ class Antrian extends Controller
         $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, P.nama as poli
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
-			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.pasiennoantrian {$limit} ");
+			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.idbppoli, A.pasiennoantrian {$limit} ");
             
         $data = array("listpasien" => $pasien);
         
