@@ -31,7 +31,7 @@
         <div style="padding: 12px 20px 0 20px">
             <div class="box m-0">
                 <div class="box-header with-border bg-red text-center">
-                    <h3 class="box-title big-title">POLI UMUM</h3>
+                    <h3 class="box-title big-title">-</h3>
                 </div>
                 <div class="box-body with-border p-0">
                     <table class="table table-bordered m-0 font-large">
@@ -225,7 +225,11 @@ function getpoliaktif() {
         async: false,
         success: function (result) {
             var data = result.data;
-            for (let i = 0; i < 6; i++) {
+
+            var noPsikologi=true;
+            let i = 0
+            
+            for (; i < 5; i++) {
                 if(data[i]){
                     listpoli.push(data[i]);
                     ALLantreanPoliState.push({
@@ -234,8 +238,29 @@ function getpoliaktif() {
                         "$bottomElem":null
                     });
                     intervalInstance.push(null)
+                    $polis[i].classList.add('active');
+
+                    if(data[i].id == 22){
+                        noPsikologi = false;
+                    }
                 }
             }
+
+            //PSIKOLOGI PALING BAWAH
+            if(noPsikologi){
+                listpoli.push({
+                    id: 22,
+                    nama: 'PSIKOLOGI'
+                });
+                ALLantreanPoliState.push({
+                    "container":null,
+                    "elemheight": null,
+                    "$bottomElem":null
+                });
+                intervalInstance.push(null)
+                $polis[i].classList.add('active');
+            }
+            
         },
         error: function (result) {
             console.log(result.statusText);
