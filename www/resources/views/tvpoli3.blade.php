@@ -174,13 +174,17 @@ function createlistmodal(data){
     // $("#boxpoliantrian").empty()
     var i = 0;
     console.log(data);
+
+    data.push({nama:'LAB',id:39})
+    data.push({nama:'FARMASI',id:31})
+
     var box = data.map(function (poli) {
         var x = $('<div class="col-md-6" style="margin-top:10px;">' +
             '<button type="button" class="btn btn-block btn-lg btn-danger buttonpoli" style="font-size: 32px;">' + poli.nama + '</button>' +
         '</div>');
         x.on('click' , function(){
             // namapoli = poli.nama
-            setpoli(poli.id)
+            setpoli(poli.id, poli.nama)
         });
         return x;
     })
@@ -188,14 +192,14 @@ function createlistmodal(data){
     // showmodalsetup();
 }
 
-async function setpoli(id) {
+async function setpoli(id, nama) {
     if(streamnomor) streamnomor.close()
     $("#loading").show();
     $("#boxlistpoli").hide('slow');
     $("#viewantrian").show('slow');
   
     listpoli[0] = id;
-    await getlistpoli();
+    await getlistpoli(id, nama);
     setTimeout(ceksuara, 2000);
 
     getDokter();
@@ -213,47 +217,29 @@ function kembali(){
     location.reload();
 }
 
-function getlistpoli(){
+function getlistpoli(idbppoli, nama){
     $('#listpoliutama').empty();
+
+    if(nama !== 'LAB' && nama !== 'FARMASI') nama='POLI '+nama;
     
-    return  $.ajax({
-        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: Settings.baseurl+'/getlistpoli',
-        type: 'GET',
-        data: {poli: listpoli},
-        dataType: 'json',
-        success: function (result) {
-            var data = result.data;
-            console.log(data);
-            for (i = 0; i < data.length; i++) {
-                var color = (i%2 == 0) ? 'red' : 'red';
-                $('#listpoliutama').append('<div class="row"><div class="col-md-4">'+
-                    '<div class="box box-danger bg-red text-center poli'+data[i]['id']+'" style="font-size:200px;" >-<p style="font-size:50px;padding-bottom:50px;">-</p></div>'+
-                    '</div>'+
-                    '<div class="col-md-8">'+
-                    '<div class="box box-danger">'+
-                        '<div class="policaption" style="font-size:70px;padding:10px;"> POLI '+data[i]['nama']+'</div>'+
-                        '<div class="marquee-container"><div id="marquee" style="width:max-content;"></div></div>'+
-                    '</div><div class="row"><div class="col-md-4">'+
-                        '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
-                        '</div><div class="col-md-4">'+
-                        '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
-                        '</div><div class="col-md-4">'+
-                        '<div class="antrianpoli box box-danger text-center  poli'+data[i]['id']+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
-                        '</div><div class="col-md-4">'+
-                    //     '<span class="antrianpoli">Estimasi jam dilayani : <span id="estimasi'+data[i]['id']+'" style="font-weight: bold;">-</span></span>'+
-                    // '</div>'+
-                    '</div></div>'
-                );
-                // idbppoli.
-            }
-        },
-        error: function(responsedata){
-            var errors = responsedata.statusText;
-            $('#loading').hide();
-            toast("error", errors);
-        }
-    });
+    $('#listpoliutama').append('<div class="row"><div class="col-md-4">'+
+        '<div class="box box-danger bg-red text-center poli'+idbppoli+'" style="font-size:200px;" >-<p style="font-size:50px;padding-bottom:50px;">-</p></div>'+
+        '</div>'+
+        '<div class="col-md-8">'+
+        '<div class="box box-danger">'+
+            '<div class="policaption" style="font-size:70px;padding:10px;">'+nama+'</div>'+
+            '<div class="marquee-container"><div id="marquee" style="width:max-content;"></div></div>'+
+        '</div><div class="row"><div class="col-md-4">'+
+            '<div class="antrianpoli box box-danger text-center  poli'+idbppoli+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
+            '</div><div class="col-md-4">'+
+            '<div class="antrianpoli box box-danger text-center  poli'+idbppoli+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
+            '</div><div class="col-md-4">'+
+            '<div class="antrianpoli box box-danger text-center  poli'+idbppoli+'" style="font-size:100px;">-<p style="font-size:30px;padding-bottom:30px;">-</p></div>'+
+            '</div><div class="col-md-4">'+
+        //     '<span class="antrianpoli">Estimasi jam dilayani : <span id="estimasi'+idbppoli+'" style="font-weight: bold;">-</span></span>'+
+        // '</div>'+
+        '</div></div>'
+    );
 }
 
 function templatePasien(d){
@@ -478,6 +464,7 @@ function getNomor(){
         // if(!$elements) return;
     
         var data = JSON.parse(event.data)
+        console.log(data);
         var datanow = data.now
         var datanext = data.next
         let nama, noantrian;
@@ -499,13 +486,17 @@ function getNomor(){
             $($elements[0]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
         }
         for (i = 1; i < 4; i++) {       //karena menampilkan tiga antrian berikutnya
-            noantrian = '-'
-            nama = '-'
-            if(datanext.length && i < data.pasien.length){       
-                noantrian = antriannow+i 
-                nama = searchPasien(antriannow+i ).NAMA_LGKP
+            try {
+                noantrian = '-'
+                nama = '-'
+                if(datanext.length && i < data.pasien.length){       
+                    noantrian = antriannow+i 
+                    nama = searchPasien(antriannow+i ).NAMA_LGKP
+                }
+                $($elements[i]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');   
+            } catch (error) {
+                
             }
-            $($elements[i]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
         }
 
         if(listpasienNeedUpdate){

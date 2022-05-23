@@ -36,7 +36,9 @@ class AntrianStream extends Controller
                 SELECT A.idbppoli, COALESCE(A.servesno,0) AS noantrian, A.servesmax FROM munitkerjapolidaily A
                     WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
             ) X ON A.idbppoli = X.idbppoli
-            WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
+            WHERE isactive = 1 
+                -- AND isdirectqueue = 1 
+                AND idunitkerja = $idunitkerja $wherepoli ");
 
         $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
             CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
@@ -46,7 +48,9 @@ class AntrianStream extends Controller
                 SELECT A.idbppoli, A.servesno + 1 AS noantrian, A.servesmax, A.servestime FROM munitkerjapolidaily A
                     WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
             ) X ON A.idbppoli = X.idbppoli
-            WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
+            WHERE isactive = 1 
+                -- AND isdirectqueue = 1 
+                AND idunitkerja = $idunitkerja $wherepoli ");
     
         if(isset($now[0]->noantrian)){
             $pasien= DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
