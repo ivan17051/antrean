@@ -195,8 +195,10 @@ function getDataUnitkerja(){
     
 }
 
-$(async function () {
-    getDataUnitkerja();
+async function loopRequestPasien(){
+
+    if(intervalInstance) clearInterval(intervalInstance); 
+
     await getListPasien();
     antreanPoliState.container=$('.antrean-poli-container');
 
@@ -205,6 +207,15 @@ $(async function () {
             intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 2);
         }
     }, 1000)
+}
+
+$(function () {
+    getDataUnitkerja();
+    
+    loopRequestPasien();
+
+    setInterval(loopRequestPasien, 60000);
+
 });
 </script>
 @endsection
