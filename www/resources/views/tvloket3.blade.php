@@ -127,6 +127,7 @@ function getListPasien(idpoli, $tbodypasien){
         type: 'GET',
         data:{
             poli: [idpoli],
+            limit: 20,
         },
         dataType: 'json',
         success: function (result) {
