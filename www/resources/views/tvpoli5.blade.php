@@ -52,12 +52,12 @@
             </div>
 
             <div class="col-md-6" style="padding-left:0;">
-              <div class="antrianpoli box box-danger text-center poli next" style="font-size:100px;"> - 
+              <div class="antrianpoli box box-danger text-center poli next-1" style="font-size:100px;"> - 
               <p class="antrianpolinama" style="font-size:25px;padding-bottom:30px;"> - </p>
               </div>
             </div>
             <div class="col-md-6" style="padding-right:0;">
-              <div class="antrianpoli box box-danger text-center poli next" style="font-size:100px;"> - 
+              <div class="antrianpoli box box-danger text-center poli next-2" style="font-size:100px;"> - 
               <p class="antrianpolinama" style="font-size:25px;padding-bottom:30px;"> - </p>
               </div>
             </div>
@@ -381,8 +381,7 @@ function getNomor(idbppoli, $poli, index){
         var datanow = data.now
         var datanext = data.next
         let noantrian, nama;
-        
-        let $elements = $(".poli"+datanow[0]['idbppoli']);
+        // console.log(datanow, datanext)
 
         const searchPasien = function(nomor){
             return data.pasien.find(obj => {
@@ -396,12 +395,21 @@ function getNomor(idbppoli, $poli, index){
           noantrian = datanow[i]['noantrian']
           $poli.find('.now').html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
         }
-
-        for (i = 0; i < datanext.length; i++) {
-          noantrian = datanext[i]['noantrian']
-          nama = searchPasien(noantrian).NAMA_LGKP
-          $poli.find('.next').html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+        
+        for (i = 1; i < 2; i++) {       //karena menampilkan dua antrian berikutnya
+            try {
+                noantrian = '-'
+                nama = '-'
+                if(datanext.length && i < data.pasien.length){       
+                    noantrian = datanext[0]['noantrian']
+                    nama = searchPasien(noantrian+i-1 ).NAMA_LGKP
+                }
+                $poli.find('.next-'+i).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+            } catch (error) {
+                console.log('error',error)
+            }
         }
+        
     }
 }
 
