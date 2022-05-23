@@ -57,6 +57,7 @@ class AntrianStream extends Controller
                 ->where('idunitkerja', $idunitkerja)
                 ->whereDate('tanggaleta', '=',$tanggal)
                 ->where('pasiennoantrian','>=', $now[0]->noantrian)
+                ->whereIn('idbppoli',$filterpoli)
                 ->orderBy('pasiennoantrian','ASC')
                 ->take(4)->get();
         }else{
