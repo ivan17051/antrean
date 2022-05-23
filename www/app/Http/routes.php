@@ -84,6 +84,7 @@ Route::group(['middleware' => ['auth']], function () {
 	
 	Route::get('tvloket', ['uses' => 'TV@tvloket', 'as' => 'tvloket']);
 	Route::get('tvloket2', ['uses' => 'TV@tvloket2', 'as' => 'tvloket2']);
+	Route::get('tvloket3', ['uses' => 'TV@tvloket3', 'as' => 'tvloket3']);
 });
 
 Route::get('puskesmas', ['uses' => 'Antrianx@index', 'as' => 'antreanpuskesmas']);

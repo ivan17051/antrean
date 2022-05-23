@@ -83,4 +83,18 @@ class TV extends Controller {
         
         return View::make('tvloket2', compact('d'));
     }
+
+    public function tvloket3() {
+        $idunitkerja = Auth::user()->idunitkerja;
+        $dataunit =DB::table('munitkerja')->where('noid', $idunitkerja)->first();
+        if(!$dataunit){
+            return View::make('errors/404');
+        }
+        $d = array();
+        $d['title'] = $dataunit->nama;
+        $d['subtitle'] = "antrean";
+        $d['idunitkerja'] = $idunitkerja;
+        
+        return View::make('tvloket3', compact('d'));
+    }
 }

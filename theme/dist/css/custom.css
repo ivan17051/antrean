@@ -175,6 +175,10 @@
     background-color: #f6f6f6!important;
 }
 
+.custom-6-grid{
+    height:calc(33vh - 100px);
+}
+
 .marquee-container {
     background-color: #f7f7f7;
     border-top: 2px solid #dd4b39;
