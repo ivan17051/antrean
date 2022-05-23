@@ -60,7 +60,7 @@
                   <tr class="bg-gray-light">
                     <th class="text-center" style="width: 15%">ANTREAN</th>
                     <th class="text-center">NAMA</th>
-                    <th class="text-center" style="width: 15%">ESTIMASI</th>
+                    <th class="text-center" style="width: 18%">ESTIMASI</th>
                     <th class="text-center" style="width: 18%">STATUS</th>
                   </tr>
                 </thead>
@@ -195,10 +195,10 @@ function templatePasien(d){
 
     time = time.toLocaleTimeString('uk')
     return $('<tr class="'+statusStyle+'">'+
-            '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
-            '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
-            '<td class="text-center" style="width: 15%">'+time+'</td>'+
-            '<td class="text-center" style="width: 18%">'+status+'</td>'+
+            '<td class="text-center" style="width: 15%; font-size:24px;">'+d.pasiennoantrian+'</td>'+
+            '<td class="text-center" style="font-size:24px;">'+d.NAMA_LGKP+'</td>'+
+            '<td class="text-center" style="width: 18%; font-size:24px;">'+time+'</td>'+
+            '<td class="text-center" style="width: 18%; font-size:24px;">'+status+'</td>'+
             '</tr>');
 }
 
