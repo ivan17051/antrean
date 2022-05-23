@@ -105,6 +105,12 @@
     text-overflow: ellipsis;
 }
 
+.antrianpolinama {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 /* LEGEND ANTRIAN */
 
 .legend-item.item-smaller:not(:last-child){    
