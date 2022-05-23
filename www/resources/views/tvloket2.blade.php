@@ -28,20 +28,20 @@
 <div class="row" style="padding: 12px 20px;">
     <div class="box">
         <div class="box-header with-border bg-red text-center">
-            <h3 class="box-title big-title">ANTREAN POLI</h3>
+            <h3 class="box-title big-title">ANTREAN</h3>
         </div>
     </div>
 </div>
 <div class="row" style="padding: 12px 20px 0 20px">
     <div class="box m-0">
         <div class="box-body with-border p-0">
-            <table class="table table-bordered m-0 font-large">
+            <table class="table table-bordered m-0" style="font-size:20px;">
                 <thead>
                     <tr class="bg-gray-light">
-                        <th class="text-center" style="width: 15%">ANTREAN</th>
+                        <th class="text-center" style="width: 13%">ANTREAN</th>
                         <th class="text-center">NAMA</th>
                         <th class="text-center" style="width: 20%">POLI</th>
-                        <th class="text-center" style="width: 10%">ESTIMASI</th>
+                        <th class="text-center" style="width: 12%">ESTIMASI</th>
                         <th class="text-center" style="width: 18%">STATUS</th>
                     </tr>
                 </thead>
@@ -114,11 +114,11 @@ function templatePasien(d){
 
     time = time.toLocaleTimeString('uk')
     return $('<tr class="'+statusStyle+'">'+
-            '<td class="text-center" style="width: 15%">'+d.pasiennoantrian+'</td>'+
-            '<td class="text-center">'+d.NAMA_LGKP+'</td>'+
-            '<td class="text-center" style="width: 20%">'+d.poli+'</td>'+
-            '<td class="text-center" style="width: 10%">'+time+'</td>'+
-            '<td class="text-center" style="width: 18%">'+status+'</td>'+
+            '<td class="text-center" style="width: 13%; font-size:23px;">'+d.pasiennoantrian+'</td>'+
+            '<td class="text-center" style="font-size:23px;">'+d.NAMA_LGKP+'</td>'+
+            '<td class="text-center" style="width: 20%; font-size:23px;">'+d.poli+'</td>'+
+            '<td class="text-center" style="width: 12%; font-size:23px;">'+time+'</td>'+
+            '<td class="text-center" style="width: 18%; font-size:23px;">'+status+'</td>'+
             '</tr>');
 }
 
