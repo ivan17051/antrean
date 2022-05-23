@@ -168,6 +168,30 @@ function checkScrollCapability()
     return false;
 }
 
+function getDataUnitkerja(){
+    $.ajax({
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: Settings.baseurl+'/getdataunitkerja',
+        type: 'GET',
+        data: {idunitkerja:idunitkerja},
+        dataType: 'json',
+        success: function (result) {
+            if(result.data){
+                var du = result.data;
+                $("#namaunitkerja").html(du.nama);
+                $("#alamatunitkerja").html(du.alamat1);
+            } else {
+                // toast("info", respon);
+            }
+        },
+        error: function(responsedata){
+            var errors = responsedata.statusText;
+            $('#loading').hide();
+            toast("error", errors);
+        }
+    });
+    
+}
 
 $(async function () {
     await getListPasien();
