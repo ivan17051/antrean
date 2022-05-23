@@ -127,7 +127,6 @@ function getListPasien(idpoli, $tbodypasien){
         type: 'GET',
         data:{
             poli: [idpoli],
-            limit: 20,
         },
         dataType: 'json',
         success: function (result) {
@@ -285,7 +284,7 @@ $(async function () {
 
     controlLoopRequestPasien();
 
-    setInterval(controlLoopRequestPasien, 10000);
+    setInterval(controlLoopRequestPasien, 60000);
 
 });
 </script>

@@ -198,6 +198,13 @@
     -webkit-animation: marquee 20s linear infinite;
     animation: marquee 20s linear infinite;
 }
+.marquee {
+    margin: 0;
+    font-size: 25px;
+    -moz-animation: marquee 20s linear infinite;
+    -webkit-animation: marquee 20s linear infinite;
+    animation: marquee 20s linear infinite;
+}
 @-moz-keyframes marquee {
     0% {
       transform: translateX(100%);
