@@ -210,6 +210,16 @@
     vertical-align: middle;
 }
 
+.custom-n-grid{
+    height:calc(20vh - 100px);
+    opacity: 0;
+}
+
+.custom-n-grid.active{
+    height:calc(20vh - 100px);
+    opacity: 1;
+}
+
 .marquee-container {
     background-color: #f7f7f7;
     border-top: 2px solid #dd4b39;
