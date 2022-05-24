@@ -212,7 +212,7 @@ async function setpoli(id, nama) {
 
     loopRequestPasien();
 
-    setInterval(loopRequestPasien, 5000);
+    setInterval(loopRequestPasien, 60000);
 
     // setTimeout(getDokter, 2000);
     // setTimeout(cekPanggilan, 2000, listpoli);
