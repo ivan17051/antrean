@@ -237,88 +237,88 @@ class Antrian extends Controller
                 ->take(1)->first();
 
             if ($res) {
-                if ($res->servesno + 1 > $res->servesmax) {
-                    throw new Exception("Semua Antrian Sudah Dilayani");
-                } else {
-                    $CALLNEXT = false;
-                    
-                    if($tipe == 1) {
-                        //DONE
-                        DB::table('mantrian')
-                        ->where('idunitkerja', $idunitkerja)
-                        ->where('pasiennoantrian',$noantrian )
-                        ->where('idbppoli',$idbppoli)
-                        ->whereDate('tanggaleta', '=', $tanggal)
-                        ->update([
-                            'isdone' => 1,
-                            "dodone" => date('Y-m-d H:i:s')
-                        ]);
+                $CALLNEXT = false;
+                
+                if($tipe == 1) {
+                    //DONE
+                    DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$noantrian )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'isdone' => 1,
+                        "dodone" => date('Y-m-d H:i:s')
+                    ]);
 
-                    }else if($tipe == 2){
-                        $CALLNEXT = true;
+                }else if($tipe == 2){
+                    $CALLNEXT = true;
 
-                        //SKIPPED
-                        DB::table('mantrian')
-                        ->where('idunitkerja', $idunitkerja)
-                        ->where('pasiennoantrian',$noantrian )
-                        ->where('idbppoli',$idbppoli)
-                        ->whereDate('tanggaleta', '=', $tanggal)
-                        ->where('isdone',0)
-                        ->update([
-                            'isskipped' => 1,
-                            "doskipped" => date('Y-m-d H:i:s')
-                        ]);
-                    }else{
-                        $CALLNEXT = true;
-                    }
-
-                    if($CALLNEXT){
-                        DB::table('munitkerjapolidaily')
-                            ->where('noid', $res->noid)
-                            ->update([
-                                'servesno' => $res->servesno + 1,
-                                "servestime" => date('Y-m-d H:i:s')
-                            ]);
-
-                        $nomor = $res->servesno + 1;
-                        $data = DB::select("SELECT NIK, NAMA_LGKP AS nama FROM mantrian WHERE idunitkerja = $idunitkerja AND idbppoli = $idbppoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian = $nomor LIMIT 1 ");
-
-                        $dt = [
-                            "tanggal" => $tanggal,
-                            "idbppoli" => $idbppoli,
-                            "idunitkerja" => $idunitkerja,
-                            "pasiennoantrian" => $res->servesno + 1,
-                        ];
-
-                        if ($data) {
-                            $dt["text"] = $data[0]->nama;
-                        }
-
-                        $addantriansuara = $this->addAntrianSuara(new Request($dt));
-                        
-                        //SET IS CALL ANTRIAN BARU NYA
-                        DB::table('mantrian')
-                        ->where('idunitkerja', $idunitkerja)
-                        ->where('pasiennoantrian',$res->servesno + 1 )
-                        ->where('idbppoli',$idbppoli)
-                        ->whereDate('tanggaleta', '=', $tanggal)
-                        ->update([
-                            'iscall' => 1,
-                            "docall" => date('Y-m-d H:i:s')
-                        ]);
-
-                        $dthistory = array(
-                            "noid" => $res->noid,
-                            "tanggal" => $tanggal,
-                            "idbppoli" => $idbppoli,
-                            "idunitkerja" => $idunitkerja,
-                            "pasiennoantrian" => $res->servesno + 1,
-                        );
-                        $addhistory = $this->addhistory(2, new Request($dthistory));
-                    }
-
-                    $idreturn = 1;
+                    //SKIPPED
+                    DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$noantrian )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->where('isdone',0)
+                    ->update([
+                        'isskipped' => 1,
+                        "doskipped" => date('Y-m-d H:i:s')
+                    ]);
+                }else{
+                    $CALLNEXT = true;
                 }
+
+                if($CALLNEXT){
+                    if ($res->servesno + 1 > $res->servesmax) {
+                        throw new Exception("Semua Antrian Sudah Dilayani");
+                    }
+
+                    DB::table('munitkerjapolidaily')
+                        ->where('noid', $res->noid)
+                        ->update([
+                            'servesno' => $res->servesno + 1,
+                            "servestime" => date('Y-m-d H:i:s')
+                        ]);
+
+                    $nomor = $res->servesno + 1;
+                    $data = DB::select("SELECT NIK, NAMA_LGKP AS nama FROM mantrian WHERE idunitkerja = $idunitkerja AND idbppoli = $idbppoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian = $nomor LIMIT 1 ");
+
+                    $dt = [
+                        "tanggal" => $tanggal,
+                        "idbppoli" => $idbppoli,
+                        "idunitkerja" => $idunitkerja,
+                        "pasiennoantrian" => $res->servesno + 1,
+                    ];
+
+                    if ($data) {
+                        $dt["text"] = $data[0]->nama;
+                    }
+
+                    $addantriansuara = $this->addAntrianSuara(new Request($dt));
+                    
+                    //SET IS CALL ANTRIAN BARU NYA
+                    DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$res->servesno + 1 )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'iscall' => 1,
+                        "docall" => date('Y-m-d H:i:s')
+                    ]);
+
+                    $dthistory = array(
+                        "noid" => $res->noid,
+                        "tanggal" => $tanggal,
+                        "idbppoli" => $idbppoli,
+                        "idunitkerja" => $idunitkerja,
+                        "pasiennoantrian" => $res->servesno + 1,
+                    );
+                    $addhistory = $this->addhistory(2, new Request($dthistory));
+                }
+
+                $idreturn = 1;
             } else {
                 throw new Exception("Antrian selanjutnya tidak ditemukan");
             }
