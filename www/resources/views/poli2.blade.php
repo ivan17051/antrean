@@ -330,8 +330,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="row" style="padding: 0 30px 12px 30px;height: calc(100% - 410px);">
-                  <div class="box antrean-poli-container original" style="display: block;overflow: auto;height: 100%;">
+                <div class="row" style="padding: 0 30px 12px 30px;height: calc(100vh - 410px);">
+                  <div class="box antrean-poli-container original" style="display: block;overflow: auto;height: 90%;">
                     <div class="box-body p-0 ">
                       <table class="table table-bordered m-0">
                         <tbody>
@@ -613,8 +613,7 @@
       type: 'GET',
       data: {
         'poli[]': idbppoli,
-        limit: 10,
-        where: 'AND iscall=1 ',
+        where: 'AND iscall=0 ',
       },
       dataType: 'json',
       success: function (result) {

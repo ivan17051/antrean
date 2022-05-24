@@ -287,6 +287,17 @@ class Antrian extends Controller
                         ]);
                     }
 
+                    //SET IS CALL ANTRIAN BARU NYA
+                    DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$res->servesno + 1 )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'iscall' => 1,
+                        "docall" => date('Y-m-d H:i:s')
+                    ]);
+
                     $dthistory = array(
                         "noid" => $res->noid,
                         "tanggal" => $tanggal,
