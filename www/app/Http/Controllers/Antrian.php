@@ -160,9 +160,10 @@ class Antrian extends Controller
 
         if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
 		
-        $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, P.nama as poli
+        $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
+            INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal
 			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.idbppoli, A.pasiennoantrian {$limit} ");
             
         $data = array("listpasien" => $pasien);
@@ -369,51 +370,75 @@ class Antrian extends Controller
                 ->first();
 
             if ($antrian) {
-                $params=[
-                    $antrian->iddevice,
-                    $antrian->idtypepasien,
-                    $antrian->kodekartu,
-                    $antrian->pasienkode,
-                    $antrian->idunitkerja,
-                    $idbppoli_baru,
-                    $antrian->idunitkerjaasal,
-                    $idbppoli[0],
-                    $tanggal,
-                    $antrian->NO_KK,
-                    $antrian->RFID,
-                    $antrian->NIK,
-                    $antrian->NAMA_LGKP,
-                    $antrian->JENIS_KELAMIN,
-                    $antrian->TMPT_LHR,
-                    $antrian->TGL_LAHIR,
-                    $antrian->AGAMA,
-                    $antrian->STATUS_KWIN,
-                    $antrian->HUB_KELUARGA,
-                    $antrian->PENDIDIKAN,
-                    $antrian->PEKERJAAN,
-                    $antrian->GOL_GARAH,
-                    $antrian->BER_AKTA_LAHIR,
-                    $antrian->TGL_PJG_KTP,
-                    $antrian->NO_KEL,
-                    $antrian->NAMA_KEL,
-                    $antrian->NO_KEC,
-                    $antrian->NAMA_KEC,
-                    $antrian->NO_KAB,
-                    $antrian->NAMA_KAB,
-                    $antrian->NO_PROP,
-                    $antrian->NAMA_PROP,
-                    $antrian->ALAMAT,
-                    $antrian->NO_RT,
-                    $antrian->NO_RW,
-                    $antrian->GAKIN,
-                    $antrian->KATEGORI_GAKIN,
-                    $antrian->LUAR_SBY,
-                    $antrian->NO_TLP,
-                    $antrian->NIKSIMDUK,
-                    $antrian->statusnik,
-                ];
+                $hasAntrianLamaInPoliBaru = DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
+                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
+                    ->where('idbppoli',$idbppoli_baru)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->first();
+                
+                if (!$hasAntrianLamaInPoliBaru) {
+                    $params=[
+                        $antrian->iddevice,
+                        $antrian->idtypepasien,
+                        $antrian->kodekartu,
+                        $antrian->pasienkode,
+                        $antrian->idunitkerja,
+                        $idbppoli_baru,
+                        $antrian->idunitkerjaasal,
+                        $idbppoli[0],
+                        $tanggal,
+                        $antrian->NO_KK,
+                        $antrian->RFID,
+                        $antrian->NIK,
+                        $antrian->NAMA_LGKP,
+                        $antrian->JENIS_KELAMIN,
+                        $antrian->TMPT_LHR,
+                        $antrian->TGL_LAHIR,
+                        $antrian->AGAMA,
+                        $antrian->STATUS_KWIN,
+                        $antrian->HUB_KELUARGA,
+                        $antrian->PENDIDIKAN,
+                        $antrian->PEKERJAAN,
+                        $antrian->GOL_GARAH,
+                        $antrian->BER_AKTA_LAHIR,
+                        $antrian->TGL_PJG_KTP,
+                        $antrian->NO_KEL,
+                        $antrian->NAMA_KEL,
+                        $antrian->NO_KEC,
+                        $antrian->NAMA_KEC,
+                        $antrian->NO_KAB,
+                        $antrian->NAMA_KAB,
+                        $antrian->NO_PROP,
+                        $antrian->NAMA_PROP,
+                        $antrian->ALAMAT,
+                        $antrian->NO_RT,
+                        $antrian->NO_RW,
+                        $antrian->GAKIN,
+                        $antrian->KATEGORI_GAKIN,
+                        $antrian->LUAR_SBY,
+                        $antrian->NO_TLP,
+                        $antrian->NIKSIMDUK,
+                        $antrian->statusnik,
+                    ];
 
-                DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+                    DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+                }
+
+                // UPDATE FLAGS ANTRIAN BARU 
+                DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
+                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
+                    ->where('idbppoli',$idbppoli_baru)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'isconfirm' => 1,
+                        'doconfirm' => date('Y-m-d H:i:s'),
+                        'isdone' => 0,
+                        'isrecall' => 0,
+                    ]);
 
                 $idreturn = 1;
             } else {
@@ -456,52 +481,64 @@ class Antrian extends Controller
                 ->whereIn('idbppoli',$idbppoli)
                 ->whereDate('tanggaleta', '=', $tanggal)
                 ->first();
-            if ($antrian) {
-                $params=[
-                    $antrian->iddevice,
-                    $antrian->idtypepasien,
-                    $antrian->kodekartu,
-                    $antrian->pasienkode,
-                    $antrian->idunitkerja,
-                    $idbppoli_baru,
-                    $antrian->idunitkerjaasal,
-                    $idbppoli[0],
-                    $tanggal,
-                    $antrian->NO_KK,
-                    $antrian->RFID,
-                    $antrian->NIK,
-                    $antrian->NAMA_LGKP,
-                    $antrian->JENIS_KELAMIN,
-                    $antrian->TMPT_LHR,
-                    $antrian->TGL_LAHIR,
-                    $antrian->AGAMA,
-                    $antrian->STATUS_KWIN,
-                    $antrian->HUB_KELUARGA,
-                    $antrian->PENDIDIKAN,
-                    $antrian->PEKERJAAN,
-                    $antrian->GOL_GARAH,
-                    $antrian->BER_AKTA_LAHIR,
-                    $antrian->TGL_PJG_KTP,
-                    $antrian->NO_KEL,
-                    $antrian->NAMA_KEL,
-                    $antrian->NO_KEC,
-                    $antrian->NAMA_KEC,
-                    $antrian->NO_KAB,
-                    $antrian->NAMA_KAB,
-                    $antrian->NO_PROP,
-                    $antrian->NAMA_PROP,
-                    $antrian->ALAMAT,
-                    $antrian->NO_RT,
-                    $antrian->NO_RW,
-                    $antrian->GAKIN,
-                    $antrian->KATEGORI_GAKIN,
-                    $antrian->LUAR_SBY,
-                    $antrian->NO_TLP,
-                    $antrian->NIKSIMDUK,
-                    $antrian->statusnik,
-                ];
 
-                DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+            if ($antrian) {
+                $hasAntrianLamaInPoliBaru = DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
+                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
+                    ->where('idbppoli',$idbppoli_baru)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->first();
+
+                //AVOID TO CREATE NEW ANTRIAN IF FIND ANY
+                if(!$hasAntrianLamaInPoliBaru){
+                    $params=[
+                        $antrian->iddevice,
+                        $antrian->idtypepasien,
+                        $antrian->kodekartu,
+                        $antrian->pasienkode,
+                        $antrian->idunitkerja,
+                        $idbppoli_baru,
+                        $antrian->idunitkerjaasal,
+                        $idbppoli[0],
+                        $tanggal,
+                        $antrian->NO_KK,
+                        $antrian->RFID,
+                        $antrian->NIK,
+                        $antrian->NAMA_LGKP,
+                        $antrian->JENIS_KELAMIN,
+                        $antrian->TMPT_LHR,
+                        $antrian->TGL_LAHIR,
+                        $antrian->AGAMA,
+                        $antrian->STATUS_KWIN,
+                        $antrian->HUB_KELUARGA,
+                        $antrian->PENDIDIKAN,
+                        $antrian->PEKERJAAN,
+                        $antrian->GOL_GARAH,
+                        $antrian->BER_AKTA_LAHIR,
+                        $antrian->TGL_PJG_KTP,
+                        $antrian->NO_KEL,
+                        $antrian->NAMA_KEL,
+                        $antrian->NO_KEC,
+                        $antrian->NAMA_KEC,
+                        $antrian->NO_KAB,
+                        $antrian->NAMA_KAB,
+                        $antrian->NO_PROP,
+                        $antrian->NAMA_PROP,
+                        $antrian->ALAMAT,
+                        $antrian->NO_RT,
+                        $antrian->NO_RW,
+                        $antrian->GAKIN,
+                        $antrian->KATEGORI_GAKIN,
+                        $antrian->LUAR_SBY,
+                        $antrian->NO_TLP,
+                        $antrian->NIKSIMDUK,
+                        $antrian->statusnik,
+                    ];
+    
+                    DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+                }
 
                 // UPDATE ANTRIAN RUJUKAN/KONSUL
                 DB::table('mantrian')
@@ -514,7 +551,9 @@ class Antrian extends Controller
                         'isconsul' => 1,
                         'doconsul' => date('Y-m-d H:i:s'),
                         'isconfirm' => 1,
-                        'doconfirm' => date('Y-m-d H:i:s')
+                        'doconfirm' => date('Y-m-d H:i:s'),
+                        'isdone' => 0,
+                        'isrecall' => 0,
                     ]);
 
                 $idreturn = 1;
@@ -531,53 +570,59 @@ class Antrian extends Controller
 
     public function layanikembali(Request $request)
     {
-        $pasiennoantrian = $request->input('pasiennoantrian');
-        $idbppoli = $request->input('idbppoli');
-		return 1;
-        // DB::enableQueryLog();
-        // DB::beginTransaction();
-        // $idreturn = '';
-        // try {
-        //     $tanggal     = date('Y-m-d');
-        //     $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
-        //     $noantrian   = $request->input('pasiennoantrian');
-        //     $idbppoli    = $request->input('idbppoli');
-
-        //     $res = DB::table('munitkerjapolidaily')
-        //         ->where('idunitkerja', $idunitkerja)
-        //         ->whereIn('idbppoli', $idbppoli)
-        //         ->where('servesdate', $tanggal)
-        //         ->take(1)->first();
+        $noantrian = $request->input('pasiennoantrian');
+        $idbppoli = $request->input('poli');
+		
+        DB::enableQueryLog();
+        DB::beginTransaction();
+        $idreturn = '';
+        try {
+            $tanggal     = date('Y-m-d');
+            $idunitkerja = Auth::user()->idunitkerja;
             
-        //     $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
-        //         ->where('idunitkerja', $idunitkerja)            
-        //         ->where('pasiennoantrian',$noantrian )
-        //         ->whereIn('idbppoli',$idbppoli)
-        //         ->whereDate('tanggaleta', '=', $tanggal)
-        //         ->first();
+            $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('pasiennoantrian',$noantrian)
+                ->whereIn('idbppoli',$idbppoli)
+                ->whereDate('tanggaleta', '=', $tanggal)
+                ->first();
 
-        //     if ($res AND $antrian) {
-        //         $dt = [
-        //             "tanggal" => $tanggal,
-        //             "idbppoli" => $idbppoli,
-        //             "idunitkerja" => $idunitkerja,
-        //             "pasiennoantrian" => $res->servesno + 1,
-        //             "text" => $antrian->NAMA_LGKP,
-        //         ];
+            if ($antrian) {
+                $dt = [
+                    "tanggal" => $tanggal,
+                    "idbppoli" => $idbppoli,
+                    "idunitkerja" => $idunitkerja,
+                    "pasiennoantrian" => $noantrian,
+                    "text" => $antrian->NAMA_LGKP,
+                ];
 
-        //         $addantriansuara = $this->addAntrianSuara(new Request($dt));
+                $addantriansuara = $this->addAntrianSuara(new Request($dt));
 
-        //         $idreturn = 1;
-        //     } else {
-        //         throw new Exception("Antrian selanjutnya tidak ditemukan");
-        //     }
-        // } catch (Exception $e) {
-        //     DB::rollback();
-        //     $idreturn = $e->getMessage();
-        // }
-        // DB::commit();
+                // UPDATE STATUS RECALL ANTRIAN
+                DB::table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$noantrian )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'isrecall' => 1,
+                        'dorecall' => date('Y-m-d H:i:s'),
+                        'isdone' => 0,
+                        'dodone' => date('Y-m-d H:i:s'),
+                    ]);
 
-        // return $idreturn;
+                $idreturn = 1;
+            } else {
+                throw new Exception("Antrian selanjutnya tidak ditemukan");
+            }
+        } catch (Exception $e) {
+            DB::rollback();
+            $idreturn = $e->getMessage();
+            return response()->json(['message'=>$idreturn], 401);
+        }
+        DB::commit();
+
+        return $idreturn;
     }
 
     public function addhistory($tipe, Request $request)

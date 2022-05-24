@@ -61,6 +61,53 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="modal-rujukan" style="display: none;">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="" method="post">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Rujuk Internal Pasien</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <select name="pasiennoantrian" class="form-control" style="width: 100%;" required onchange="setPoliRujukanBalik(event)">
+            <option></option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="">Poli Rujuk Balik</label>
+          <select name="polirujukan" class="form-control" style="width: 100%;" required readonly>
+            <option></option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-default batal" data-dismiss="modal">BATAL</button>
+          <button type="submit" class="btn btn-success">RUJUK</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal modal-dialog-centered fade" id="modal-next-or-skip" style="display: none;">
+  <div class="modal-dialog" style="width:fit-content;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Pilih Aksi</h4>
+      </div>
+      <div class="modal-body text-center">
+          <button type="button" class="btn btn-warning btn-lg" onclick="nextno(2);"><i
+            class="fa  fa-arrow-circle-o-right"></i> Skip</button>
+          <button type="button" class="btn btn-primary btn-lg" onclick="nextno();"><i class="fa fa-arrow-right"></i>
+            Berikutnya</button>
+      </div>
+    </div>
+  </div>
+</div>
 <style type="text/css">
   .box-info-number {
     border-top-left-radius: 2px;
@@ -172,10 +219,14 @@
                 <div class="box-info-content">
 
                   <div class="btn-group-vertical btn-group-lg" role="group">
-                    <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
-                      Panggil</button>
+                    <button type="button" class="btn btn-primary" onclick="nextno();"><i class="fa fa-arrow-right"></i>
+                        Berikutnya</button>
                     <!-- <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
                         class="fa  fa-arrow-circle-o-right"></i> Skip</button> -->
+                    <button type="button" class="btn btn-info" onclick="beforePanggilBerikutnya(true);"><i class="fa fa-arrow-right"></i>
+                      Rujuk Balik</button>
+                    <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
+                      Aksi Lain</button>
                     <button type="button" class="btn btn-secondary" onclick="recall();"><i class="fa fa-volume-up"></i>
                       Ulang</button>
                   </div>
@@ -397,6 +448,7 @@
       return x;
     })
     $("#listpoli").html('').append(box);
+
     // showmodalsetup();
   }
 
@@ -451,6 +503,8 @@
   }
 
   function nextno(tipe, pasiennoantrian=null) {
+    $('#modal-next-or-skip').modal('hide')
+
     if (tipe == 1) distombol(2500);
     else distombol(1700);
 
@@ -474,6 +528,7 @@
           // getDataPoli();
           // setTimeout(function(){addantriansuara(noantrian, idbppoli)}, timeout+=500);
           toast("info", "Call");
+          toast("success", "Berhasil");
         } else {
           toast("info", respon);
         }
@@ -582,8 +637,7 @@
       type: 'GET',
       data: {
         'poli[]': idbppoli,
-        limit: 10,
-        where: 'AND iscall=0 ',
+        where: 'AND iscall=0 AND isconsul=0 ',
       },
       dataType: 'json',
       success: function (result) {
@@ -722,9 +776,13 @@
     }); 
   }
 
-  async function beforePanggilBerikutnya(){
+  async function beforePanggilBerikutnya(isRujukan=false){
     $('#loading').show();
-    let $modal = $('#modal-konfirmasi-selesai')
+    let $modal;
+
+    if(isRujukan) $modal = $('#modal-rujukan');
+    else $modal = $('#modal-konfirmasi-selesai');
+
     try {
       const res = await getPasienSedangDiperiksa();
 
@@ -736,34 +794,58 @@
       });
       
       var data = res.data;
-
+      
       if(data.listpasien.length == 0){
-        nextno(1)
+        // nextno(1)
+        toast("info","Tidak ada pasien di ruangan.")
+        $('#loading').hide();
         return
       }
 
       for (const d of data.listpasien) {
-        $pasienSelect2.append($("<option />").val(d.pasiennoantrian).text(d.NAMA_LGKP));
+        let $option = $("<option />")
+        $option.val(d.pasiennoantrian).text(d.NAMA_LGKP)
+        $option[0].dataset.idbppoliasal = d.idbppoliasal
+        $option[0].dataset.poliasal = d.poliasal
+        $pasienSelect2.append($option);
       }
       $pasienSelect2.val(null).trigger("change");
       
       $modal.modal('show')
 
-      // ON SUBMIT 
-      $modal.find('form').submit(function(e) {
-        event.preventDefault();
-        let param = getFormData($(this))
-        console.log(param)
+      if(isRujukan){
+        // ON SUBMIT UNTUK RUJUKAN
+        $modal.find('form').submit(function(e) {
+          event.preventDefault();
+          let param = getFormData($(this))
 
-        if(param.tipe == 'SELESAI'){
-          nextno(1, param.pasiennoantrian)
-        }else{
-          goToFarmasiLab($(this).serialize(), param.pasiennoantrian);
-        }
+          if(param.polirujukan == idbppoli){
+            alert("Poli tidak boleh sama.");
+            return;
+          }
 
-        $modal.modal('hide')
-        $(this).unbind('submit');
-      });
+          goToPoliRujukan($(this).serialize(), param.pasiennoantrian);
+
+          $modal.modal('hide')
+          $(this).unbind('submit');
+        });
+      }else{
+        // ON SUBMIT 
+        $modal.find('form').submit(function(e) {
+          event.preventDefault();
+          let param = getFormData($(this))
+
+          if(param.tipe == 'SELESAI'){
+            nextno(1, param.pasiennoantrian)
+          }else{
+            goToFarmasiLab($(this).serialize(), param.pasiennoantrian);
+          }
+
+          $modal.modal('hide')
+          $(this).unbind('submit');
+        });
+      }
+      
     } catch(errors) {
       toast("error", errors);
     }
@@ -782,9 +864,7 @@
       },
       dataType: 'json',
       success: function (result) {
-        console.log(result);
         toast("success", 'Berhasil');
-        nextno(1, pasiennoantrian)
       },
       error: function(responsedata){
           var errors = responsedata.statusText;
@@ -794,6 +874,45 @@
         $('#loading').hide();
       }
     }); 
+  }
+
+  function goToPoliRujukan(param, pasiennoantrian){
+    $('#loading').show();
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url: '{{route("gotopolirujukan")}}?'+param,
+      type: 'POST',
+      data: {
+        'poli[]': idbppoli,
+      },
+      dataType: 'json',
+      success: function (result) {
+        toast("success", 'Berhasil');
+      },
+      error: function(responsedata){
+          var errors = responsedata.statusText;
+          toast("error", errors);
+      },
+      complete: function(){
+        $('#loading').hide();
+      }
+    }); 
+  }
+
+  function setPoliRujukanBalik(event){
+    let $poliSelect = $('[name=polirujukan]')
+    let $selected = $(event.target).find(":selected")[0]
+
+    $poliSelect.empty()
+
+    if(!$selected) return;
+
+    let idpoli = $selected.dataset.idbppoliasal
+    let namapoli = $selected.dataset.poliasal
+
+    $poliSelect.append($("<option />").val(idpoli).text(namapoli));
+    $poliSelect.val(idpoli).trigger("change");
+    $poliSelect.attr('readonly',true)
   }
 
   $(function () {

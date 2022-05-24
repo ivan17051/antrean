@@ -90,6 +90,23 @@
     </div>
   </div>
 </div>
+<div class="modal modal-dialog-centered fade" id="modal-next-or-skip" style="display: none;">
+  <div class="modal-dialog" style="width:fit-content;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span></button>
+        <h4 class="modal-title">Pilih Aksi</h4>
+      </div>
+      <div class="modal-body text-center">
+          <button type="button" class="btn btn-warning btn-lg" onclick="nextno(2);"><i
+            class="fa  fa-arrow-circle-o-right"></i> Skip</button>
+          <button type="button" class="btn btn-primary btn-lg" onclick="nextno();"><i class="fa fa-arrow-right"></i>
+            Berikutnya</button>
+      </div>
+    </div>
+  </div>
+</div>
 <style type="text/css">
   .box-info-number {
     border-top-left-radius: 2px;
@@ -201,14 +218,12 @@
                 <div class="box-info-content">
 
                   <div class="btn-group-vertical btn-group-lg" role="group">
-                    <button type="button" class="btn btn-primary" onclick="nextno();"><i class="fa fa-arrow-right"></i>
-                      Berikutnya</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-next-or-skip" ><i class="fa fa-arrow-right"></i>
+                      Aksi</button>
                     <button type="button" class="btn btn-info" onclick="beforePanggilBerikutnya(true);"><i class="fa fa-arrow-right"></i>
                       Rujuk Internal</button>
                     <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
                       Aksi Lain</button>
-                    <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
-                        class="fa  fa-arrow-circle-o-right"></i> Skip</button>
                     <button type="button" class="btn btn-secondary" onclick="recall();"><i class="fa fa-volume-up"></i>
                       Ulang</button>
                   </div>
@@ -484,6 +499,8 @@
   }
 
   function nextno(tipe, pasiennoantrian=null) {
+    $('#modal-next-or-skip').modal('hide')
+
     if (tipe == 1) distombol(2500);
     else distombol(1700);
 
@@ -616,7 +633,7 @@
       type: 'GET',
       data: {
         'poli[]': idbppoli,
-        where: 'AND iscall=0 ',
+        where: 'AND iscall=0 AND isconsul=0 ',
       },
       dataType: 'json',
       success: function (result) {
@@ -672,6 +689,7 @@
   }
 
   function getListPasienKonsul() {
+    console.log('konsul called')
     return $.ajax({
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -725,6 +743,8 @@
           dataType: 'json',
           success: function (result) {
               toast("success", 'Memanggil '+nama);
+              getListPasienKonsul();
+              getListPasienSkip()
           },
           error: function(responsedata){
               var errors = responsedata.statusText;
@@ -773,7 +793,9 @@
       var data = res.data;
       
       if(data.listpasien.length == 0){
-        nextno(1)
+        // nextno(1)
+        toast("info","Tidak ada pasien di ruangan.")
+        $('#loading').hide();
         return
       }
 
