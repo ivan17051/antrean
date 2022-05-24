@@ -43,7 +43,7 @@ class Dokter extends Controller {
             'jamawal',
             'jamakhir',
             'isavailable',
-            'isdokter',
+            'isdokter'
         );
         
         $input = array_map('trim', $input);
