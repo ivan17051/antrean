@@ -83,7 +83,12 @@
 @section('jsx')
 <script>
 var streamnomor;
-var listpasienNeedUpdate = true;
+var antreanPoliState={
+    "container":null,
+    "elemheight": null,
+    "$bottomElem":null
+};
+var intervalInstance;
 
 $(window).on('load', function(){
     $(".loader").fadeOut("slow");
@@ -204,6 +209,10 @@ async function setpoli(id, nama) {
 
     getDokter();
     getNomor();
+
+    loopRequestPasien();
+
+    setInterval(loopRequestPasien, 5000);
 
     // setTimeout(getDokter, 2000);
     // setTimeout(cekPanggilan, 2000, listpoli);
@@ -499,24 +508,22 @@ function getNomor(){
             }
         }
 
-        if(listpasienNeedUpdate){
-            await getListPasien();
-
-            setTimeout(function(){
-                if(checkScrollCapability()){
-                    intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 2);
-                }
-            }, 1000)
-
-            listpasienNeedUpdate = false;
-        }
     }
 }
 
+async function loopRequestPasien(){
 
-$(async function () {
+    if(intervalInstance) clearInterval(intervalInstance); 
+
+    await getListPasien();
     antreanPoliState.container=$('.antrean-poli-container');
-});
+
+    setTimeout(function(){
+        if(checkScrollCapability()){
+            intervalInstance = setInterval(scrollLoop, 50, antreanPoliState.container[0], 2);
+        }
+    }, 1000)
+}
 
 </script>
 @endsection

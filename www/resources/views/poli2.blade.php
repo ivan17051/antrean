@@ -201,10 +201,12 @@
                 <div class="box-info-content">
 
                   <div class="btn-group-vertical btn-group-lg" role="group">
-                    <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
-                      Panggil</button>
+                    <button type="button" class="btn btn-primary" onclick="nextno();"><i class="fa fa-arrow-right"></i>
+                      Berikutnya</button>
                     <button type="button" class="btn btn-info" onclick="beforePanggilBerikutnya(true);"><i class="fa fa-arrow-right"></i>
                       Rujuk Internal</button>
+                    <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
+                      Aksi Lain</button>
                     <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
                         class="fa  fa-arrow-circle-o-right"></i> Skip</button>
                     <button type="button" class="btn btn-secondary" onclick="recall();"><i class="fa fa-volume-up"></i>
@@ -505,6 +507,7 @@
           // getDataPoli();
           // setTimeout(function(){addantriansuara(noantrian, idbppoli)}, timeout+=500);
           toast("info", "Call");
+          toast("success", "Berhasil");
         } else {
           toast("info", respon);
         }
@@ -833,7 +836,6 @@
       dataType: 'json',
       success: function (result) {
         toast("success", 'Berhasil');
-        nextno(1, pasiennoantrian)
       },
       error: function(responsedata){
           var errors = responsedata.statusText;
@@ -857,7 +859,6 @@
       dataType: 'json',
       success: function (result) {
         toast("success", 'Berhasil');
-        nextno(1, pasiennoantrian)
       },
       error: function(responsedata){
           var errors = responsedata.statusText;
