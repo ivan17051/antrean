@@ -54,11 +54,19 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="checkbox">
                         <label>
                         <input type="checkbox" name="isavailable" id="isavailable" checked> <b>Ada</b>
                         </label>
                     </div>
+                
+                    <div class="checkbox">
+                        <label>
+                        <input type="checkbox" name="isdokter" id="isdokter" checked> <b>Dokter</b> <i>*Harap dicentang untuk menampilkan pada TV Poli</i>
+                        </label>
+                    </div>
+                        
                     </div>
 
                     <div class="box-footer">
@@ -144,6 +152,7 @@
         $('#jamawal').val('08:00')
         $('#jamakhir').val('16:00')
         $('#isavailable').prop('checked', true)
+        $('#isdokter').prop('checked', true)
         vc.setActive('#form')
     }
 
@@ -158,6 +167,7 @@
         $('#jamawal').val(sData['jamawal'])
         $('#jamakhir').val(sData['jamakhir'])
         $('#isavailable').prop('checked', sData['isavailable'])
+        $('#isdokter').prop('checked', sData['isdokter'])
         vc.setActive('#form')
     }
 
@@ -179,6 +189,12 @@
                 { "mData": "jamawal", "sTitle": "Jam Awal" },
                 { "mData": "jamakhir", "sTitle": "Jam Akhir" },
                 { "mData": "isavailable", "sTitle": "Ada" , 
+                    "mRender": function ( data, type, full ) {
+                        return data ? '<a href="javascript:void(0)" class="text-success"><i class="fa fa-check"></i></a>' : 
+                                        '<a href="javascript:void(0)" class="text-danger"><i class="fa fa-times"></i></a>';
+                    }
+                },
+                { "mData": "isdokter", "sTitle": "Dokter" , 
                     "mRender": function ( data, type, full ) {
                         return data ? '<a href="javascript:void(0)" class="text-success"><i class="fa fa-check"></i></a>' : 
                                         '<a href="javascript:void(0)" class="text-danger"><i class="fa fa-times"></i></a>';

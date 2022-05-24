@@ -42,14 +42,17 @@ class Dokter extends Controller {
 			'nik',
             'jamawal',
             'jamakhir',
-            'isavailable'
+            'isavailable',
+            'isdokter',
         );
+        
         $input = array_map('trim', $input);
         
         $user = Auth::user();
         $idunitkerja = $user->idunitkerja;
         
         $input['isavailable'] = empty($input['isavailable']) ? 0 : 1;
+        $input['isdokter'] = empty($input['isdokter']) ? 0 : 1;
     
         try {
             if(isset($noid)){
