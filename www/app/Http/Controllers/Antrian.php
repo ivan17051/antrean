@@ -136,7 +136,7 @@ class Antrian extends Controller
         	FROM munitkerjapoli A
             LEFT JOIN mdokter B ON A.idunitkerja = B.idunitkerja
             LEFT JOIN mbppoli C ON C.noid = A.idbppoli
-			WHERE A.idbppoli=B.idbppoli AND B.isdokter = 1 AND B.isavailable = 1 AND A.idunitkerja = $idunitkerja $wherepoli ");
+			WHERE A.idbppoli=B.idbppoli AND B.isdokter = 1 AND A.idunitkerja = $idunitkerja $wherepoli ");
 
         $data = array("dokter" => $dokter);
         
