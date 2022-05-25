@@ -180,7 +180,7 @@ function createlistmodal(data){
     var i = 0;
     console.log(data);
 
-    data.push({nama:'LAB',id:39})
+    data.push({nama:'LABORATORIUM',id:39})
     data.push({nama:'FARMASI',id:31})
 
     var box = data.map(function (poli) {
@@ -229,7 +229,7 @@ function kembali(){
 function getlistpoli(idbppoli, nama){
     $('#listpoliutama').empty();
 
-    if(nama !== 'LAB' && nama !== 'FARMASI') nama='POLI '+nama;
+    if(nama !== 'LABORATORIUM' && nama !== 'FARMASI') nama='POLI '+nama;
     
     $('#listpoliutama').append('<div class="row"><div class="col-md-4">'+
         '<div class="box box-danger bg-red text-center poli'+idbppoli+'" style="font-size:200px;" >-<p style="font-size:50px;padding-bottom:50px;">-</p></div>'+
