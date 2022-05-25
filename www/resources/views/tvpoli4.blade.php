@@ -263,7 +263,7 @@ function getDokter(idbppoli, $poli){
           var datanow = result.data.dokter;
           let listdokterhtml = "";
           if (!datanow.length){
-              listdokterhtml="<tr><td>Dokter: &nbsp</td><td><b>-</b></td></tr>";
+              listdokterhtml="<tr><td></td><td><b>-</b></td></tr>";
           }
           for (i = 0; i < datanow.length; i++) {
               if(i==0){

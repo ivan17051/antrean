@@ -280,7 +280,7 @@ function getDokter(idbppoli, $poli){
           var datanow = result.data.dokter;
           let listdokterhtml = "";
           if (!datanow.length){
-              listdokterhtml="<tr><td>Dokter: &nbsp</td><td><b>-</b></td></tr>";
+              listdokterhtml="<tr><td></td><td><b>-</b></td></tr>";
           }
           for (i = 0; i < datanow.length; i++) {
               if(i==0){
@@ -393,7 +393,7 @@ function getNomor(idbppoli, $poli, index){
           if(datanow[i]['noantrian'] == 0) nama='-'
           else nama = searchPasien(datanow[i]['noantrian']).NAMA_LGKP
           noantrian = datanow[i]['noantrian']
-          $poli.find('.now').html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+          $poli.find('.now').html(noantrian+'<p style="font-size:40px;padding-bottom:30px;">'+nama+'</p>');
         }
         
         for (i = 1; i < 2; i++) {       //karena menampilkan dua antrian berikutnya

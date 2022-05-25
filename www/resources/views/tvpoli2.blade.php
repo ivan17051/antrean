@@ -354,11 +354,11 @@ function getDokter(){
                 var datanow = result.data.dokter;
                 let listdokterhtml = "";
                 if (!datanow.length){
-                    listdokterhtml="<tr><td>Dokter: &nbsp</td><td><b>-</b></td></tr>";
+                    listdokterhtml="<tr><td></td><td><b>-</b></td></tr>";
                 }
                 for (i = 0; i < datanow.length; i++) {
                     if(i==0){
-                        listdokterhtml+="<tr><td>Dokter: &nbsp</td><td><b>"+datanow[i]['nakes']+"</b></td></tr>";
+                        listdokterhtml+="<tr><td></td><td><b>"+datanow[i]['nakes']+"</b></td></tr>";
                     }else{
                         listdokterhtml+="<tr><td></td><td class=\"pt-3\"><b>"+datanow[i]['nakes']+"</b></td></tr>";
                     }
