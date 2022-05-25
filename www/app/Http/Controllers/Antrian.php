@@ -132,12 +132,11 @@ class Antrian extends Controller
         $wherepoli = "";
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
-		
         $dokter = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, B.*, C.nama AS namapoli
         	FROM munitkerjapoli A
             LEFT JOIN mdokter B ON A.idunitkerja = B.idunitkerja
             LEFT JOIN mbppoli C ON C.noid = A.idbppoli
-			WHERE A.idbppoli=B.idbppoli AND B.isdokter = 1 AND B.isactive = 1 AND A.isdirectqueue = 1 AND A.idunitkerja = $idunitkerja $wherepoli ");
+			WHERE A.idbppoli=B.idbppoli AND B.isdokter = 1 AND B.isavailable = 1 AND A.idunitkerja = $idunitkerja $wherepoli ");
 
         $data = array("dokter" => $dokter);
         
@@ -164,7 +163,7 @@ class Antrian extends Controller
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
             INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal
-			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 ORDER BY A.idbppoli, A.pasiennoantrian {$limit} ");
+			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 GROUP BY A.pasiennoantrian ORDER BY A.idbppoli, A.pasiennoantrian {$limit}");
             
         $data = array("listpasien" => $pasien);
         
