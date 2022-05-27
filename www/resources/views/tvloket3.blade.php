@@ -228,7 +228,7 @@ function getpoliaktif() {
             var noPsikologi=true;
             let i = 0
             
-            for (; i < 5; i++) {
+            for (; i < 6; i++) {
                 if(data[i]){
                     listpoli.push(data[i]);
                     ALLantreanPoliState.push({
