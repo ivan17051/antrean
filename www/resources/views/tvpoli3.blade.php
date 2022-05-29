@@ -60,7 +60,7 @@
       <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
           <div class="box-body p-0 " >
               <table class="table table-bordered m-0 font-large ">
-                  <tbody>
+                  <tbody style="font-size: 24px;">
                   </tbody>
               </table>
           </div>
