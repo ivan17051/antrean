@@ -469,6 +469,10 @@ function getNomor(){
     if(streamnomor) streamnomor.close();
     streamnomor = new EventSource('{{route("getnomors")}}?poli[]='+listpoli);
 
+    streamnomor.addEventListener('lost',function(e){
+      toast("error", "Connection Lost, Retry in 3 Seconds.");
+    }); 
+
     streamnomor.onmessage = async function(event){
         // if(!$elements) return;
     

@@ -30,46 +30,54 @@ class AntrianStream extends Controller
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
 
-        $now = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*
-            FROM munitkerjapoli A
-            LEFT JOIN ( 
-                SELECT A.idbppoli, COALESCE(A.servesno,0) AS noantrian, A.servesmax FROM munitkerjapolidaily A
-                    WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
-            ) X ON A.idbppoli = X.idbppoli
-            WHERE isactive = 1 
-                AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
-                AND idunitkerja = $idunitkerja $wherepoli ");
+        try {
+            $now = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*
+                FROM munitkerjapoli A
+                LEFT JOIN ( 
+                    SELECT A.idbppoli, COALESCE(A.servesno,0) AS noantrian, A.servesmax FROM munitkerjapolidaily A
+                        WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
+                ) X ON A.idbppoli = X.idbppoli
+                WHERE isactive = 1 
+                    AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
+                    AND idunitkerja = $idunitkerja $wherepoli ");
 
-        $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
-            CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
-            ROUND((A.avgtindakan+30)/60) AS waktutindakan, ROUND((A.avgnontindakan+30)/60) AS waktunontindakan
-            FROM munitkerjapoli A
-            LEFT JOIN ( 
-                SELECT A.idbppoli, A.servesno + 1 AS noantrian, A.servesmax, A.servestime FROM munitkerjapolidaily A
-                    WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
-            ) X ON A.idbppoli = X.idbppoli
-            WHERE isactive = 1 
-                AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
-                AND idunitkerja = $idunitkerja $wherepoli ");
-    
-        if(isset($now[0]->noantrian)){
-            $pasien= DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
-                ->where('idunitkerja', $idunitkerja)
-                ->whereDate('tanggaleta', '=',$tanggal)
-                ->where('pasiennoantrian','>=', $now[0]->noantrian)
-                ->whereIn('idbppoli',$filterpoli)
-                ->orderBy('pasiennoantrian','ASC')
-                ->take(4)->get();
-        }else{
-            $pasien = null;
-        }
+            $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
+                CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
+                ROUND((A.avgtindakan+30)/60) AS waktutindakan, ROUND((A.avgnontindakan+30)/60) AS waktunontindakan
+                FROM munitkerjapoli A
+                LEFT JOIN ( 
+                    SELECT A.idbppoli, A.servesno + 1 AS noantrian, A.servesmax, A.servestime FROM munitkerjapolidaily A
+                        WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
+                ) X ON A.idbppoli = X.idbppoli
+                WHERE isactive = 1 
+                    AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
+                    AND idunitkerja = $idunitkerja $wherepoli ");
         
-        echo "retry: 3000\n";
-        $data = json_encode(["now" => $now, "next" => $next, "pasien" => $pasien ]);
+            if(isset($now[0]->noantrian)){
+                $pasien= DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->whereDate('tanggaleta', '=',$tanggal)
+                    ->where('pasiennoantrian','>=', $now[0]->noantrian)
+                    ->whereIn('idbppoli',$filterpoli)
+                    ->orderBy('pasiennoantrian','ASC')
+                    ->take(4)->get();
+            }else{
+                $pasien = null;
+            }
 
-        echo "data: " . $data. "\n\n";
-
-        flush();
+            echo "retry: 3000\n";
+            $data = json_encode(["now" => $now, "next" => $next, "pasien" => $pasien ]);
+    
+            echo "data: " . $data. "\n\n";
+    
+            flush();
+        }  catch (Exception $e) {
+            echo "retry: 3000\n";
+            echo "event: lost\n";
+    
+            flush();
+        }
+       
     }
 
     public function getPanggilanAntrian(Request $request)

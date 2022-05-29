@@ -359,6 +359,10 @@ function getNomor(idbppoli, $poli, index){
 
     let streamnomor = ALLstreamnomor[index];
 
+    streamnomor.addEventListener('lost',function(e){
+      toast("error", "Connection Lost, Retry in 3 Seconds.");
+    }); 
+
     streamnomor.onmessage = async function(event){
         var data = JSON.parse(event.data)
         var datanow = data.now
