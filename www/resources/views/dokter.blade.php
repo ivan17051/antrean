@@ -38,6 +38,8 @@
                     		@foreach($d['listpoli'] as $row)
                     		<option value="{{$row->idbppoli}}">{{$row->policaption}}</option>
                     		@endforeach
+                            <option value="31">FARMASI</option>
+                            <option value="39">LABORATORIUM</option>
                         </select>
                     </div>
                     <div class="row">
@@ -145,7 +147,7 @@
     }
 
     function openTambah(){
-        $('#form form').attr('action','{{route("dokter.storeupdate")}}')
+        $('#form form').attr('action','{{route("dokter.storeupdate", ["idunitkerja"=>app("request")->get("idunitkerja")])}}')
 		$('#nik').val('')
         $('#nakes').val('')
         $('#idbppoli').val('')
@@ -160,7 +162,7 @@
         var tr = $(self).closest('tr');
         var sData = oTable.fnGetData( tr);
         
-        $('#form form').attr('action','{{route("dokter.storeupdate")}}/'+sData['noid'])
+        $('#form form').attr('action','{{route("dokter.storeupdate", ["idunitkerja"=>app("request")->get("idunitkerja")])}}/'+sData['noid'])
 		$('#nik').val(sData['nik'])
         $('#nakes').val(sData['nakes'])
         $('#idbppoli').val(sData['idbppoli'])
@@ -179,7 +181,7 @@
         }
 
         oTable = $('#tbdokter').dataTable({
-            "sAjaxSource": "{{route('dokter.show')}}", 
+            "sAjaxSource": '{{route("dokter.show", ["idunitkerja"=>app("request")->get("idunitkerja")])}}', 
             "iDisplayLength": 50,
             "bProcessing": true,
             "aoColumns": [

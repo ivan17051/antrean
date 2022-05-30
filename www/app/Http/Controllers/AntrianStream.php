@@ -21,7 +21,8 @@ class AntrianStream extends Controller
         header("Cache-Control: no-cache");
         header("Content-Type: text/event-stream");
         header("Connection: keep-alive");
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $tanggal = date('Y-m-d');
         // COBA DEV
         // $tanggal = '2021-01-16';
@@ -79,7 +80,8 @@ class AntrianStream extends Controller
         header("Content-Type: text/event-stream");
         header("Connection: keep-alive");
         $tanggal = date('Y-m-d');
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $filterpoli = $request->input('poli');
 
         $data = DB::connection('mysql')->table('panggilanantrian')

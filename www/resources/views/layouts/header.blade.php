@@ -19,7 +19,7 @@
         <li class="dropdown user user-menu">
           <a href="#">
             <!-- <img src="theme/dist/img/user2-160x160.jpg" class="user-image" alt="User Image"> -->
-            <span class="hidden-xs">{{Auth::user()->nama}}</span>
+            <span class="hidden-xs" id="namaunitkerja"></span>
           </a>
         </li>
         <!-- Control Sidebar Toggle Button -->

@@ -37,18 +37,10 @@
       <b>Admin</b>Antrean
     </div>
     <!-- <p class="login-box-msg">Sign in to start your session</p> -->
-    @if (count($errors) > 0)
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-    <form action="{{route('login')}}" autocomplete="off" method="post">
+    
+    <!-- <form action="" autocomplete="off" method="get"> -->
       <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
-      {{ csrf_field() }}
+      
       <div class="form-group">
         <select name="idunitkerja" id="idunitkerja" class="form-control" style="width: 100%;">
           <option></option>
@@ -64,29 +56,20 @@
       </div> -->
       <div class="form-group has-feedback">
         <div class="input-group">
-          <input type="password" class="form-control" name="password" placeholder="Password">
+          <input type="password" class="form-control" id="password" placeholder="Password">
           <div class="input-group-addon">
             <i class="fa fa-lock"></i>
           </div>
         </div>
       </div>
-      @if(Session::has('error'))
+      
       <div class="row">
         <div class="col-xs-12">
-          <div class="alert alert-danger">
-            <button class="close" data-close="alert"></button>
-            <span>{{Session::get('error')}}</span>
-          </div>
-        </div>
-      </div>
-      @endif
-      <div class="row">
-        <div class="col-xs-12">
-          <button type="submit" class="btn btn-danger btn-block btn-flat">Login</button>
+          <button type="submit" id="btnlogin" onclick="login()" class="btn btn-danger btn-block btn-flat">Login</button>
         </div>
         <!-- /.col -->
       </div>
-    </form>
+    <!-- </form> -->
 
   </div>
   <!-- /.login-box-body -->
@@ -118,6 +101,14 @@
     });
     $('#idunitkerja').val(null).trigger("change");
   });
+
+  function login(){
+    if($('#password').val()==1){
+      var link = '{{url('')}}/'+$('#idunitkerja').val();
+      window.location.href = link;
+    }
+    
+  }
 </script>
 </body>
 </html>

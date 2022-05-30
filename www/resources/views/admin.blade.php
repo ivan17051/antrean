@@ -112,7 +112,7 @@ function getJumlahAntrian(){
     $.ajax({
         url: Settings.baseurl+'/getrekappoli',
         type: 'GET',
-        data: {idunitkerja: idunitkerja},
+        // data: {idunitkerja: idunitkerja},
         dataType: 'json',
         success: function (result) {
             var data = result.data;

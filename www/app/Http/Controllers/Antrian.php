@@ -18,7 +18,8 @@ class Antrian extends Controller
 
     public function getListPoli(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $wherepoli = "";
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND idbppoli IN (" . implode(",", $filterpoli) . ") ";
@@ -30,7 +31,8 @@ class Antrian extends Controller
 
     public function getNomor(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
 
@@ -63,7 +65,8 @@ class Antrian extends Controller
 
     public function getNomorold(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
 
@@ -104,11 +107,11 @@ class Antrian extends Controller
         return Response::json(array('data' => $data));
     }
 
-    public function getDataPoli($idunitkerja, $idbppoli)
+    public function getDataPoli(Request $request, $idbppoli)
     {
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
-		
+		$idunitkerja = $request->get('idunitkerja');
         $data = DB::connection('mysql')->select("SELECT A.nama, COALESCE(X.servesno, 0) AS noantrian, COALESCE(X.NAMA_LGKP, '-') AS pasien, X.*
             FROM mbppoli A
             LEFT JOIN ( SELECT A.*, B.NAMA_LGKP FROM munitkerjapolidaily A
@@ -120,12 +123,15 @@ class Antrian extends Controller
                 WHERE A.idunitkerja = $idunitkerja AND A.idbppoli = $idbppoli AND A.servesdate = '$tanggal'
             ) X ON A.noid = X.idbppoli
             WHERE A.noid = $idbppoli");
+            
         return Response::json(array('data' => $data));
     }
 	
 	public function getDokter(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
+        
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
 
@@ -145,7 +151,8 @@ class Antrian extends Controller
 
     public function getListPasien(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $tanggalawal = date('Y-m-d');
 		$tanggalakhir = date('Y-m-d', strtotime('+1 day', strtotime($tanggalawal)));
         // $tanggal = '2022-05-12';
@@ -156,7 +163,6 @@ class Antrian extends Controller
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
         if ($limit = $request->input('limit')) $limit = " LIMIT {$limit} ";
-
         if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
 		
         $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
@@ -225,7 +231,8 @@ class Antrian extends Controller
         try {
             $tanggal     = date('Y-m-d');
             // $tanggal = '2019-08-07';
-            $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
+            // $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
+            $idunitkerja = $request->get('idunitkerja');
             $noantrian   = $request->input('pasiennoantrian');
             $idbppoli    = $request->input('idbppoli');
             $tipe = $request->input('tipe');
@@ -333,7 +340,8 @@ class Antrian extends Controller
 
     public function goToFarmasiLab(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $pasiennoantrian = $request->input('pasiennoantrian');
         $idbppoli = $request->input('poli');
         $tipe = $request->input('tipe');
@@ -453,7 +461,8 @@ class Antrian extends Controller
 
     public function goToPoliRujukan(Request $request)
     {
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $pasiennoantrian = $request->input('pasiennoantrian');
         $idbppoli = $request->input('poli');
         $idbppoli_baru = $request->input('polirujukan');
@@ -577,7 +586,8 @@ class Antrian extends Controller
         $idreturn = '';
         try {
             $tanggal     = date('Y-m-d');
-            $idunitkerja = Auth::user()->idunitkerja;
+            // $idunitkerja = Auth::user()->idunitkerja;
+            $idunitkerja = $request->get('idunitkerja');
             
             $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
                 ->where('idunitkerja', $idunitkerja)
@@ -736,7 +746,7 @@ class Antrian extends Controller
     public function getrekappoli(Request $request)
     {
 		
-        $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
         $data = DB::select("SELECT 'all' AS idbppoli, COALESCE(SUM(servesmax),0) AS jumlahantrian FROM munitkerjapolidaily WHERE idunitkerja = '$idunitkerja' AND servesdate = '$tanggal'
@@ -749,7 +759,8 @@ class Antrian extends Controller
     public function getPanggilanAntrian(Request $request)
     {
         $tanggal = date('Y-m-d');
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $filterpoli = $request->input('poli');
 		
         $data = DB::table('panggilanantrian')
@@ -771,7 +782,8 @@ class Antrian extends Controller
 		
         $tanggal = date('Y-m-d');
         $idbppoli = $request->input('idbppoli');
-        $idunitkerja = Auth::user()->idunitkerja;
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $noantrian = $request->input('pasiennoantrian');
         try {
             $dt = ["idunitkerja" => $idunitkerja,

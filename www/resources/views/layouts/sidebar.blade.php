@@ -5,7 +5,9 @@
     <ul class="sidebar-menu" data-widget="tree">
       <?php 
         function display_menu($parent) {
-          $level = Auth::user()->level;
+          // $level = Auth::user()->level;
+          $level = 2;
+          $idunitkerja = app('request')->get('idunitkerja');
           
           $result = DB::select("SELECT a.id, a.nama, a.link,a.idparent, a.icon, a.isdivider, COALESCE(c.Count, 0) as count FROM mmenu a
             RIGHT OUTER JOIN mmenulevel b on a.id = b.idmenu
@@ -15,23 +17,23 @@
           foreach($result as $row){
               if (($row->count > 0)&&($row->idparent==0)) {
                   echo '<li class="treeview">';
-                  echo '<a href="'.$row->link.'">'.$row->icon.' <span>'.$row->nama.'</span> <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
+                  echo '<a href="'.url('').'/'.$idunitkerja.'/'.$row->link.'">'.$row->icon.' <span>'.$row->nama.'</span> <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
                   echo '<ul class="treeview-menu">';
                     display_menu($row->id);            
                   echo '</ul>';
                   echo '</li>';
               } elseif(($row->count > 0)&&($row->idparent<>0)) {
-                echo '<li class="treeview"><a href="'.$row->link.'"><i class="fa fa-circle-o"></i> '.$row->nama.' <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
+                echo '<li class="treeview"><a href="'.url('').'/'.$idunitkerja.'/'.$row->link.'"><i class="fa fa-circle-o"></i> '.$row->nama.' <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span></a>';
                 echo '<ul class="treeview-menu"> ';
                     display_menu($row->id);            
                 echo '</ul>';
                 echo '</li>';
               } elseif (($row->count==0) && ($row->idparent<>0)) {          
-                echo '<li class=""><a href="'.$row->link.'"><i class="fa fa-circle-o"></i> '.$row->nama.' </a></li>';
+                echo '<li class=""><a href="'.url('').'/'.$idunitkerja.'/'.$row->link.'"><i class="fa fa-circle-o"></i> '.$row->nama.' </a></li>';
               } elseif (($row->idparent==0) && ($row->isdivider==1)) {          
                 echo '<li class="header">'.$row->nama.'</li>';
               } else {
-                echo '<li class=""><a href="'.(($row->link == "/") ? url('')."/" : $row->link).'">'.$row->icon.' <span class="">'.$row->nama.'</span></a></li>';
+                echo '<li class=""><a href="'.(($row->link == "/") ? url('')."/".$idunitkerja : url('')."/".$idunitkerja.'/'.$row->link).'">'.$row->icon.' <span class="">'.$row->nama.'</span></a></li>';
               };
           }
         }

@@ -1,4 +1,5 @@
 <?php namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 use View;
 use Input;
 use Auth;
@@ -8,8 +9,9 @@ use Response;
 
 class Poli extends Controller {
     
-    public function index() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function index(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $d = array();
         $d['title'] = "Daftar Antrean";
         $d['subtitle'] = "antrean";
@@ -19,8 +21,9 @@ class Poli extends Controller {
         // print_r($d);
     }
     // Update 2
-    public function index2() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function index2(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $d = array();
         $d['title'] = "Daftar Antrean";
         $d['subtitle'] = "antrean";
@@ -30,8 +33,9 @@ class Poli extends Controller {
     }
 
     // Clone dari tampilan kontrol antrian POLI
-    public function lab() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function lab(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $d = array();
         $d['title'] = "Daftar Antrean";
         $d['subtitle'] = "antrean";
@@ -41,8 +45,9 @@ class Poli extends Controller {
     }
 
     // Clone dari tampilan kontrol antrian POLI
-    public function farmasi() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function farmasi(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $d = array();
         $d['title'] = "Daftar Antrean";
         $d['subtitle'] = "antrean";

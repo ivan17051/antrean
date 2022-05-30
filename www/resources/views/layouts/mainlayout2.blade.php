@@ -176,6 +176,29 @@
     // });
 
     $(document).ready(function () {
+        var idunitkerja = {{app('request')->get('idunitkerja')}};
+        
+        $.ajax({
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            url: Settings.baseurl+'/getdataunitkerja',
+            type: 'GET',
+            data: {idunitkerja:idunitkerja},
+            dataType: 'json',
+            success: function (result) {
+                if(result.data){
+                    var du = result.data;
+                    $("#namaunitkerja").html(du.nama);
+                } else {
+                    // toast("info", respon);
+                }
+            },
+            error: function(responsedata){
+                var errors = responsedata.statusText;
+                $('#loading').hide();
+                toast("error", errors);
+            }
+        });
+        
         var url = document.URL;
         // alert(url);
         var segments = url.split('/');
@@ -201,14 +224,14 @@
       bootbox.confirm("Logout dari aplikasi?", function(result){
         if (result == true) {
           // console.log("logout");
-          location = "{{route('logout')}}";
+          location = "login";
         }
       })
     }
 
     var Settings = {
         token: "{{ csrf_token() }}",
-        baseurl: "{{url('')}}"
+        baseurl: "{{url('').'/'.app('request')->get('idunitkerja')}}"
     }
 </script>
 @yield('ajax')

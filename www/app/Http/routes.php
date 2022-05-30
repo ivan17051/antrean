@@ -10,17 +10,20 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
+use Illuminate\Http\Request;
 Route::get('login', ['uses' => 'UserController@index', 'as' => 'login']);
-Route::post('login', ['uses' => 'UserController@doLogin', 'as' => 'login']);
+// Route::post('login', ['uses' => 'UserController@doLogin', 'as' => 'login']);
 // Route::get('/', 'Home@index');
 Route::get('getunitkerja', ['uses' => 'Home@getData', 'as' => 'get-data']);
 
 // Route::get('lihat/{id}', ['uses' => 'Lihat@index', 'as' => 'lihat']);
 // Route::get('getlistpoli/{tipe}/{id}', ['uses' => 'Antrian@getPoliUtama', 'as' => 'get-poliutama']);
 // Route::get('getnomor/{id}', ['uses' => 'Antrian@getNomor', 'as' => 'get-nomor']);
-
-Route::group(['middleware' => ['auth']], function () {
+Route::get('/', function(){
+	return redirect(url('/login'));
+});
+Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], function(){
+// Route::group(['middleware' => ['auth']], function () {
 	Route::get('logout', ['uses' => 'UserController@logout', 'as' => 'logout']);
 	Route::get('/', ['uses' => 'Admin@index']);
 
@@ -30,10 +33,6 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('tvpoli', ['uses' => 'TVPoli@index', 'as' => 'tvpoli']);
 	Route::get('getlistpoli', ['uses' => 'Antrian@getListPoli', 'as' => 'getlistpoli']);
 	Route::get('getnomor', ['uses' => 'Antrian@getNomor', 'as' => 'get-nomor']);
-
-	Route::get('detail/{id}/{idbppoli}', ['uses' => 'Detail@index', 'as' => 'detail']);
-	Route::get('getdatapoli/{idunitkerja}/{idbppoli}', ['uses' => 'Antrian@getDataPoli', 'as' => 'getdatapoli']);
-	Route::get('getpasienpoli', ['uses' => 'Antrian@getPasienPoli', 'as' => 'getpasienpoli']);
 
 	Route::get('poli', ['uses' => 'Poli@index']);
 	Route::get('poli2', ['uses' => 'Poli@index2']);
@@ -88,7 +87,12 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('tvloket2', ['uses' => 'TV@tvloket2', 'as' => 'tvloket2']);
 	Route::get('tvloket3', ['uses' => 'TV@tvloket3', 'as' => 'tvloket3']);
 	Route::get('tvloket4', ['uses' => 'TV@tvloket4', 'as' => 'tvloket4']);
+
+	Route::get('detail/{id}/{idbppoli}', ['uses' => 'Detail@index', 'as' => 'detail']);
+	Route::get('getdatapoli/{idbppoli}', ['uses' => 'Antrian@getDataPoli', 'as' => 'getdatapoli']);
+	Route::get('getpasienpoli', ['uses' => 'Antrian@getPasienPoli', 'as' => 'getpasienpoli']);
 });
 
 Route::get('puskesmas', ['uses' => 'Antrianx@index', 'as' => 'antreanpuskesmas']);
 Route::post('antreanpuskesmas', ['uses' => 'Antrianx@getNomor', 'as' => 'antreanpuskesmas']);
+

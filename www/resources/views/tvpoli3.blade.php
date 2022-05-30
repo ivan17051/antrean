@@ -13,10 +13,10 @@
     </div>
     <div class="row" style="padding: 12px 20px;">
       <div class="col-md-7">
-          <img class="d-inline-block" src="./img/pemkot.png" alt="Logo" style="height:100px; margin-bottom:30px;">
+          <img class="d-inline-block" src="{{asset('./img/pemkot.png')}}" alt="Logo" style="height:100px; margin-bottom:30px;">
           <div class="d-inline-block navbar-wrapper" style="">
-              <h3 class="navbar-brand" style="padding-left: 32px;" href="{{url('/')}}">Dinas Kesehatan Kota Surabaya<br>
-                  <label class="text-secondary" id="namaunitkerja">Puskesmas Asemrowo</label>
+              <h3 class="navbar-brand" style="padding-left: 32px;">Dinas Kesehatan Kota Surabaya<br>
+                  <label class="text-secondary" id="namaunitkerja">Puskesmas</label>
               </h3>
           </div>
       </div>
@@ -125,7 +125,7 @@ $(document).ready(function () {
 
 var Settings = {
     token: "{{ csrf_token() }}",
-    baseurl: "{{url('')}}"
+    baseurl: "{{url('').'/'.app('request')->get('idunitkerja')}}"
 }
 
 var idunitkerja = "{{$d['idunitkerja']}}";
@@ -156,6 +156,7 @@ function settombolsuara(){
 }
 
 function getpoliaktif(){
+    console.log('link: '+Settings.baseurl+'/getlistpoli');
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
@@ -178,8 +179,7 @@ function getpoliaktif(){
 function createlistmodal(data){
     // $("#boxpoliantrian").empty()
     var i = 0;
-    console.log(data);
-
+    // console.log(data);
     data.push({nama:'LABORATORIUM',id:39})
     data.push({nama:'FARMASI',id:31})
 
@@ -293,7 +293,7 @@ function templatePasien(d){
 function getListPasien(){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: '{{route("get-pasien")}}?poli[]='+listpoli,
+        url: Settings.baseurl+'/getlistpasien?poli[]='+listpoli,
         type: 'GET',
         data: {poli: listpoli},
         dataType: 'json',
@@ -467,13 +467,13 @@ $(function () {
 
 function getNomor(){
     if(streamnomor) streamnomor.close();
-    streamnomor = new EventSource('{{route("getnomors")}}?poli[]='+listpoli);
+    streamnomor = new EventSource('getnomorstream?poli[]='+listpoli);
 
     streamnomor.onmessage = async function(event){
         // if(!$elements) return;
     
         var data = JSON.parse(event.data)
-        console.log(data);
+        // console.log(data);
         var datanow = data.now
         var datanext = data.next
         let nama, noantrian;
@@ -492,7 +492,7 @@ function getNomor(){
             else nama = searchPasien(datanow[i]['noantrian']).NAMA_LGKP
             antriannow = datanow[i]['noantrian']
             noantrian = datanow[i]['noantrian']
-            $($elements[0]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+            $($elements[0]).html(noantrian+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
         }
         for (i = 1; i < 4; i++) {       //karena menampilkan tiga antrian berikutnya
             try {
@@ -502,7 +502,7 @@ function getNomor(){
                     noantrian = antriannow+i 
                     nama = searchPasien(antriannow+i ).NAMA_LGKP
                 }
-                $($elements[i]).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');   
+                $($elements[i]).html(noantrian+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');   
             } catch (error) {
                 
             }

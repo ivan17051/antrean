@@ -9,9 +9,9 @@ use Response;
 
 class Dokter extends Controller {
     
-    public function index() {
-	
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function index(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $dataunit = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
         if(!$dataunit){
             return View::make('errors/404');
@@ -25,8 +25,9 @@ class Dokter extends Controller {
         return View::make('dokter', compact('d'));
     }
 
-    public function show(){
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function show(Request $request){
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $dokter=DB::table('mdokter')
             ->select('mdokter.*','mbppoli.nama as namapoli')
             ->leftJoin('mbppoli', 'mdokter.idbppoli', '=', 'mbppoli.noid')

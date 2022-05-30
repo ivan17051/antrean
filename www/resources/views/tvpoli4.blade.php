@@ -11,10 +11,10 @@
     </div>
     <div class="row" style="padding: 12px 20px;">
       <div class="col-md-7">
-        <img class="d-inline-block" src="./img/pemkot.png" alt="Logo" style="height:100px; margin-bottom:30px;">
+        <img class="d-inline-block" src="{{asset('./img/pemkot.png')}}" alt="Logo" style="height:100px; margin-bottom:30px;">
         <div class="d-inline-block navbar-wrapper" style="">
           <h3 class="navbar-brand" style="padding-left: 32px;" href="{{url('/')}}">Dinas Kesehatan Kota Surabaya<br>
-            <label class="text-secondary" id="namaunitkerja">Puskesmas Asemrowo</label>
+            <label class="text-secondary" id="namaunitkerja">Puskesmas</label>
           </h3>
         </div>
       </div>
@@ -43,8 +43,8 @@
           </div>
         </div>
         <div class="col-md-6" style="padding-left:0;">
-          <div class="box box-danger bg-red text-center poli now" style="font-size:100px;">-<p
-              style="font-size:25px;padding-bottom:30px;">-</p>
+          <div class="box box-danger bg-red text-center poli now" style="font-size:100px;max-height:210px;">-
+          <p style="font-size:25px;padding-bottom:30px;overflow-x: hidden;white-space: nowrap;text-overflow: ellipsis;">-</p>
           </div>
         </div>
         <div class="col-md-6" style="padding-right:0;">
@@ -135,7 +135,7 @@ $(document).ready(function () {
 
 var Settings = {
     token: "{{ csrf_token() }}",
-    baseurl: "{{url('')}}"
+    baseurl: "{{url('').'/'.app('request')->get('idunitkerja')}}"
 }
 
 var idunitkerja = "{{$d['idunitkerja']}}";
@@ -205,7 +205,7 @@ function templatePasien(d){
 function getListPasien(idpoli, $tbodypasien){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: '{{route("get-pasien")}}',
+        url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
         type: 'GET',
         data:{
             poli: [idpoli],
@@ -355,7 +355,7 @@ function ceksuara(idbppoli){
 
 function getNomor(idbppoli, $poli, index){
     if(ALLstreamnomor[index]) streamnomor.close();
-    ALLstreamnomor[index] = new EventSource('{{route("getnomors")}}?poli[]='+idbppoli);
+    ALLstreamnomor[index] = new EventSource('{{route("getnomors", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?poli[]='+idbppoli);
 
     let streamnomor = ALLstreamnomor[index];
 
@@ -377,13 +377,13 @@ function getNomor(idbppoli, $poli, index){
           if(datanow[i]['noantrian'] == 0) nama='-'
           else nama = searchPasien(datanow[i]['noantrian']).NAMA_LGKP
           noantrian = datanow[i]['noantrian']
-          $poli.find('.now').html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+          $poli.find('.now').html(noantrian+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
         }
 
         for (i = 0; i < datanext.length; i++) {
           noantrian = datanext[i]['noantrian']
           nama = searchPasien(noantrian).NAMA_LGKP
-          $poli.find('.next').html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+          $poli.find('.next').html(noantrian+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
         }
     }
 }

@@ -11,10 +11,10 @@
     </div>
     <div class="row" style="padding: 12px 20px;">
       <div class="col-md-7">
-        <img class="d-inline-block" src="./img/pemkot.png" alt="Logo" style="height:100px; margin-bottom:30px;">
+        <img class="d-inline-block" src="{{asset('./img/pemkot.png')}}" alt="Logo" style="height:100px; margin-bottom:30px;">
         <div class="d-inline-block navbar-wrapper" style="">
           <h3 class="navbar-brand" style="padding-left: 32px;" href="{{url('/')}}">Dinas Kesehatan Kota Surabaya<br>
-            <label class="text-secondary" id="namaunitkerja">Puskesmas Asemrowo</label>
+            <label class="text-secondary" id="namaunitkerja">Puskesmas</label>
           </h3>
         </div>
       </div>
@@ -152,7 +152,7 @@ $(document).ready(function () {
 
 var Settings = {
     token: "{{ csrf_token() }}",
-    baseurl: "{{url('')}}"
+    baseurl: "{{url('').'/'.app('request')->get('idunitkerja')}}"
 }
 
 var idunitkerja = "{{$d['idunitkerja']}}";
@@ -222,7 +222,7 @@ function templatePasien(d){
 function getListPasien(idpoli, $tbodypasien){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: '{{route("get-pasien")}}',
+        url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
         type: 'GET',
         data:{
             poli: [idpoli],
@@ -372,7 +372,7 @@ function ceksuara(idbppoli){
 
 function getNomor(idbppoli, $poli, index){
     if(ALLstreamnomor[index]) streamnomor.close();
-    ALLstreamnomor[index] = new EventSource('{{route("getnomors")}}?poli[]='+idbppoli);
+    ALLstreamnomor[index] = new EventSource('{{route("getnomors", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?poli[]='+idbppoli);
 
     let streamnomor = ALLstreamnomor[index];
 
@@ -393,7 +393,7 @@ function getNomor(idbppoli, $poli, index){
           if(datanow[i]['noantrian'] == 0) nama='-'
           else nama = searchPasien(datanow[i]['noantrian']).NAMA_LGKP
           noantrian = datanow[i]['noantrian']
-          $poli.find('.now').html(noantrian+'<p style="font-size:40px;padding-bottom:30px;">'+nama+'</p>');
+          $poli.find('.now').html(noantrian+'<p class="antrianpolinama" style="font-size:40px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
         }
         
         for (i = 1; i < 2; i++) {       //karena menampilkan dua antrian berikutnya
@@ -404,7 +404,7 @@ function getNomor(idbppoli, $poli, index){
                     noantrian = datanext[0]['noantrian']
                     nama = searchPasien(noantrian+i-1 ).NAMA_LGKP
                 }
-                $poli.find('.next-'+i).html(noantrian+'<p style="font-size:30px;padding-bottom:30px;">'+nama+'</p>');
+                $poli.find('.next-'+i).html(noantrian+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
             } catch (error) {
                 console.log('error',error)
             }

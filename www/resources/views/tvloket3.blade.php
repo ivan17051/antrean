@@ -3,7 +3,7 @@
 <div style="height:calc(100vh - 81px);max-height:calc(100vh - 81px);" class="">
 <div class="row" style="padding: 12px 20px;">
     <div class="col-sm-7">
-        <img class="d-inline-block" src="./img/pemkot.png" alt="Logo" style="height:100px; margin-bottom:30px;">
+        <img class="d-inline-block" src="{{asset('./img/pemkot.png')}}" alt="Logo" style="height:100px; margin-bottom:30px;">
         <div class="d-inline-block navbar-wrapper" style="">
             <h3 class="navbar-brand" style="padding-left: 32px;" href="{{url('/')}}">Dinas Kesehatan Kota
                 Surabaya<br>
@@ -123,7 +123,7 @@ function templatePasien(d){
 function getListPasien(idpoli, $tbodypasien){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: '{{route("get-pasien")}}',
+        url: Settings.baseurl+'/getlistpasien',
         type: 'GET',
         data:{
             poli: [idpoli],
@@ -171,6 +171,7 @@ function checkScrollCapability(antreanPoliState )
 }
 
 function getDataUnitkerja(){
+    console.log('link: '+Settings.baseurl);
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url: Settings.baseurl+'/getdataunitkerja',

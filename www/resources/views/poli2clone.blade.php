@@ -223,7 +223,7 @@
                         Berikutnya</button>
                     <!-- <button type="button" class="btn btn-warning" onclick="nextno(2);"><i
                         class="fa  fa-arrow-circle-o-right"></i> Skip</button> -->
-                    <button type="button" class="btn btn-info" onclick="beforePanggilBerikutnya(true);"><i class="fa fa-arrow-right"></i>
+                    <button type="button" id="btnrujukbalik" class="btn btn-info" onclick="beforePanggilBerikutnya(true);"><i class="fa fa-arrow-right"></i>
                       Rujuk Balik</button>
                     <button type="button" class="btn btn-primary" onclick="beforePanggilBerikutnya();"><i class="fa fa-arrow-right"></i>
                       Aksi Lain</button>
@@ -435,7 +435,7 @@
   function createlistpoli(data) {
     // $("#boxpoliantrian").empty()
     var i = 0;
-    console.log(data);
+    // console.log(data);
     var box = data.map(function (poli) {
       var x = $('<div class="col-md-6" style="margin-top:10px;">' +
         '<button type="button" class="btn btn-block btn-lg btn-danger buttonpoli" style="font-size: 32px;">' +
@@ -444,6 +444,9 @@
       x.on('click', function () {
         // namapoli = poli.nama
         setpoli(poli.id)
+        if(poli.id == 31) {
+          $('#btnrujukbalik').hide();
+        }
       });
       return x;
     })
@@ -477,7 +480,7 @@
     // $("#tombolnext").prop("disabled", true);
     if (idbppoli) {
       $.ajax({
-        url: Settings.baseurl + '/getdatapoli/' + idunitkerja + '/' + idbppoli,
+        url: Settings.baseurl + '/getdatapoli/' + idbppoli,
         type: 'GET',
         // data: {idunitkerja: 1},
         dataType: 'json',
@@ -633,11 +636,11 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
-        where: 'AND iscall=0 AND isconsul=0 ',
+        where: 'AND isdone=0 AND isconsul=0 ',
       },
       dataType: 'json',
       success: function (result) {
@@ -665,7 +668,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
@@ -697,7 +700,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
@@ -739,7 +742,7 @@
       //continue with ajax request
       $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-          url: '{{route("layanikembali")}}?'+param,
+          url: '{{route("layanikembali", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?'+param,
           data: {
             'poli[]': idbppoli,
           },
@@ -766,7 +769,7 @@
   function getPasienSedangDiperiksa(){
     return $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
@@ -856,7 +859,7 @@
     $('#loading').show();
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      url: '{{route("gotofarmasilab")}}?'+param,
+      url: '{{route("gotofarmasilab", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?'+param,
       type: 'POST',
       data: {
         'poli[]': idbppoli,
@@ -880,7 +883,7 @@
     $('#loading').show();
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      url: '{{route("gotopolirujukan")}}?'+param,
+      url: '{{route("gotopolirujukan", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?'+param,
       type: 'POST',
       data: {
         'poli[]': idbppoli,

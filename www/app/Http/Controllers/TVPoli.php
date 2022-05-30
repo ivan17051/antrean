@@ -1,4 +1,5 @@
 <?php namespace App\Http\Controllers;
+use Illuminate\Http\Request;
 use View;
 use Input;
 use Auth;
@@ -9,8 +10,9 @@ use Response;
 
 class TVPoli extends Controller {
     
-    public function index() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function index(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $dataunit = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
         if(!$dataunit){
             return View::make('errors/404');
@@ -24,8 +26,9 @@ class TVPoli extends Controller {
         // print_r($d);
     }
 	
-	public function index2() {
-        $idunitkerja = Auth::user()->idunitkerja;
+	public function index2(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $dataunit = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
         if(!$dataunit){
             return View::make('errors/404');
@@ -39,8 +42,9 @@ class TVPoli extends Controller {
         // print_r($d);
     }
 
-    public function index3() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function index3(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $dataunit = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
         if(!$dataunit){
             return View::make('errors/404');
@@ -54,8 +58,9 @@ class TVPoli extends Controller {
         // print_r($d);
     }
 
-    public function index4() {
-        $idunitkerja = Auth::user()->idunitkerja;
+    public function index4(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         $dataunit = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
         if(!$dataunit){
             return View::make('errors/404');

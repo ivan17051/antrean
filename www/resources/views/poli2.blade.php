@@ -1,6 +1,7 @@
 @extends('layouts.mainlayout2')
 
 @section('content')
+
 <div class="modal fade" id="modal-konfirmasi-panggil" style="display: none;">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -474,7 +475,7 @@
     // $("#tombolnext").prop("disabled", true);
     if (idbppoli) {
       $.ajax({
-        url: Settings.baseurl + '/getdatapoli/' + idunitkerja + '/' + idbppoli,
+        url: Settings.baseurl + '/getdatapoli/' + idbppoli,
         type: 'GET',
         // data: {idunitkerja: 1},
         dataType: 'json',
@@ -590,6 +591,7 @@
     } else if (minutesDifference > 30) { //telat >30 menit
       statusStyle = "my-bg-danger"
       status = "Batal"
+      return $('');
     } else {
       statusStyle = "my-bg-light"
       status = "Belum Datang"
@@ -629,11 +631,11 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
-        where: 'AND iscall=0 AND isconsul=0 ',
+        where: 'AND isdone=0 AND isconsul=0 ',
       },
       dataType: 'json',
       success: function (result) {
@@ -661,7 +663,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
@@ -694,7 +696,7 @@
       headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
@@ -735,7 +737,7 @@
       //continue with ajax request
       $.ajax({
           headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-          url: '{{route("layanikembali")}}?'+param,
+          url: '{{route("layanikembali", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?'+param,
           data: {
             'poli[]': idbppoli,
           },
@@ -763,7 +765,7 @@
   function getPasienSedangDiperiksa(){
     return $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      url: '{{route("get-pasien")}}',
+      url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
       type: 'GET',
       data: {
         'poli[]': idbppoli,
@@ -849,7 +851,7 @@
     $('#loading').show();
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      url: '{{route("gotofarmasilab")}}?'+param,
+      url: '{{route("gotofarmasilab", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?'+param,
       type: 'POST',
       data: {
         'poli[]': idbppoli,
@@ -873,7 +875,7 @@
     $('#loading').show();
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-      url: '{{route("gotopolirujukan")}}?'+param,
+      url: '{{route("gotopolirujukan", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?'+param,
       type: 'POST',
       data: {
         'poli[]': idbppoli,
