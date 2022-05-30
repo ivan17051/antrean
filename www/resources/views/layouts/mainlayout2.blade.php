@@ -224,7 +224,7 @@
       bootbox.confirm("Logout dari aplikasi?", function(result){
         if (result == true) {
           // console.log("logout");
-          location = "login";
+          location = "{{url('')}}/login";
         }
       })
     }
