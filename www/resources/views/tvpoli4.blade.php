@@ -72,7 +72,7 @@
           <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
             <div class="box-body p-0 ">
               <table class="table table-bordered m-0 font-large ">
-                <tbody>
+                <tbody style="font-size: 24px;">
                 </tbody>
               </table>
             </div>
@@ -358,6 +358,10 @@ function getNomor(idbppoli, $poli, index){
     ALLstreamnomor[index] = new EventSource('{{route("getnomors", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?poli[]='+idbppoli);
 
     let streamnomor = ALLstreamnomor[index];
+
+    streamnomor.addEventListener('lost',function(e){
+      toast("error", "Connection Lost, Retry in 3 Seconds.");
+    }); 
 
     streamnomor.onmessage = async function(event){
         var data = JSON.parse(event.data)
