@@ -332,6 +332,7 @@ class Antrian extends Controller
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
+            return response()->json(["statusText"=>$idreturn], 400);
         }
         DB::commit();
 
@@ -358,17 +359,6 @@ class Antrian extends Controller
         DB::enableQueryLog();
         DB::beginTransaction();
         try {
-            //DONE
-            DB::table('mantrian')
-            ->where('idunitkerja', $idunitkerja)
-            ->where('pasiennoantrian',$pasiennoantrian )
-            ->where('idbppoli',$idbppoli)
-            ->whereDate('tanggaleta', '=', $tanggal)
-            ->update([
-                'isdone' => 1,
-                "dodone" => date('Y-m-d H:i:s')
-            ]);
-
             $antrian = DB::table('mantrian')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$pasiennoantrian )
@@ -451,9 +441,21 @@ class Antrian extends Controller
             } else {
                 throw new Exception("Data antrean tidak ditemukan");
             }
+
+             //DONE
+             DB::table('mantrian')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('pasiennoantrian',$pasiennoantrian )
+                ->where('idbppoli',$idbppoli)
+                ->whereDate('tanggaleta', '=', $tanggal)
+                ->update([
+                    'isdone' => 1,
+                    "dodone" => date('Y-m-d H:i:s')
+                ]); 
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
+            return response()->json(["statusText"=>$idreturn], 400);
         }
         DB::commit();
         return $idreturn;
@@ -472,17 +474,6 @@ class Antrian extends Controller
         DB::enableQueryLog();
         DB::beginTransaction();
         try {
-            //DONE
-            DB::table('mantrian')
-            ->where('idunitkerja', $idunitkerja)
-            ->where('pasiennoantrian',$pasiennoantrian )
-            ->where('idbppoli',$idbppoli)
-            ->whereDate('tanggaleta', '=', $tanggal)
-            ->update([
-                'isdone' => 1,
-                "dodone" => date('Y-m-d H:i:s')
-            ]);
-
             $antrian = DB::table('mantrian')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$pasiennoantrian )
@@ -568,6 +559,17 @@ class Antrian extends Controller
             } else {
                 throw new Exception("Data antrean tidak ditemukan");
             }
+            
+            //DONE
+            DB::table('mantrian')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('pasiennoantrian',$pasiennoantrian )
+                ->where('idbppoli',$idbppoli)
+                ->whereDate('tanggaleta', '=', $tanggal)
+                ->update([
+                    'isdone' => 1,
+                    "dodone" => date('Y-m-d H:i:s')
+                ]);
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
@@ -627,7 +629,7 @@ class Antrian extends Controller
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
-            return response()->json(['message'=>$idreturn], 401);
+            return response()->json(['statusText'=>$idreturn], 401);
         }
         DB::commit();
 
