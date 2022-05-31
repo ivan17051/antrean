@@ -377,7 +377,8 @@
 
     var Settings = {
         token: "{{ csrf_token() }}",
-        baseurl: "{{url('').'/'.app('request')->get('idunitkerja')}}"
+        baseurl: "{{url('').'/'.app('request')->get('idunitkerja')}}",
+        url: "{{url('')}}",
     }
 </script>
 

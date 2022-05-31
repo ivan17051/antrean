@@ -209,7 +209,7 @@ var currentSound = {};
 function playsound(audiourl){
     currentSound = document.createElement('audio');
     if (currentSound.canPlayType){
-        currentSound.setAttribute('src', Settings.baseurl+'/sound/male/low/'+audiourl+'.mp3');
+        currentSound.setAttribute('src', Settings.url+'/sound/male/low/'+audiourl+'.mp3');
         currentSound.setAttribute('type', 'audio/mpeg');
         currentSound.load();
         currentSound.addEventListener('ended', function() {
