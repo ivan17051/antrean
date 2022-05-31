@@ -640,7 +640,7 @@
       type: 'GET',
       data: {
         'poli[]': idbppoli,
-        where: 'AND isdone=0 AND isconsul=0 ',
+        // where: 'AND isdone=0 AND isconsul=0 ',
       },
       dataType: 'json',
       success: function (result) {
