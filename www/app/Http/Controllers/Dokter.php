@@ -48,9 +48,9 @@ class Dokter extends Controller {
         );
         
         $input = array_map('trim', $input);
-        
-        $user = Auth::user();
-        $idunitkerja = $user->idunitkerja;
+        // $user = Auth::user();
+        // $idunitkerja = $user->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
         
         $input['isavailable'] = empty($input['isavailable']) ? 0 : 1;
         $input['isdokter'] = empty($input['isdokter']) ? 0 : 1;
@@ -58,16 +58,16 @@ class Dokter extends Controller {
         try {
             if(isset($noid)){
                 // UPDATE
-                $input = array_merge($input, ['idmodif'=>$user->id] );
+                $input = array_merge($input, ['idmodif'=>$idunitkerja] );
                 $dokter = DB::table('mdokter')->where('noid', $noid)
                     ->update($input);
                 return response()->json($dokter);
             }else{
                 // STORE
                 $input = array_merge($input, [
-                    'idunitkerja' => $idunitkerja, 
-                    'idcreate' => $user->id,
-                    'idmodif' => $user->id,
+                    'idunitkerja' => $idunitkerja,
+                    'idcreate' => $idunitkerja,
+                    'idmodif' => $idunitkerja,
                     ] );
                 $id = DB::table('mdokter')->insertGetId($input);
                 return response()->json(['id' => $id]);
