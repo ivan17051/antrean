@@ -82,6 +82,7 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 	Route::get('tvpoli2', ['uses' => 'TVPoli@index2', 'as' => 'tvpoli2']);
 	Route::get('tvpoli3', ['uses' => 'TVPoli@index3', 'as' => 'tvpoli3']);
 	Route::get('tvpoli4', ['uses' => 'TVPoli@index4', 'as' => 'tvpoli4']);
+	Route::get('tvpoli5', ['uses' => 'TVPoli@index5', 'as' => 'tvpoli5']);
 	
 	Route::get('tvloket', ['uses' => 'TV@tvloket', 'as' => 'tvloket']);
 	Route::get('tvloket2', ['uses' => 'TV@tvloket2', 'as' => 'tvloket2']);
