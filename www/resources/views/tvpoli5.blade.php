@@ -408,8 +408,11 @@ function getNomor(idbppoli, $poli, index){
                 if(datanext.length && i < data.pasien.length){       
                     noantrian = datanext[0]['noantrian']
                     nama = searchPasien(noantrian+i-1 ).NAMA_LGKP
+                    $poli.find('.next-'+i).html((noantrian+i-1)+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
+                }else{
+                    $poli.find('.next-'+i).html((noantrian)+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
                 }
-                $poli.find('.next-'+i).html((noantrian+i-1)+'<p class="antrianpolinama" style="font-size:30px;padding-bottom:30px;padding-left:10px;">'+nama+'</p>');
+                
             } catch (error) {
                 console.log('error',error)
             }

@@ -8,13 +8,13 @@ class DatabaseConnection
 {
     
 	
-	public static function setConnection()
+	public static function setConnection($idunitkerja)
     {
         $r = DB::connection('mysql')->table('munitkerja')
             ->select(
                 DB::raw("lower(replace(replace(munitkerja.namaalias,' ',''),'.','')) as n ")
             ) 
-            ->where('munitkerja.noid', Auth::user()->idunitkerja)
+            ->where('munitkerja.noid', $idunitkerja)
             ->where('munitkerja.isactive', '1')
             ->where('munitkerja.idtype', '207')
             ->take(1)->first();
