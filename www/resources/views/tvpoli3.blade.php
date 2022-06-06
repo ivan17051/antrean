@@ -201,13 +201,15 @@ function createlistmodal(data){
 async function setpoli(id, nama) {
     if(streamnomor) streamnomor.close()
     $("#loading").show();
-    $("#boxlistpoli").hide('slow');
+    $("#boxlistpoli").hide();
     $("#viewantrian").show('slow');
-  
+    
     listpoli[0] = id;
     await getlistpoli(id, nama);
     setTimeout(ceksuara, 2000);
 
+    localStorage.setItem("setpoli", id+','+nama);
+    
     getDokter();
     getNomor();
 
@@ -224,6 +226,7 @@ async function setpoli(id, nama) {
 function kembali(){
     // $("#boxlistpoli").show('slow');
     // $("#viewantrian").hide('slow');
+    localStorage.removeItem("setpoli");
     location.reload();
 }
 
@@ -462,6 +465,10 @@ $(function () {
     if(localStorage.getItem("suaraantrian") !== null){
         suaraaktif = localStorage.getItem("suaraantrian");
         settombolsuara();
+    }
+    if(localStorage.setpoli){
+        var poli = localStorage.getItem('setpoli').split(',');
+        setpoli(parseInt(poli[0]), poli[1]);
     }
 
 });
