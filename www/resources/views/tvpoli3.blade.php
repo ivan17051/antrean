@@ -137,11 +137,11 @@ var listpoli = [];
 function setsuara(){
     if (suaraaktif == 1) {
         // $("#tombolsuara").html('<i class="glyphicon glyphicon-volume-off">');
-        localStorage.setItem("suaraantrian", 0);
+        sessionStorage.setItem("suaraantrian", 0);
         suaraaktif = 0;
     } else {
         // $("#tombolsuara").html('<i class="glyphicon glyphicon-volume-up">');
-        localStorage.setItem("suaraantrian", 1);
+        sessionStorage.setItem("suaraantrian", 1);
         suaraaktif = 1;
     }
     settombolsuara();
@@ -208,7 +208,7 @@ async function setpoli(id, nama) {
     await getlistpoli(id, nama);
     setTimeout(ceksuara, 2000);
 
-    localStorage.setItem("setpoli", id+','+nama);
+    sessionStorage.setItem("setpoli", id+','+nama);
     
     getDokter();
     getNomor();
@@ -226,7 +226,7 @@ async function setpoli(id, nama) {
 function kembali(){
     // $("#boxlistpoli").show('slow');
     // $("#viewantrian").hide('slow');
-    localStorage.removeItem("setpoli");
+    sessionStorage.removeItem("setpoli");
     location.reload();
 }
 
@@ -462,12 +462,12 @@ $(function () {
     // getPoliUtama();
     getpoliaktif();
 
-    if(localStorage.getItem("suaraantrian") !== null){
-        suaraaktif = localStorage.getItem("suaraantrian");
+    if(sessionStorage.getItem("suaraantrian") !== null){
+        suaraaktif = sessionStorage.getItem("suaraantrian");
         settombolsuara();
     }
-    if(localStorage.setpoli){
-        var poli = localStorage.getItem('setpoli').split(',');
+    if(sessionStorage.setpoli){
+        var poli = sessionStorage.getItem('setpoli').split(',');
         setpoli(parseInt(poli[0]), poli[1]);
     }
 
