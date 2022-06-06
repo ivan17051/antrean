@@ -208,7 +208,7 @@ return [
         'Datatables' => Yajra\Datatables\DatatablesServiceProvider::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-
+        'DBOnTheFly' => App\Helpers\DatabaseConnection::class,
     ],
 
 ];

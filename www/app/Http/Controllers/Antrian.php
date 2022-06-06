@@ -11,6 +11,7 @@ use Response;
 use DateTime, DateTimeZone;
 use Exception;
 use Illuminate\Http\Request;
+use DBOnTheFly;
 
 
 class Antrian extends Controller
@@ -25,7 +26,7 @@ class Antrian extends Controller
         if ($filterpoli) $wherepoli = " AND idbppoli IN (" . implode(",", $filterpoli) . ") ";
         $query = "SELECT idbppoli AS id, policaption AS nama FROM munitkerjapoli WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = '$idunitkerja' $wherepoli ";
 		
-        $data = DB::connection('mysql')->select($query);
+        $data = DBOnTheFly::setConnection($idunitkerja)->select($query);
         return Response::json(array('data' => $data));
     }
 
@@ -165,7 +166,7 @@ class Antrian extends Controller
         if ($limit = $request->input('limit')) $limit = " LIMIT {$limit} ";
         if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
 		
-        $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
+        $pasien = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
             INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal
