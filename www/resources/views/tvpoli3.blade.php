@@ -297,7 +297,7 @@ function templatePasien(d){
 function getListPasien(){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: Settings.baseurl+'/getlistpasien?poli[]='+listpoli,
+        url: Settings.baseurl+'/getlistpasienlocal?poli[]='+listpoli,
         type: 'GET',
         data: {poli: listpoli},
         dataType: 'json',
@@ -475,7 +475,7 @@ $(function () {
 
 function getNomor(){
     if(streamnomor) streamnomor.close();
-    streamnomor = new EventSource('getnomorstream?poli[]='+listpoli);
+    streamnomor = new EventSource('getnomorstreamlocal?poli[]='+listpoli);
 
     streamnomor.addEventListener('lost',function(e){
       toast("error", "Connection Lost, Retry in 3 Seconds.");

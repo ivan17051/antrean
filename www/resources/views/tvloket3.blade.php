@@ -123,7 +123,7 @@ function templatePasien(d){
 function getListPasien(idpoli, $tbodypasien){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: Settings.baseurl+'/getlistpasien',
+        url: Settings.baseurl+'/getlistpasienlocal',
         type: 'GET',
         data:{
             poli: [idpoli],

@@ -206,7 +206,7 @@ function templatePasien(d){
 function getListPasien(idpoli, $tbodypasien){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
+        url: '{{route("get-pasien-local", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
         type: 'GET',
         data:{
             poli: [idpoli],
@@ -356,7 +356,7 @@ function ceksuara(idbppoli){
 
 function getNomor(idbppoli, $poli, index){
     if(ALLstreamnomor[index]) streamnomor.close();
-    ALLstreamnomor[index] = new EventSource('{{route("getnomors", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?poli[]='+idbppoli);
+    ALLstreamnomor[index] = new EventSource('{{route("getnomorslocal", ["idunitkerja"=>app("request")->get("idunitkerja")])}}?poli[]='+idbppoli);
 
     let streamnomor = ALLstreamnomor[index];
 

@@ -125,7 +125,7 @@ function templatePasien(d){
 function getListPasien(){
     return $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: '{{route("get-pasien", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
+        url: '{{route("get-pasien-local", ["idunitkerja"=>app("request")->get("idunitkerja")])}}',
         type: 'GET',
         dataType: 'json',
         success: function (result) {

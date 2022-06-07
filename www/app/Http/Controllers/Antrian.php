@@ -64,6 +64,40 @@ class Antrian extends Controller
         return Response::json(array('data' => $data));
     }
 
+    public function getNomorLocal(Request $request)
+    {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
+        $tanggal = date('Y-m-d');
+        // $tanggal = '2019-08-07';
+
+        $wherepoli = "";
+        $filterpoli = $request->input('poli');
+        if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
+		
+        $now = DB::connection('local')->select("SELECT A.policaption AS bppoli, X.*
+        	FROM munitkerjapoli A
+        	LEFT JOIN ( 
+        		SELECT A.idbppoli, COALESCE(A.servesno,0) AS noantrian, A.servesmax FROM munitkerjapolidaily A
+					WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
+			) X ON A.idbppoli = X.idbppoli
+			WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
+
+        $next = DB::connection('local')->select("SELECT A.policaption AS bppoli, X.*, 
+            CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
+            ROUND((A.avgtindakan+30)/60) AS waktutindakan, ROUND((A.avgnontindakan+30)/60) AS waktunontindakan
+        	FROM munitkerjapoli A
+        	LEFT JOIN ( 
+        		SELECT A.idbppoli, A.servesno + 1 AS noantrian, A.servesmax, A.servestime FROM munitkerjapolidaily A
+					WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
+			) X ON A.idbppoli = X.idbppoli
+			WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
+
+        $data = array("now" => $now, "next" => $next);
+
+        return Response::json(array('data' => $data));
+    }
+
     public function getNomorold(Request $request)
     {
         // $idunitkerja = Auth::user()->idunitkerja;
@@ -167,6 +201,32 @@ class Antrian extends Controller
         if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
 		
         $pasien = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
+			FROM mantrian A
+            INNER JOIN mbppoli P ON P.noid = A.idbppoli
+            INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal
+			WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 GROUP BY A.pasiennoantrian ORDER BY A.idbppoli, A.pasiennoantrian {$limit}");
+            
+        $data = array("listpasien" => $pasien);
+        
+        return Response::json(array('data' => $data));
+    }
+
+    public function getListPasienLocal(Request $request){
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
+        $tanggalawal = date('Y-m-d');
+		$tanggalakhir = date('Y-m-d', strtotime('+1 day', strtotime($tanggalawal)));
+        // $tanggal = '2022-05-12';
+		
+        $wherepoli = "";
+        $limit ="";
+		$wheretanggal = "AND A.tanggaleta >= '{$tanggalawal} 00:00:00' AND A.tanggaleta < '{$tanggalakhir} 00:00:00'";
+        $filterpoli = $request->input('poli');
+        if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
+        if ($limit = $request->input('limit')) $limit = " LIMIT {$limit} ";
+        if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
+		
+        $pasien = DB::connection('local')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
             INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal

@@ -427,7 +427,7 @@ function getPoliUtama(){
     });
 }
 
-var streamnomor = new EventSource(Settings.baseurl+'/getnomorstream');
+var streamnomor = new EventSource(Settings.baseurl+'/getnomorstreamlocal');
 
 streamnomor.onmessage = function(event){
     // console.log(event.data);
@@ -452,7 +452,7 @@ function getNomor(){
     // $("#loading").show();
     $.ajax({
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: Settings.baseurl+'/getnomor',
+        url: Settings.baseurl+'/getnomorlocal',
         type: 'GET',
         // data: {idunitkerja: 1},
         dataType: 'json',

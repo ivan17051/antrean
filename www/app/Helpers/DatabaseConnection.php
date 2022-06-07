@@ -10,6 +10,9 @@ class DatabaseConnection
 	
 	public static function setConnection($idunitkerja)
     {
+        if(env('APP_ENV','production') == 'development'){
+            return DB::connection('mysql');
+        }
         $r = DB::connection('mysql')->table('munitkerja')
             ->select(
                 DB::raw("lower(replace(replace(munitkerja.namaalias,' ',''),'.','')) as n ")

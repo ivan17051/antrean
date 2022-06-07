@@ -33,9 +33,11 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 	Route::get('tvpoli', ['uses' => 'TVPoli@index', 'as' => 'tvpoli']);
 	Route::get('getlistpoli', ['uses' => 'Antrian@getListPoli', 'as' => 'getlistpoli']);
 	Route::get('getnomor', ['uses' => 'Antrian@getNomor', 'as' => 'get-nomor']);
+	Route::get('getnomorlocal', ['uses' => 'Antrian@getNomorLocal', 'as' => 'get-nomor-local']);
 
 	Route::get('poli', ['uses' => 'Poli@index']);
 	Route::get('poli2', ['uses' => 'Poli@index2']);
+	Route::get('poli3', ['uses' => 'Poli@index3']);
 	Route::get('lab', ['uses' => 'Poli@lab']);
 	Route::get('farmasi', ['uses' => 'Poli@farmasi']);
 
@@ -70,6 +72,7 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 	Route::get('tv2', ['uses' => 'TV@tvstream', 'as' => 'tvs']);
 	Route::get('tvn', ['uses' => 'TV@tvnonpanggilan', 'as' => 'tvn']);
 	Route::get('getnomorstream', ['uses' => 'AntrianStream@getNomor', 'as' => 'getnomors']);
+	Route::get('getnomorstreamlocal', ['uses' => 'AntrianStream@getNomorLocal', 'as' => 'getnomorslocal']);	
 	Route::get('getpanggilanantrianstream', ['uses' => 'AntrianStream@getPanggilanAntrian', 'as' => 'getpanggilanantrians']);
 	
 	//dokter
@@ -79,6 +82,7 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 	
 	Route::get('getdokter', ['uses' => 'Antrian@getDokter', 'as' => 'get-dokter']);
 	Route::get('getlistpasien', ['uses' => 'Antrian@getListPasien', 'as' => 'get-pasien']);
+	Route::get('getlistpasienlocal', ['uses' => 'Antrian@getListPasienLocal', 'as' => 'get-pasien-local']);
 	Route::get('tvpoli2', ['uses' => 'TVPoli@index2', 'as' => 'tvpoli2']);
 	Route::get('tvpoli3', ['uses' => 'TVPoli@index3', 'as' => 'tvpoli3']);
 	Route::get('tvpoli4', ['uses' => 'TVPoli@index4', 'as' => 'tvpoli4']);
