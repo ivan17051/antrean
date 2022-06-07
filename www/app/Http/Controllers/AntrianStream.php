@@ -11,7 +11,6 @@ use Response;
 use DateTime, DateTimeZone;
 use Exception;
 use Illuminate\Http\Request;
-use DBOnTheFly;
 
 
 class AntrianStream extends Controller
@@ -33,7 +32,7 @@ class AntrianStream extends Controller
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
 
         try {
-            $now = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.policaption AS bppoli, X.*
+            $now = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*
                 FROM munitkerjapoli A
                 LEFT JOIN ( 
                     SELECT A.idbppoli, COALESCE(A.servesno,0) AS noantrian, A.servesmax FROM munitkerjapolidaily A
@@ -43,7 +42,7 @@ class AntrianStream extends Controller
                     AND (isdirectqueue = 1 OR A.idbppoli=31 OR A.idbppoli=39 )
                     AND idunitkerja = $idunitkerja $wherepoli ");
 
-            $next = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.policaption AS bppoli, X.*, 
+            $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
                 CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
                 ROUND((A.avgtindakan+30)/60) AS waktutindakan, ROUND((A.avgnontindakan+30)/60) AS waktunontindakan
                 FROM munitkerjapoli A
@@ -56,7 +55,7 @@ class AntrianStream extends Controller
                     AND idunitkerja = $idunitkerja $wherepoli ");
         
             if(isset($now[0]->noantrian)){
-                $pasien= DBOnTheFly::setConnection($idunitkerja)->table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+                $pasien= DB::connection('mysql')->table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
                     ->where('idunitkerja', $idunitkerja)
                     ->whereDate('tanggaleta', '=',$tanggal)
                     ->where('pasiennoantrian','>=', $now[0]->noantrian)

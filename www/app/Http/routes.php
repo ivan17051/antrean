@@ -36,6 +36,7 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 
 	Route::get('poli', ['uses' => 'Poli@index']);
 	Route::get('poli2', ['uses' => 'Poli@index2']);
+	Route::get('poli3', ['uses' => 'Poli@index3']);
 	Route::get('lab', ['uses' => 'Poli@lab']);
 	Route::get('farmasi', ['uses' => 'Poli@farmasi']);
 

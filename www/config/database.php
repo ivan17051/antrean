@@ -80,6 +80,20 @@ return [
             'engine' => null,
         ],
 
+        'mysqlapi' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_API', '172.18.1.208'),
+            'port' => env('DB_PORT_API', '3306'),
+            'database' => env('DB_DATABASE_API', 'dbantrian'),
+            'username' => env('DB_USERNAME_API', 'alif'),
+            'password' => env('DB_PASSWORD_API', 'Puskesmas1234'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', 'localhost'),

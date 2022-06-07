@@ -50,5 +50,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'customize.parameter' => \App\Http\Middleware\CustomizeParameter::class,
+        'guardswitcher' => \App\Http\Middleware\GuardSwitcher::class,
     ];
 }

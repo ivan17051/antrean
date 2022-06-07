@@ -31,6 +31,17 @@ class Poli extends Controller {
         $d['listpoli'] = DB::select("SELECT idbppoli, policaption FROM munitkerjapoli WHERE idunitkerja = $idunitkerja AND isactive = 1 AND isdirectqueue = 1");
         return View::make('poli2', compact('d'));
     }
+    // Update 3
+    public function index3(Request $request) {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
+        $d = array();
+        $d['title'] = "Daftar Antrean";
+        $d['subtitle'] = "antrean";
+        $d['idunitkerja'] = $idunitkerja;
+        $d['listpoli'] = DB::select("SELECT idbppoli, policaption FROM munitkerjapoli WHERE idunitkerja = $idunitkerja AND isactive = 1 AND isdirectqueue = 1");
+        return View::make('poli3', compact('d'));
+    }
 
     // Clone dari tampilan kontrol antrian POLI
     public function lab(Request $request) {

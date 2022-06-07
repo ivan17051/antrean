@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
 use View;
 use Input;
@@ -11,27 +11,28 @@ use Response;
 use DateTime, DateTimeZone;
 use Exception;
 use Illuminate\Http\Request;
-use App\Helpers\Http;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\RequestException;
-
+use DBOnTheFly;
+use App\Http\Controllers\Controller;
 
 class Antrian extends Controller
 {
+    private function getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor=0){
+        $res['munitkerjapolidaily'] = DBOnTheFly::setConnection($idunitkerja)->table('munitkerjapolidaily')
+            ->where('idunitkerja', $idunitkerja)
+            ->where('idbppoli', $idbppoli)
+            ->where('servesdate', $tanggal)
+            ->take(1)->first();
+        $res['mantrian'] = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
+            ->select("noid","isexpired","iscall","isrecall","isconfirm","isserved","isskipped","isconsul","isdone","pasiennoantrian")
+            ->where('idunitkerja', $idunitkerja)
+            ->where('idbppoli',$idbppoli)
+            ->whereDate('tanggaleta', '=', $tanggal)->get();
 
-    public function getListPoli(Request $request)
-    {
-        // $idunitkerja = Auth::user()->idunitkerja;
-        $idunitkerja = $request->get('idunitkerja');
-        $wherepoli = "";
-        $filterpoli = $request->input('poli');
-        if ($filterpoli) $wherepoli = " AND idbppoli IN (" . implode(",", $filterpoli) . ") ";
-        $query = "SELECT idbppoli AS id, policaption AS nama FROM munitkerjapoli WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = '$idunitkerja' $wherepoli ";
-		
-        $data = DB::connection('mysql')->select($query);
-        return Response::json(array('data' => $data));
+        $idpasien = collect($res['mantrian'])->pluck('pasiennoantrian');
+        $res['pasien']=DBOnTheFly::setConnection($idunitkerja)->table('mpasien')->get();
+        return $res;
     }
-
+    
     public function getNomor(Request $request)
     {
         // $idunitkerja = Auth::user()->idunitkerja;
@@ -43,7 +44,7 @@ class Antrian extends Controller
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
 		
-        $now = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*
+        $now = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.policaption AS bppoli, X.*
         	FROM munitkerjapoli A
         	LEFT JOIN ( 
         		SELECT A.idbppoli, COALESCE(A.servesno,0) AS noantrian, A.servesmax FROM munitkerjapolidaily A
@@ -51,7 +52,7 @@ class Antrian extends Controller
 			) X ON A.idbppoli = X.idbppoli
 			WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
 
-        $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
+        $next = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.policaption AS bppoli, X.*, 
             CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
             ROUND((A.avgtindakan+30)/60) AS waktutindakan, ROUND((A.avgnontindakan+30)/60) AS waktunontindakan
         	FROM munitkerjapoli A
@@ -63,92 +64,6 @@ class Antrian extends Controller
 
         $data = array("now" => $now, "next" => $next);
 
-        return Response::json(array('data' => $data));
-    }
-
-    public function getNomorold(Request $request)
-    {
-        // $idunitkerja = Auth::user()->idunitkerja;
-        $idunitkerja = $request->get('idunitkerja');
-        $tanggal = date('Y-m-d');
-        // $tanggal = '2019-08-07';
-
-        $wherepoli = "";
-        $filterpoli = $request->input('poli');
-        if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
-		
-        $now = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*
-            FROM munitkerjapoli A
-            LEFT JOIN ( 
-                SELECT A.idbppoli, COALESCE(B.pasiennoantrian,0) AS noantrian, DATE_FORMAT(B.tanggaleta, '%H.%i') AS jamestimasi, A.servesmax, B.NAMA_LGKP AS pasien FROM munitkerjapolidaily A
-                    LEFT JOIN (
-                        SELECT idunitkerja, idbppoli, pasiennoantrian, tanggaleta, NIK, NAMA_LGKP, tanggalbuka FROM mantrian WHERE idunitkerja = $idunitkerja AND DATE(tanggalbuka) = '$tanggal'
-                        UNION
-                        SELECT idunitkerja, idbppoli, pasiennoantrian, tanggaleta, NIK, NAMA_LGKP, tanggalbuka FROM mantrianserve WHERE idunitkerja = $idunitkerja AND DATE(tanggalbuka) = '$tanggal'
-                    ) B ON A.idunitkerja = B.idunitkerja AND A.idbppoli = B.idbppoli AND A.servesno = B.pasiennoantrian AND A.servesdate = DATE(B.tanggalbuka)
-                    WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
-            ) X ON A.idbppoli = X.idbppoli
-            WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
-
-        $next = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, X.*, 
-            CASE WHEN X.noantrian = 1 THEN DATE_FORMAT(A.jambuka, '%H.%i') ELSE DATE_FORMAT(DATE_ADD(COALESCE(X.servestime,NOW()), INTERVAL A.avgtindakan SECOND), '%H.%i') END AS jamestimasi,
-            ROUND((A.avgtindakan+30)/60) AS waktutindakan, ROUND((A.avgnontindakan+30)/60) AS waktunontindakan
-            FROM munitkerjapoli A
-            LEFT JOIN ( 
-                SELECT A.idbppoli, B.pasiennoantrian AS noantrian, A.servesmax, A.servestime, B.NAMA_LGKP AS pasien FROM munitkerjapolidaily A
-                    LEFT JOIN (
-                        SELECT idunitkerja, idbppoli, pasiennoantrian, tanggaleta, NIK, NAMA_LGKP, tanggalbuka FROM mantrian WHERE idunitkerja = $idunitkerja AND DATE(tanggalbuka) = '$tanggal'
-                        UNION
-                        SELECT idunitkerja, idbppoli, pasiennoantrian, tanggaleta, NIK, NAMA_LGKP, tanggalbuka FROM mantrianserve WHERE idunitkerja = $idunitkerja AND DATE(tanggalbuka) = '$tanggal'
-                    ) B ON A.idunitkerja = B.idunitkerja AND A.idbppoli = B.idbppoli AND (A.servesno+1) = B.pasiennoantrian AND A.servesdate = DATE(B.tanggalbuka)
-                    WHERE A.idunitkerja = $idunitkerja AND A.servesdate = '$tanggal'
-            ) X ON A.idbppoli = X.idbppoli
-            WHERE isactive = 1 AND isdirectqueue = 1 AND idunitkerja = $idunitkerja $wherepoli ");
-
-        $data = array("now" => $now, "next" => $next);
-
-        return Response::json(array('data' => $data));
-    }
-
-    public function getDataPoli(Request $request, $idbppoli)
-    {
-        $tanggal = date('Y-m-d');
-        // $tanggal = '2019-08-07';
-		$idunitkerja = $request->get('idunitkerja');
-        $data = DB::connection('mysql')->select("SELECT A.nama, COALESCE(X.servesno, 0) AS noantrian, COALESCE(X.NAMA_LGKP, '-') AS pasien, X.*
-            FROM mbppoli A
-            LEFT JOIN ( SELECT A.*, B.NAMA_LGKP FROM munitkerjapolidaily A
-                LEFT JOIN (
-                        SELECT idunitkerja, idbppoli, pasiennoantrian, tanggaleta, NIK, NAMA_LGKP, tanggalbuka FROM mantrian WHERE idunitkerja = $idunitkerja AND DATE(tanggalbuka) = '$tanggal'
-                        UNION
-                        SELECT idunitkerja, idbppoli, pasiennoantrian, tanggaleta, NIK, NAMA_LGKP, tanggalbuka FROM mantrianserve WHERE idunitkerja = $idunitkerja AND DATE(tanggalbuka) = '$tanggal'
-                    ) B ON A.idunitkerja = B.idunitkerja AND A.idbppoli = B.idbppoli AND A.servesno = B.pasiennoantrian 
-                WHERE A.idunitkerja = $idunitkerja AND A.idbppoli = $idbppoli AND A.servesdate = '$tanggal'
-            ) X ON A.noid = X.idbppoli
-            WHERE A.noid = $idbppoli");
-            
-        return Response::json(array('data' => $data));
-    }
-	
-	public function getDokter(Request $request)
-    {
-        // $idunitkerja = Auth::user()->idunitkerja;
-        $idunitkerja = $request->get('idunitkerja');
-        
-        $tanggal = date('Y-m-d');
-        // $tanggal = '2019-08-07';
-
-        $wherepoli = "";
-        $filterpoli = $request->input('poli');
-        if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
-        $dokter = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, B.*, C.nama AS namapoli
-        	FROM munitkerjapoli A
-            LEFT JOIN mdokter B ON A.idunitkerja = B.idunitkerja
-            LEFT JOIN mbppoli C ON C.noid = A.idbppoli
-			WHERE A.idbppoli=B.idbppoli AND B.isdokter = 1 AND A.idunitkerja = $idunitkerja $wherepoli ");
-
-        $data = array("dokter" => $dokter);
-        
         return Response::json(array('data' => $data));
     }
 
@@ -168,7 +83,7 @@ class Antrian extends Controller
         if ($limit = $request->input('limit')) $limit = " LIMIT {$limit} ";
         if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
 		
-        $pasien = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
+        $pasien = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
 			FROM mantrian A
             INNER JOIN mbppoli P ON P.noid = A.idbppoli
             INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal
@@ -178,97 +93,125 @@ class Antrian extends Controller
         
         return Response::json(array('data' => $data));
     }
-	
-    public function getPasienPoli(Request $request)
-    {
-        $tanggal = date('Y-m-d');
-        // $tanggal = '2019-08-07';
-        $idunitkerja = $request->input('idunitkerja');
-        $idbppoli = $request->input('idbppoli');
-        $idpolireq = $request->input('idpolireq');
-        $isconfirm = $request->input('isconfirm');
-
-        $noantrian = 0;
-
-        if ($idbppoli == 0) {
-            $wherepoli = "";
-        } else {
-            $wherepoli = " AND idbppoli = " . $idbppoli . " ";
-        }
-        
-        if($isconfirm == 0) {
-            $whereisconfirm = " AND isconfirm = 0";
-        }else {
-            $whereisconfirm = "";
-        }
-
-        // if ($idpolireq == 0 || $idpolireq == 31 || $idpolireq == 39) {
-        if ($idpolireq === 0) {
-            $wherehistory = " AND (pasiennoantrian, idbppoli) NOT IN (SELECT pasiennoantrian, idbppoliasal FROM historypasien WHERE idunitkerja = $idunitkerja AND DATE(tanggaleta) = '$tanggal' AND idbppoli = $idpolireq) ";
-        } elseif ($idpolireq == 31 || $idpolireq == 39) {
-            $wherehistory = " AND (pasiennoantrian, idbppoli) IN (SELECT pasiennoantrian, idbppoliasal FROM historypasien WHERE idunitkerja = $idunitkerja AND DATE(tanggaleta) = '$tanggal' AND idbppoli = $idpolireq AND tipe = 0) AND (pasiennoantrian, idbppoli) NOT IN (SELECT pasiennoantrian, idbppoliasal FROM historypasien WHERE idunitkerja = $idunitkerja AND DATE(tanggaleta) = '$tanggal' AND idbppoli = $idpolireq AND tipe = 1) ";
-        } elseif ($idpolireq == 9999) {
-            $wherehistory = "";
-        } else {
-            $wherehistory = "";
-            $cekantrian = DB::select("SELECT COALESCE(servesno, 0) AS noantrian FROM munitkerjapolidaily WHERE idunitkerja = $idunitkerja $wherepoli AND servesdate = '$tanggal' LIMIT 1");
-            if ($cekantrian) {
-                $noantrian = $cekantrian[0]->noantrian;
-            }
-        }
-
-		
-        $data = DB::connection('mysql')->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli $whereisconfirm AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
-            UNION
-            SELECT A.noid, idunitkerja, idbppoli,  B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP FROM mantrianserve A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory ORDER BY pasiennoantrian ");
-        
-        return Response::json(array('data' => $data));
-    }
-
-    private function getCurrentTotalNomorAntrian($input){
-        $tanggal     = date('Y-m-d');
-        $idunitkerja = $input['idunitkerja'];
-        $noantrian   = $input['pasiennoantrian'];
-        $idbppoli    = $input['idbppoli'];
-
-        $res = DB::connection('mysql')->table('munitkerjapolidaily')
-            ->where('idunitkerja', $idunitkerja)
-            ->where('idbppoli', $idbppoli)
-            ->where('servesdate', $tanggal)
-            ->first();
-        $total = isset($res) ? $res->servesdate : 0;
-        return $total;
-    }
     
     public function layaniantrian(Request $request)
     {
-        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
-        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
-
-        $res = Http::post(config('app.hostapi')."/api/layaniantrian2", $data);
-        $statusCode = $res->getStatusCode();
-        $data = json_decode($res->getBody(), true);
-
+        DB::enableQueryLog();
         DB::beginTransaction();
+        $idreturn = '';
         try {
-            if($statusCode != 200){
-                return response()->json($data, $statusCode);
+            $tanggal     = date('Y-m-d');
+            // $tanggal = '2019-08-07';
+            // $idunitkerja = Auth::user()->idunitkerja; //Input::get('idunitkerja');
+            $idunitkerja = $request->input('idunitkerja');
+            $noantrian   = $request->input('pasiennoantrian');
+            $idbppoli    = $request->input('idbppoli');
+            $tipe = $request->input('tipe');
+
+            $currentnomor = $request->input('currentnomor');
+            $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
+            return response()->json($res, 200);
+
+            $res = DBOnTheFly::setConnection($idunitkerja)->table('munitkerjapolidaily')
+                ->where('idunitkerja', $idunitkerja)
+                ->where('idbppoli', $idbppoli)
+                ->where('servesdate', $tanggal)
+                ->take(1)->first();
+
+            if ($res) {
+                $CALLNEXT = false;
+                
+                if($tipe == 1) {
+                    //DONE
+                    DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$noantrian )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'isdone' => 1,
+                        "dodone" => date('Y-m-d H:i:s')
+                    ]);
+
+                }else if($tipe == 2){
+                    $CALLNEXT = true;
+
+                    //SKIPPED
+                    DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$noantrian )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->where('isdone',0)
+                    ->update([
+                        'isskipped' => 1,
+                        "doskipped" => date('Y-m-d H:i:s')
+                    ]);
+                }else{
+                    $CALLNEXT = true;
+                }
+
+                if($CALLNEXT){
+                    if ($res->servesno + 1 > $res->servesmax) {
+                        throw new Exception("Semua Antrian Sudah Dilayani");
+                    }
+
+                    DBOnTheFly::setConnection($idunitkerja)->table('munitkerjapolidaily')
+                        ->where('noid', $res->noid)
+                        ->update([
+                            'servesno' => $res->servesno + 1,
+                            "servestime" => date('Y-m-d H:i:s')
+                        ]);
+
+                    $nomor = $res->servesno + 1;
+                    $data = DBOnTheFly::setConnection($idunitkerja)->select("SELECT NIK, NAMA_LGKP AS nama FROM mantrian WHERE idunitkerja = $idunitkerja AND idbppoli = $idbppoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian = $nomor LIMIT 1 ");
+
+                    $dt = [
+                        "tanggal" => $tanggal,
+                        "idbppoli" => $idbppoli,
+                        "idunitkerja" => $idunitkerja,
+                        "pasiennoantrian" => $res->servesno + 1,
+                    ];
+
+                    if ($data) {
+                        $dt["text"] = $data[0]->nama;
+                    }
+
+                    $addantriansuara = $this->addAntrianSuara(new Request($dt));
+                    
+                    //SET IS CALL ANTRIAN BARU NYA
+                    DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
+                    ->where('idunitkerja', $idunitkerja)
+                    ->where('pasiennoantrian',$res->servesno + 1 )
+                    ->where('idbppoli',$idbppoli)
+                    ->whereDate('tanggaleta', '=', $tanggal)
+                    ->update([
+                        'iscall' => 1,
+                        "docall" => date('Y-m-d H:i:s')
+                    ]);
+
+                    $dthistory = array(
+                        "noid" => $res->noid,
+                        "tanggal" => $tanggal,
+                        "idbppoli" => $idbppoli,
+                        "idunitkerja" => $idunitkerja,
+                        "pasiennoantrian" => $res->servesno + 1,
+                    );
+                    $addhistory = $this->addhistory(2, new Request($dthistory));
+                }
+
+                $idreturn = 1;
+            } else {
+                throw new Exception("Antrian selanjutnya tidak ditemukan");
             }
-            DB::connection('mysql')->table('munitkerjapolidaily')
-                ->updateOrCreate( ['noid'=> $data['munitkerjapolidaily']['noid']], $data['munitkerjapolidaily']);
-            // foreach ($data['pasien'] as $px) {
-            //     DB::connection('mysql')->table('mpasien')->updateOrInsert( ["noid" => $px['noid']], $px );
-            // }
-            // foreach ($data['mantrian'] as $px) {
-            //     DB::connection('mysql')->table('mpasien')->updateOrInsert( ["noid" => $px['noid']], $px );
-            // }
-            DB::commit();
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
             return response()->json(["statusText"=>$idreturn], 400);
         }
-        return response()->json("Berhasil memanggil A", $statusCode);
+        DB::commit();
+
+        return $idreturn;
     }
 
     public function goToFarmasiLab(Request $request)
@@ -291,7 +234,7 @@ class Antrian extends Controller
         DB::enableQueryLog();
         DB::beginTransaction();
         try {
-            $antrian = DB::table('mantrian')
+            $antrian = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$pasiennoantrian )
                 ->whereIn('idbppoli',$idbppoli)
@@ -299,7 +242,7 @@ class Antrian extends Controller
                 ->first();
 
             if ($antrian) {
-                $hasAntrianLamaInPoliBaru = DB::table('mantrian')
+                $hasAntrianLamaInPoliBaru = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                     ->where('idunitkerja', $idunitkerja)
                     // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
                     ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
@@ -352,11 +295,11 @@ class Antrian extends Controller
                         $antrian->statusnik,
                     ];
 
-                    DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+                    DBOnTheFly::setConnection($idunitkerja)->select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
                 }
 
                 // UPDATE FLAGS ANTRIAN BARU 
-                DB::table('mantrian')
+                DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                     ->where('idunitkerja', $idunitkerja)
                     // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
                     ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
@@ -375,7 +318,7 @@ class Antrian extends Controller
             }
 
              //DONE
-             DB::table('mantrian')
+             DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$pasiennoantrian )
                 ->where('idbppoli',$idbppoli)
@@ -406,7 +349,7 @@ class Antrian extends Controller
         DB::enableQueryLog();
         DB::beginTransaction();
         try {
-            $antrian = DB::table('mantrian')
+            $antrian = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$pasiennoantrian )
                 ->whereIn('idbppoli',$idbppoli)
@@ -414,7 +357,7 @@ class Antrian extends Controller
                 ->first();
 
             if ($antrian) {
-                $hasAntrianLamaInPoliBaru = DB::table('mantrian')
+                $hasAntrianLamaInPoliBaru = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                     ->where('idunitkerja', $idunitkerja)
                     // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
                     ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
@@ -468,11 +411,11 @@ class Antrian extends Controller
                         $antrian->statusnik,
                     ];
     
-                    DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
+                    DBOnTheFly::setConnection($idunitkerja)->select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
                 }
 
                 // UPDATE ANTRIAN RUJUKAN/KONSUL
-                DB::table('mantrian')
+                DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                     ->where('idunitkerja', $idunitkerja)
                     // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
                     ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
@@ -493,7 +436,7 @@ class Antrian extends Controller
             }
             
             //DONE
-            DB::table('mantrian')
+            DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$pasiennoantrian )
                 ->where('idbppoli',$idbppoli)
@@ -523,7 +466,7 @@ class Antrian extends Controller
             // $idunitkerja = Auth::user()->idunitkerja;
             $idunitkerja = $request->get('idunitkerja');
             
-            $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
+            $antrian = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
                 ->where('idunitkerja', $idunitkerja)
                 ->where('pasiennoantrian',$noantrian)
                 ->whereIn('idbppoli',$idbppoli)
@@ -542,7 +485,7 @@ class Antrian extends Controller
                 $addantriansuara = $this->addAntrianSuara(new Request($dt));
 
                 // UPDATE STATUS RECALL ANTRIAN
-                DB::table('mantrian')
+                DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
                     ->where('idunitkerja', $idunitkerja)
                     ->where('pasiennoantrian',$noantrian )
                     ->where('idbppoli',$idbppoli)
@@ -568,7 +511,7 @@ class Antrian extends Controller
         return $idreturn;
     }
 
-    public function addhistory($tipe, Request $request)
+    private function addhistory($tipe, Request $request)
     {
 		
         $noid = $request->input('noid');
@@ -577,7 +520,7 @@ class Antrian extends Controller
         $idunitkerja = $request->input('idunitkerja');
         $noantrian = $request->input('pasiennoantrian');
 
-        $dataantrian = DB::select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP, ALAMAT, pasienantriancode  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja AND idbppoli = $idbppoli AND DATE(tanggaleta) = '$tanggal' AND pasiennoantrian = $noantrian
+        $dataantrian = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP, ALAMAT, pasienantriancode  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja AND idbppoli = $idbppoli AND DATE(tanggaleta) = '$tanggal' AND pasiennoantrian = $noantrian
             UNION
             SELECT A.noid, idunitkerja, idbppoli,  B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP, ALAMAT, pasienantriancode FROM mantrianserve A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja AND idbppoli = $idbppoli AND DATE(tanggaleta) = '$tanggal'  AND pasiennoantrian = $noantrian
             ORDER BY pasiennoantrian ");
@@ -602,7 +545,7 @@ class Antrian extends Controller
                 "tanggal" => date('Y-m-d H:i:s')
             );
 
-            DB::table("historypasien")->insert(array_merge($dt, $datapasien));
+            DBOnTheFly::setConnection($idunitkerja)->table("historypasien")->insert(array_merge($dt, $datapasien));
         } elseif ($tipe == 2) { //poli
             $dt = array(
                 "idunitkerja" => $dataantrian[0]->idunitkerja,
@@ -612,7 +555,7 @@ class Antrian extends Controller
                 "tanggal" => date('Y-m-d H:i:s')
             );
 
-            DB::table("historypasien")->insert(array_merge($dt, $datapasien));
+            DBOnTheFly::setConnection($idunitkerja)->table("historypasien")->insert(array_merge($dt, $datapasien));
         } elseif ($tipe == 3) { //kasir
             $idtujuan = $request->input('idtujuan');
             if ($idtujuan == 0) {
@@ -624,7 +567,7 @@ class Antrian extends Controller
                     "tanggal" => date('Y-m-d H:i:s')
                 );
 
-                DB::table("historypasien")->insert(array_merge($dt, $datapasien));
+                DBOnTheFly::setConnection($idunitkerja)->table("historypasien")->insert(array_merge($dt, $datapasien));
             } else {
                 $dt = array(
                     "idunitkerja" => $dataantrian[0]->idunitkerja,
@@ -634,7 +577,7 @@ class Antrian extends Controller
                     "tanggal" => date('Y-m-d H:i:s')
                 );
 
-                DB::table("historypasien")->insert(array_merge($dt, $datapasien));
+                DBOnTheFly::setConnection($idunitkerja)->table("historypasien")->insert(array_merge($dt, $datapasien));
 
                 $dt = array(
                     "idunitkerja" => $dataantrian[0]->idunitkerja,
@@ -644,7 +587,7 @@ class Antrian extends Controller
                     "tanggal" => date('Y-m-d H:i:s')
                 );
 
-                DB::table("historypasien")->insert(array_merge($dt, $datapasien));
+                DBOnTheFly::setConnection($idunitkerja)->table("historypasien")->insert(array_merge($dt, $datapasien));
             }
         } elseif ($tipe == 4) { //aplab
             $idasal = $request->input('idasal');
@@ -657,61 +600,13 @@ class Antrian extends Controller
                 "tipe" => 1,
             );
 
-            DB::table("historypasien")->insert(array_merge($dt, $datapasien));
+            DBOnTheFly::setConnection($idunitkerja)->table("historypasien")->insert(array_merge($dt, $datapasien));
         }
 
         return 1;
     }
 
-    public function getriwayat(Request $request)
-    {
-		
-        $tanggal = $request->input('tanggal');
-        $idbppoli = $request->input('idbppoli');
-        $idunitkerja = $request->input('idunitkerja');
-        $noantrian = $request->input('pasiennoantrian');
-
-        $data = DB::select("SELECT A.id, idunitkerja, idbppoli, CASE WHEN idbppoli = 99999 THEN 'KASIR' ELSE B.nama END AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggal, '%H.%i') AS jam, nik, A.nama, alamat, pasienantriancode  FROM historypasien A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerjaasal = $idunitkerja AND idbppoliasal = $idbppoli AND DATE(tanggaleta) = '$tanggal' AND pasiennoantrian = $noantrian
-            ORDER BY tanggal ");
-
-        return Response::json(array('data' => $data));
-    }
-
-    public function getrekappoli(Request $request)
-    {
-		
-        $idunitkerja = $request->get('idunitkerja');
-        $tanggal = date('Y-m-d');
-        // $tanggal = '2019-08-07';
-        $data = DB::select("SELECT 'all' AS idbppoli, COALESCE(SUM(servesmax),0) AS jumlahantrian FROM munitkerjapolidaily WHERE idunitkerja = '$idunitkerja' AND servesdate = '$tanggal'
-            UNION
-            SELECT idbppoli, SUM(servesmax) AS jumlahantrian FROM munitkerjapolidaily WHERE idunitkerja = '$idunitkerja' AND servesdate = '$tanggal' GROUP BY idbppoli");
-
-        return Response::json(array('data' => $data));
-    }
-
-    public function getPanggilanAntrian(Request $request)
-    {
-        $tanggal = date('Y-m-d');
-        // $idunitkerja = Auth::user()->idunitkerja;
-        $idunitkerja = $request->get('idunitkerja');
-        $filterpoli = $request->input('poli');
-		
-        $data = DB::table('panggilanantrian')
-            ->leftJoin('mbppoli', 'panggilanantrian.idbppoli', '=', 'mbppoli.noid')
-            ->where('idunitkerja', $idunitkerja)
-            ->where('iscall', 0)
-            ->where('tanggal', $tanggal)
-            ->when($filterpoli, function ($query) use ($filterpoli) {
-                return $query->whereIn('idbppoli', $filterpoli);
-            })
-            ->select('panggilanantrian.*', 'mbppoli.nama AS namapoli')
-            ->orderBy('id')
-            ->first();
-        return Response::json(array('data' => $data));
-    }
-
-    public function addAntrianSuara(Request $request)
+    private function addAntrianSuara(Request $request)
     {
 		
         $tanggal = date('Y-m-d');
@@ -726,25 +621,11 @@ class Antrian extends Controller
                 'tanggal' => $tanggal,
                 'text' => $request->input('text')
             ];
-            DB::table('panggilanantrian')->insert($dt);
+            DBOnTheFly::setConnection($idunitkerja)->table('panggilanantrian')->insert($dt);
             return "ok";
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function deletePanggilanAntrian($id)
-    {
-		
-        DB::table('panggilanantrian')->where('id', $id)->delete();
-        // DB::table('panggilanantrian')->where('id', $id)->update(array("iscall" => 1));
-    }
-
-    public function getDataUnitkerja(Request $request)
-    {
-		
-        $idunitkerja = $request->input('idunitkerja');
-        $data = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
-        return Response::json(array('data' => $data));
-    }
 }

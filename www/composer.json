@@ -10,7 +10,8 @@
         "yajra/laravel-datatables-oracle": "6.0",
         "maatwebsite/excel": "^2.1",
         "barryvdh/laravel-dompdf": "^0.7.0",
-        "dompdf/dompdf": "0.7.0 as 0.6.2"
+        "dompdf/dompdf": "0.7.0 as 0.6.2",
+        "guzzlehttp/guzzle": "^7.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
