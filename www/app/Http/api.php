@@ -14,8 +14,9 @@ use Illuminate\Http\Request;
 */
 
 //API route
-Route::post('getnomor2', ['uses' => 'API\Antrian@getNomor', 'as' => 'api.getnomor']);
-Route::post('getlistpasien2', ['uses' => 'API\Antrian@getListPasien', 'as' => 'api.getlistpasien']);
+// Route::post('getnomor2', ['uses' => 'API\Antrian@getNomor', 'as' => 'api.getnomor']);
+// Route::post('getlistpasien2', ['uses' => 'API\Antrian@getListPasien', 'as' => 'api.getlistpasien']);
+Route::post('getantrianpoli2', ['uses' => 'API\Antrian@getantrianpoli', 'as' => 'api.getantrianpoli']);
 Route::post('layaniantrian2', ['uses' => 'API\Antrian@layaniantrian', 'as' => 'api.layaniantrian']);
 Route::post('layanikembali2', ['uses' => 'API\Antrian@layanikembali', 'as' => 'api.layanikembali']);
 Route::post('gotofarmasilab2', ['uses' => 'API\Antrian@goToFarmasiLab', 'as' => 'api.gotofarmasilab']);

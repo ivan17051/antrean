@@ -224,21 +224,6 @@ class Antrian extends Controller
         
         return Response::json(array('data' => $data));
     }
-
-    private function getCurrentTotalNomorAntrian($input){
-        $tanggal     = date('Y-m-d');
-        $idunitkerja = $input['idunitkerja'];
-        $noantrian   = $input['pasiennoantrian'];
-        $idbppoli    = $input['idbppoli'];
-
-        $res = DB::connection('mysql')->table('munitkerjapolidaily')
-            ->where('idunitkerja', $idunitkerja)
-            ->where('idbppoli', $idbppoli)
-            ->where('servesdate', $tanggal)
-            ->first();
-        $total = isset($res) ? $res->servesdate : 0;
-        return $total;
-    }
     
     public function layaniantrian(Request $request)
     {
@@ -254,14 +239,12 @@ class Antrian extends Controller
             if($statusCode != 200){
                 return response()->json($data, $statusCode);
             }
-            DB::connection('mysql')->table('munitkerjapolidaily')
-                ->updateOrCreate( ['noid'=> $data['munitkerjapolidaily']['noid']], $data['munitkerjapolidaily']);
-            // foreach ($data['pasien'] as $px) {
-            //     DB::connection('mysql')->table('mpasien')->updateOrInsert( ["noid" => $px['noid']], $px );
-            // }
-            // foreach ($data['mantrian'] as $px) {
-            //     DB::connection('mysql')->table('mpasien')->updateOrInsert( ["noid" => $px['noid']], $px );
-            // }
+            else if(!isset($data['munitkerjapolidaily'])){
+                throw new Exception("Antrian tidak ditemukan");
+            }
+
+            $this->syncAntrian($data);
+
             DB::commit();
         } catch (Exception $e) {
             DB::rollback();
@@ -273,12 +256,14 @@ class Antrian extends Controller
 
     public function goToFarmasiLab(Request $request)
     {
-        // $idunitkerja = Auth::user()->idunitkerja;
-        $idunitkerja = $request->get('idunitkerja');
-        $pasiennoantrian = $request->input('pasiennoantrian');
-        $idbppoli = $request->input('poli');
+        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
+        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
+
+        $res = Http::post(config('app.hostapi')."/api/gotofarmasilab2", $data);
+        $statusCode = $res->getStatusCode();
+        $data = json_decode($res->getBody(), true);
+
         $tipe = $request->input('tipe');
-        $tanggal = date('Y-m-d');
         
         if($tipe=='FARMASI'){
             $idbppoli_baru= 31;
@@ -288,226 +273,92 @@ class Antrian extends Controller
             return response()->json(['message' => 'Not Found!'], 404);
         }
 
-        DB::enableQueryLog();
         DB::beginTransaction();
         try {
-            $antrian = DB::table('mantrian')
-                ->where('idunitkerja', $idunitkerja)
-                ->where('pasiennoantrian',$pasiennoantrian )
-                ->whereIn('idbppoli',$idbppoli)
-                ->whereDate('tanggaleta', '=', $tanggal)
-                ->first();
-
-            if ($antrian) {
-                $hasAntrianLamaInPoliBaru = DB::table('mantrian')
-                    ->where('idunitkerja', $idunitkerja)
-                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
-                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
-                    ->where('idbppoli',$idbppoli_baru)
-                    ->whereDate('tanggaleta', '=', $tanggal)
-                    ->first();
-                
-                if (!$hasAntrianLamaInPoliBaru) {
-                    $params=[
-                        $antrian->iddevice,
-                        $antrian->idtypepasien,
-                        $antrian->kodekartu,
-                        $antrian->pasienkode,
-                        $antrian->idunitkerja,
-                        $idbppoli_baru,
-                        $antrian->idunitkerjaasal,
-                        $idbppoli[0],
-                        $tanggal,
-                        $antrian->NO_KK,
-                        $antrian->RFID,
-                        $antrian->NIK,
-                        $antrian->NAMA_LGKP,
-                        $antrian->JENIS_KELAMIN,
-                        $antrian->TMPT_LHR,
-                        $antrian->TGL_LAHIR,
-                        $antrian->AGAMA,
-                        $antrian->STATUS_KWIN,
-                        $antrian->HUB_KELUARGA,
-                        $antrian->PENDIDIKAN,
-                        $antrian->PEKERJAAN,
-                        $antrian->GOL_GARAH,
-                        $antrian->BER_AKTA_LAHIR,
-                        $antrian->TGL_PJG_KTP,
-                        $antrian->NO_KEL,
-                        $antrian->NAMA_KEL,
-                        $antrian->NO_KEC,
-                        $antrian->NAMA_KEC,
-                        $antrian->NO_KAB,
-                        $antrian->NAMA_KAB,
-                        $antrian->NO_PROP,
-                        $antrian->NAMA_PROP,
-                        $antrian->ALAMAT,
-                        $antrian->NO_RT,
-                        $antrian->NO_RW,
-                        $antrian->GAKIN,
-                        $antrian->KATEGORI_GAKIN,
-                        $antrian->LUAR_SBY,
-                        $antrian->NO_TLP,
-                        $antrian->NIKSIMDUK,
-                        $antrian->statusnik,
-                    ];
-
-                    DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
-                }
-
-                // UPDATE FLAGS ANTRIAN BARU 
-                DB::table('mantrian')
-                    ->where('idunitkerja', $idunitkerja)
-                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
-                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
-                    ->where('idbppoli',$idbppoli_baru)
-                    ->whereDate('tanggaleta', '=', $tanggal)
-                    ->update([
-                        'isconfirm' => 1,
-                        'doconfirm' => date('Y-m-d H:i:s'),
-                        'isdone' => 0,
-                        'isrecall' => 0,
-                    ]);
-
-                $idreturn = 1;
-            } else {
-                throw new Exception("Data antrean tidak ditemukan");
+            if($statusCode != 200){
+                return response()->json($data, $statusCode);
+            }
+            else if(!isset($data['munitkerjapolidaily'])){
+                throw new Exception("Antrian tidak ditemukan");
             }
 
-             //DONE
-             DB::table('mantrian')
-                ->where('idunitkerja', $idunitkerja)
-                ->where('pasiennoantrian',$pasiennoantrian )
-                ->where('idbppoli',$idbppoli)
-                ->whereDate('tanggaleta', '=', $tanggal)
-                ->update([
-                    'isdone' => 1,
-                    "dodone" => date('Y-m-d H:i:s')
-                ]); 
+            $this->syncAntrian($data);
+
+            //sync antrian lab/farmasi
+            $data2 = [ 'idunitkerja'=>$request->input('idunitkerja'),
+                        'idbppoli'=>$idbppoli_baru ];
+            $data2['currentnomor'] = $this->getCurrentTotalNomorAntrian();
+            $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data2);
+            $statusCode2 = $res->getStatusCode();
+            $data2 = json_decode($res->getBody(), true);
+
+            if($statusCode2 != 200){
+                return response()->json($data2, $statusCode2);
+            }
+            else if(!isset($data2['munitkerjapolidaily'])){
+                throw new Exception("Antrian tidak ditemukan");
+            }
+
+            $this->syncAntrian($data2);
+            //end of sync antrian lab/farmasi
+
+            DB::commit();
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
             return response()->json(["statusText"=>$idreturn], 400);
         }
-        DB::commit();
-        return $idreturn;
+        return response()->json("Berhasil masuk ke LAB/FARMASI", $statusCode);
     }
 
     public function goToPoliRujukan(Request $request)
     {
-        // $idunitkerja = Auth::user()->idunitkerja;
-        $idunitkerja = $request->get('idunitkerja');
         $pasiennoantrian = $request->input('pasiennoantrian');
-        $idbppoli = $request->input('poli');
         $idbppoli_baru = $request->input('polirujukan');
-        $tipe = $request->input('tipe');
-        $tanggal = date('Y-m-d');
         
-        DB::enableQueryLog();
+        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
+        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
+
+        $res = Http::post(config('app.hostapi')."/api/gotopolirujukan2", $data);
+        $statusCode = $res->getStatusCode();
+        $data = json_decode($res->getBody(), true);
+
         DB::beginTransaction();
         try {
-            $antrian = DB::table('mantrian')
-                ->where('idunitkerja', $idunitkerja)
-                ->where('pasiennoantrian',$pasiennoantrian )
-                ->whereIn('idbppoli',$idbppoli)
-                ->whereDate('tanggaleta', '=', $tanggal)
-                ->first();
-
-            if ($antrian) {
-                $hasAntrianLamaInPoliBaru = DB::table('mantrian')
-                    ->where('idunitkerja', $idunitkerja)
-                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
-                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
-                    ->where('idbppoli',$idbppoli_baru)
-                    ->whereDate('tanggaleta', '=', $tanggal)
-                    ->first();
-
-                //AVOID TO CREATE NEW ANTRIAN IF FIND ANY
-                if(!$hasAntrianLamaInPoliBaru){
-                    $params=[
-                        $antrian->iddevice,
-                        $antrian->idtypepasien,
-                        $antrian->kodekartu,
-                        $antrian->pasienkode,
-                        $antrian->idunitkerja,
-                        $idbppoli_baru,
-                        $antrian->idunitkerjaasal,
-                        $idbppoli[0],
-                        $tanggal,
-                        $antrian->NO_KK,
-                        $antrian->RFID,
-                        $antrian->NIK,
-                        $antrian->NAMA_LGKP,
-                        $antrian->JENIS_KELAMIN,
-                        $antrian->TMPT_LHR,
-                        $antrian->TGL_LAHIR,
-                        $antrian->AGAMA,
-                        $antrian->STATUS_KWIN,
-                        $antrian->HUB_KELUARGA,
-                        $antrian->PENDIDIKAN,
-                        $antrian->PEKERJAAN,
-                        $antrian->GOL_GARAH,
-                        $antrian->BER_AKTA_LAHIR,
-                        $antrian->TGL_PJG_KTP,
-                        $antrian->NO_KEL,
-                        $antrian->NAMA_KEL,
-                        $antrian->NO_KEC,
-                        $antrian->NAMA_KEC,
-                        $antrian->NO_KAB,
-                        $antrian->NAMA_KAB,
-                        $antrian->NO_PROP,
-                        $antrian->NAMA_PROP,
-                        $antrian->ALAMAT,
-                        $antrian->NO_RT,
-                        $antrian->NO_RW,
-                        $antrian->GAKIN,
-                        $antrian->KATEGORI_GAKIN,
-                        $antrian->LUAR_SBY,
-                        $antrian->NO_TLP,
-                        $antrian->NIKSIMDUK,
-                        $antrian->statusnik,
-                    ];
-    
-                    DB::select('call antrian_add(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', $params);
-                }
-
-                // UPDATE ANTRIAN RUJUKAN/KONSUL
-                DB::table('mantrian')
-                    ->where('idunitkerja', $idunitkerja)
-                    // ->where('pasiennoantrian',$pasiennoantrian )         // pasien no antrian belum diketemukan, 
-                    ->where('NAMA_LGKP', $antrian->NAMA_LGKP)               // alternatif pakai NAMA_LGKP
-                    ->where('idbppoli',$idbppoli_baru)
-                    ->whereDate('tanggaleta', '=', $tanggal)
-                    ->update([
-                        'isconsul' => 1,
-                        'doconsul' => date('Y-m-d H:i:s'),
-                        'isconfirm' => 1,
-                        'doconfirm' => date('Y-m-d H:i:s'),
-                        'isdone' => 0,
-                        'isrecall' => 0,
-                    ]);
-
-                $idreturn = 1;
-            } else {
-                throw new Exception("Data antrean tidak ditemukan");
+            if($statusCode != 200){
+                return response()->json($data, $statusCode);
             }
-            
-            //DONE
-            DB::table('mantrian')
-                ->where('idunitkerja', $idunitkerja)
-                ->where('pasiennoantrian',$pasiennoantrian )
-                ->where('idbppoli',$idbppoli)
-                ->whereDate('tanggaleta', '=', $tanggal)
-                ->update([
-                    'isdone' => 1,
-                    "dodone" => date('Y-m-d H:i:s')
-                ]);
+            else if(!isset($data['munitkerjapolidaily'])){
+                throw new Exception("Antrian tidak ditemukan");
+            }
+
+            $this->syncAntrian($data);
+
+            //sync antrian lab/farmasi
+            $data2 = [ 'idunitkerja'=>$request->input('idunitkerja'),
+                        'idbppoli'=>$idbppoli_baru ];
+            $data2['currentnomor'] = $this->getCurrentTotalNomorAntrian();
+            $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data2);
+            $statusCode2 = $res->getStatusCode();
+            $data2 = json_decode($res->getBody(), true);
+
+            if($statusCode2 != 200){
+                return response()->json($data2, $statusCode2);
+            }
+            else if(!isset($data2['munitkerjapolidaily'])){
+                throw new Exception("Antrian tidak ditemukan");
+            }
+
+            $this->syncAntrian($data2);
+            //end of sync antrian lab/farmasi
+
+            DB::commit();
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
+            return response()->json(["statusText"=>$idreturn], 400);
         }
-        DB::commit();
-        return $idreturn;
+        return response()->json("Berhasil Rujuk Internal", $statusCode);
     }
 
     public function layanikembali(Request $request)
@@ -515,57 +366,31 @@ class Antrian extends Controller
         $noantrian = $request->input('pasiennoantrian');
         $idbppoli = $request->input('poli');
 		
-        DB::enableQueryLog();
+        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
+        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
+
+        $res = Http::post(config('app.hostapi')."/api/layanikembali2", $data);
+        $statusCode = $res->getStatusCode();
+        $data = json_decode($res->getBody(), true);
+
         DB::beginTransaction();
-        $idreturn = '';
         try {
-            $tanggal     = date('Y-m-d');
-            // $idunitkerja = Auth::user()->idunitkerja;
-            $idunitkerja = $request->get('idunitkerja');
-            
-            $antrian = DB::table('mantrian')->select('pasiennoantrian','pasienid','tanggaleta','NAMA_LGKP')
-                ->where('idunitkerja', $idunitkerja)
-                ->where('pasiennoantrian',$noantrian)
-                ->whereIn('idbppoli',$idbppoli)
-                ->whereDate('tanggaleta', '=', $tanggal)
-                ->first();
-
-            if ($antrian) {
-                $dt = [
-                    "tanggal" => $tanggal,
-                    "idbppoli" => $idbppoli,
-                    "idunitkerja" => $idunitkerja,
-                    "pasiennoantrian" => $noantrian,
-                    "text" => $antrian->NAMA_LGKP,
-                ];
-
-                $addantriansuara = $this->addAntrianSuara(new Request($dt));
-
-                // UPDATE STATUS RECALL ANTRIAN
-                DB::table('mantrian')
-                    ->where('idunitkerja', $idunitkerja)
-                    ->where('pasiennoantrian',$noantrian )
-                    ->where('idbppoli',$idbppoli)
-                    ->whereDate('tanggaleta', '=', $tanggal)
-                    ->update([
-                        'isrecall' => 1,
-                        'dorecall' => date('Y-m-d H:i:s'),
-                        'isdone' => 0,
-                        'dodone' => date('Y-m-d H:i:s'),
-                    ]);
-
-                $idreturn = 1;
-            } else {
-                throw new Exception("Antrian selanjutnya tidak ditemukan");
+            if($statusCode != 200){
+                return response()->json($data, $statusCode);
             }
+            else if(!isset($data['munitkerjapolidaily'])){
+                throw new Exception("Antrian tidak ditemukan");
+            }
+
+            $this->syncAntrian($data);
+
+            DB::commit();
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
-            return response()->json(['statusText'=>$idreturn], 401);
+            return response()->json(["statusText"=>$idreturn], 400);
         }
-        DB::commit();
-
-        return $idreturn;
+        return response()->json("Berhasil Melayani Kembali", $statusCode);
     }
 
     public function addhistory($tipe, Request $request)
@@ -746,5 +571,156 @@ class Antrian extends Controller
         $idunitkerja = $request->input('idunitkerja');
         $data = DB::table('munitkerja')->where('noid', $idunitkerja)->first();
         return Response::json(array('data' => $data));
+    }
+
+    private function getCurrentTotalNomorAntrian($input){
+        $tanggal     = date('Y-m-d');
+        $idunitkerja = $input['idunitkerja'];
+        $idbppoli    = $input['idbppoli'];
+
+        $res = DB::connection('mysql')->table('munitkerjapolidaily')
+            ->where('idunitkerja', $idunitkerja)
+            ->where('idbppoli', $idbppoli)
+            ->where('servesdate', $tanggal)
+            ->first();
+        $total = isset($res) ? $res->servesdate : 0;
+        return $total;
+    }
+
+    private function syncAntrian($data){
+        //sync munitkerjapoli
+        DB::connection('mysql')->select("REPLACE INTO munitkerjapolidaily VALUES(
+            :noid,
+            :idunitkerja,
+            :idbppoli,
+            :idtypeantrian,
+            :idshift,
+            :servesdate,
+            :jambuka,
+            :jamtutup,
+            :jamlayanan,
+            :avgservice,
+            :avgtindakan,
+            :avgnontindakan,
+            :noserver,
+            :servesno,
+            :servesmax,
+            :servestime)", $data['munitkerjapolidaily']);
+        
+        //sync mpasien
+        foreach ($data['pasien'] as $px) {
+            DB::connection('mysql')->select("REPLACE INTO mpasien VALUES(
+                :noid,
+                :nik,
+                :nama,
+                :jeniskelamin,
+                :tgllahir,
+                :agama,
+                :pendidikan,
+                :pekerjaan,
+                :goldarah,
+                :no_kel,
+                :nama_kel,
+                :no_kec,
+                :nama_kec,
+                :no_kab,
+                :nama_kab,
+                :no_prop,
+                :nama_prop,
+                :alamat,
+                :rt,
+                :rw,
+                :issurabaya,
+                :nohp,
+                :idcreate,
+                :docreate,
+                :idupdate,
+                :lastupdate)", $px);
+        }
+
+        //sync mantrian
+        foreach ($data['mantrian'] as $a) {
+            DB::connection('mysql')->select("REPLACE INTO mantrian VALUES(
+                   :noid,
+                :idunitkerja,
+                :idbppoli,
+                :idunitkerjaasal,
+                :idbppoliasal,
+                :pasienid,
+                :pasienkode,
+                :pasiennoantrian,
+                :pasienantriancode,
+                :tanggal,
+                :tanggalbuka,
+                :waktueta,
+                :tanggaleta,
+                :appid,
+                :appname,
+                :deviceidunitkerja,
+                :devicenama,
+                :deviceip,
+                :idcreate,
+                :docreate,
+                :idupdate,
+                :lastupdate,
+                :NO_KK,
+                :RFID,
+                :NIK,
+                :NAMA_LGKP,
+                :JENIS_KELAMIN,
+                :TMPT_LHR,
+                :TGL_LAHIR,
+                :AGAMA,
+                :STATUS_KWIN,
+                :HUB_KELUARGA,
+                :PENDIDIKAN,
+                :PEKERJAAN,
+                :GOL_GARAH,
+                :BER_AKTA_LAHIR,
+                :TGL_PJG_KTP,
+                :NO_KEL,
+                :NAMA_KEL,
+                :NO_KEC,
+                :NAMA_KEC,
+                :NO_KAB,
+                :NAMA_KAB,
+                :NO_PROP,
+                :NAMA_PROP,
+                :ALAMAT,
+                :NO_RT,
+                :NO_RW,
+                :GAKIN,
+                :KATEGORI_GAKIN,
+                :LUAR_SBY,
+                :NO_TLP,
+                :NIKSIMDUK,
+                :idtypepasien,
+                :idshift,
+                :kodekartu,
+                :isexpired,
+                :doexpired,
+                :iscall,
+                :docall,
+                :ipaddress,
+                :iddevice,
+                :statusnik,
+                :isrecall,
+                :dorecall,
+                :isconfirm,
+                :doconfirm,
+                :isserved,
+                :doserved,
+                :isskipped,
+                :doskipped,
+                :isconsul,
+                :doconsul,
+                :isdone,
+                :dodone)", $a);
+        }
+
+        //sync statusantrian
+        foreach ($data['statusantrian'] as $a) {
+            DB::connection('mysql')->table('mantrian')->where("noid",$a['noid'])->update( $a );
+        }
     }
 }

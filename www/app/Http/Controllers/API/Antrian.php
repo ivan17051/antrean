@@ -16,21 +16,36 @@ use App\Http\Controllers\Controller;
 
 class Antrian extends Controller
 {
-    private function getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor=0){
+    private function getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor=1000){
         $res['munitkerjapolidaily'] = DBOnTheFly::setConnection($idunitkerja)->table('munitkerjapolidaily')
             ->where('idunitkerja', $idunitkerja)
             ->where('idbppoli', $idbppoli)
             ->where('servesdate', $tanggal)
             ->take(1)->first();
-        $res['mantrian'] = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
+        $res['statusantrian'] = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
             ->select("noid","isexpired","iscall","isrecall","isconfirm","isserved","isskipped","isconsul","isdone","pasiennoantrian")
             ->where('idunitkerja', $idunitkerja)
             ->where('idbppoli',$idbppoli)
             ->whereDate('tanggaleta', '=', $tanggal)->get();
+        $res['mantrian'] = DBOnTheFly::setConnection($idunitkerja)->table('mantrian')
+            ->where('idunitkerja', $idunitkerja)
+            ->where('idbppoli',$idbppoli)
+            ->whereDate('tanggaleta', '=', $tanggal)
+            ->where('pasiennoantrian','>',$currentnomor)->get();
 
-        $idpasien = collect($res['mantrian'])->pluck('pasiennoantrian');
-        $res['pasien']=DBOnTheFly::setConnection($idunitkerja)->table('mpasien')->get();
+        $idpasien = collect($res['mantrian'])->pluck('pasienid');
+        $res['pasien']=DBOnTheFly::setConnection($idunitkerja)->table('mpasien')->whereIn('noid',$idpasien)->get();
         return $res;
+    }
+
+    public function getantrianpoli(Request $request){
+        //ask for sync
+        $tanggal     = date('Y-m-d');
+        $idunitkerja = $request->input('idunitkerja');
+        $idbppoli    = $request->input('idbppoli');
+        $currentnomor = $request->input('currentnomor');
+        $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
+        return response()->json($res, 200);
     }
     
     public function getNomor(Request $request)
@@ -108,9 +123,6 @@ class Antrian extends Controller
             $idbppoli    = $request->input('idbppoli');
             $tipe = $request->input('tipe');
 
-            $currentnomor = $request->input('currentnomor');
-            $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
-            return response()->json($res, 200);
 
             $res = DBOnTheFly::setConnection($idunitkerja)->table('munitkerjapolidaily')
                 ->where('idunitkerja', $idunitkerja)
@@ -201,6 +213,11 @@ class Antrian extends Controller
                 }
 
                 $idreturn = 1;
+
+                //ask for sync
+                $currentnomor = $request->input('currentnomor');
+                $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
+                return response()->json($res, 200);
             } else {
                 throw new Exception("Antrian selanjutnya tidak ditemukan");
             }
@@ -327,6 +344,11 @@ class Antrian extends Controller
                     'isdone' => 1,
                     "dodone" => date('Y-m-d H:i:s')
                 ]); 
+
+            //ask for sync
+            $currentnomor = $request->input('currentnomor');
+            $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
+            return response()->json($res, 200);
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
@@ -444,7 +466,12 @@ class Antrian extends Controller
                 ->update([
                     'isdone' => 1,
                     "dodone" => date('Y-m-d H:i:s')
-                ]);
+            ]);
+
+            //ask for sync
+            $currentnomor = $request->input('currentnomor');
+            $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
+            return response()->json($res, 200);
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
@@ -501,6 +528,11 @@ class Antrian extends Controller
             } else {
                 throw new Exception("Antrian selanjutnya tidak ditemukan");
             }
+
+            //ask for sync
+            $currentnomor = $request->input('currentnomor');
+            $res = $this->getLatestListAntrianPoli($tanggal, $idunitkerja, $idbppoli, $currentnomor);
+            return response()->json($res, 200);
         } catch (Exception $e) {
             DB::rollback();
             $idreturn = $e->getMessage();
