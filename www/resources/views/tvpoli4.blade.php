@@ -3,16 +3,32 @@
 <div style="height:calc(100vh - 81px);max-height:calc(100vh - 81px);" class="">
   <div id="boxlistpoli">
       <div class="row" id="listpoli">
-        <div class="col-md-12">
-          <div class="form-group" style="font-size:50px;">
-            <label>Pilih 3 Poli</label>
-            <select id="selectpoli" name="selectpoli" class="form-control select2" multiple="multiple" data-placeholder="Pilih 3 Poli" 
+        <div class="col-md-4">
+          <div class="form-group" >
+            <label>Pilih Poli Kiri</label>
+            <select id="selectpoli1" name="selectpoli1" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;" data-maximum-selection-length="3">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group" >
+            <label>Pilih Poli Tengah</label>
+            <select id="selectpoli2" name="selectpoli2" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;" data-maximum-selection-length="3">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group" >
+            <label>Pilih Poli Kanan</label>
+            <select id="selectpoli3" name="selectpoli3" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
               style="width: 100%;" data-maximum-selection-length="3">
             </select>
           </div>
         </div>
         <div class="col-md-12">
-          <button type="button" class="btn btn-primary btn-block" style="font-size:40px;" onclick="setpoli()">Pilih</button>
+          <button type="button" class="btn btn-primary btn-block" style="font-size:30px;" onclick="setpoli()">Pilih</button>
         </div>
       </div>
   </div>
@@ -178,7 +194,7 @@ function settombolsuara(){
 }
 
 function getpoliaktif(){
-    console.log('link: '+Settings.baseurl+'/getlistpoli');
+    // console.log('link: '+Settings.baseurl+'/getlistpoli');
     $.ajax({
         type: 'GET',
         headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
@@ -207,7 +223,7 @@ function createlistmodal(data){
     data.push({id:39, nama:'LABORATORIUM'})
     data.push({id:31, nama:'FARMASI'})
 
-    let $listpoli = $('#selectpoli')
+    let $listpoli = $('.dataselect')
     $listpoli.empty();
     for(const poli of data){
       $listpoli.append('<option value="'+poli['id']+','+poli['nama']+'" data-text="'+poli['nama']+'">'+poli['nama']+'</option>');
@@ -229,18 +245,6 @@ function createlistmodal(data){
 
 async function setpoli() {
     
-    listpoli = $('#selectpoli').val().reduce(function(e,a){
-      // e.push(a.split(','));
-      let poli = a.split(',');
-      e.push({id:poli[0], nama:poli[1]});
-      return e;
-    },[]);
-
-    listpoli2 = $('#selectpoli').val().reduce(function(e,a){
-      e.push(a.split(','));
-      return e;
-    },[]);
-    
     $("#loading").show();
     $("#boxlistpoli").hide();
     $("#viewantrian").show('slow');
@@ -248,8 +252,25 @@ async function setpoli() {
     // listpoli[0] = id;
     // await getlistpoli(id, nama);
     // setTimeout(ceksuara, 2000);
+    if(sessionStorage.setpoli3 == null){
+      
+      listpoli=[];
+      listpoli2=[];
 
-    sessionStorage.setItem("setpoli", listpoli2);
+      poli = $('#selectpoli1').val().split(',');
+      listpoli.push({id:poli[0], nama:poli[1]});
+      listpoli2.push(poli[0],poli[1]);
+
+      poli = $('#selectpoli2').val().split(',');
+      listpoli.push({id:poli[0], nama:poli[1]});
+      listpoli2.push(poli[0],poli[1]);
+
+      poli = $('#selectpoli3').val().split(',');
+      listpoli.push({id:poli[0], nama:poli[1]});
+      listpoli2.push(poli[0],poli[1]);
+
+      sessionStorage.setItem("setpoli3", listpoli2);
+    }
     
     getDokter();
     getNomor();
@@ -284,7 +305,7 @@ async function setpoli() {
 function kembali(){
     // $("#boxlistpoli").show('slow');
     // $("#viewantrian").hide('slow');
-    sessionStorage.removeItem("setpoli");
+    sessionStorage.removeItem("setpoli3");
     location.reload();
 }
 
@@ -548,20 +569,22 @@ function controlLoopRequestPasien(){
 
 $(async function () {
   $polis = $('.my-poli-grid');
-  // $('#viewantrian').hide();
+  
   $("#viewantrian").hide();
-    getDataUnitkerja();
-    date_time("date_time");
-    // getPoliUtama();
-    getpoliaktif();
+  getDataUnitkerja();
+  date_time("date_time");
+  // getPoliUtama();
+  getpoliaktif();
 
-    // if(sessionStorage.setpoli){
-    //     var poli = sessionStorage.getItem('setpoli').split(',');
-        
-    //     listpoli.push({id:poli[0], nama:poli[1]},{id:poli[2], nama:poli[3]},{id:poli[4], nama:poli[5]});
-        
-    //     setpoli();
-    // }
+  if(sessionStorage.setpoli3){
+      listpoli=[];
+      var poli = sessionStorage.getItem('setpoli3');
+      var poli2 = poli.split(',');
+      // console.log(poli2);
+      listpoli.push({id:poli2[0],nama:poli2[1]},{id:poli2[2],nama:poli2[3]},{id:poli2[4], nama:poli2[5]});
+      
+      setpoli();
+  }
   
 
   // getDataUnitkerja();

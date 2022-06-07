@@ -1,6 +1,29 @@
 @extends('layouts.tvlayout')
 @section('content')
 <div style="height:calc(100vh - 81px);max-height:calc(100vh - 81px);" class="">
+  <div id="boxlistpoli">
+      <div class="row" id="listpoli">
+        <div class="col-md-6">
+          <div class="form-group" >
+            <label>Pilih Poli Kiri</label>
+            <select id="selectpoli1" name="selectpoli1" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group" >
+            <label>Pilih Poli Kanan</label>
+            <select id="selectpoli2" name="selectpoli2" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary btn-block" style="font-size:40px;" onclick="setpoli()">Pilih</button>
+        </div>
+      </div>
+  </div>
   <div id="viewantrian" style="height:calc(100% - 481px);">
     <div class="row">
       <div class="col-md-12 " id="barisbutton">
@@ -117,11 +140,9 @@ var listpasienNeedUpdate = true;
 
 var ALLantreanPoliState=[];
 var intervalInstance = [];
-var listpoli = [
-  {"id": 1, "nama": "UMUM"},
-  {"id": 55, "nama": "LANSIA"},
-];
+var listpoli = [];
 var $polis;
+$('.select2').select2();
 
 
 $(window).on('load', function(){
@@ -179,6 +200,104 @@ function settombolsuara(){
     } else {
         $("#tombolsuara").html('<i class="glyphicon glyphicon-volume-off">');
     }
+}
+
+function getpoliaktif(){
+    // console.log('link: '+Settings.baseurl+'/getlistpoli');
+    $.ajax({
+        type: 'GET',
+        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+        url: Settings.baseurl+'/getlistpoli',
+        // data: { idshift: idshift },
+        dataType: 'json',
+        async: false,
+        success: function (result) {
+            var data = result.data;
+            createlistmodal(data);
+        },
+        error: function (result) {
+            console.log(result.statusText);
+        }
+    }).done( () => {
+        // console.table(listpoli)
+    })
+}
+
+function createlistmodal(data){
+    // $("#boxpoliantrian").empty()
+    var i = 0;
+    // console.log(data);
+    data.push({id:39, nama:'LABORATORIUM'})
+    data.push({id:31, nama:'FARMASI'})
+
+    let $listpoli = $('.dataselect')
+    $listpoli.empty();
+    for(const poli of data){
+      $listpoli.append('<option value="'+poli['id']+','+poli['nama']+'" data-text="'+poli['nama']+'">'+poli['nama']+'</option>');
+    }
+
+}
+
+async function setpoli() {
+    
+  $("#loading").show();
+  $("#boxlistpoli").hide();
+  $("#viewantrian").show('slow');
+  
+  // listpoli[0] = id;
+  // await getlistpoli(id, nama);
+  // setTimeout(ceksuara, 2000);
+  if(sessionStorage.setpoli2 == null){
+      
+    listpoli=[];
+    listpoli2=[];
+
+    poli = $('#selectpoli1').val().split(',');
+    listpoli.push({id:poli[0], nama:poli[1]});
+    listpoli2.push(poli[0],poli[1]);
+
+    poli = $('#selectpoli2').val().split(',');
+    listpoli.push({id:poli[0], nama:poli[1]});
+    listpoli2.push(poli[0],poli[1]);
+
+    sessionStorage.setItem("setpoli2", listpoli2);
+  }
+
+  getDokter();
+  getNomor();
+
+  loopRequestPasien();
+
+  setInterval(loopRequestPasien, 60000);
+
+  //init data antrean 
+  for (let i = 0; i < listpoli.length; i++) {
+    ALLantreanPoliState.push({
+        "container":null,
+        "elemheight": null,
+        "$bottomElem":null
+    });
+    intervalInstance.push(null)
+    ALLstreamnomor.push(null)
+    getNomor(listpoli[i].id, $($polis[i]), i)
+  }
+
+  // setTimeout(getDokter, 2000);
+  // setTimeout(cekPanggilan, 2000, listpoli);
+  // setTimeout(getNomor, 2000);
+
+  controlLoopRequestPasien();
+
+  setInterval(controlLoopRequestPasien, 60000);
+
+  $("#loading").hide();
+}
+
+function kembali(){
+  // $("#boxlistpoli").show('slow');
+  // $("#viewantrian").hide('slow');
+  sessionStorage.removeItem("setpoli2");
+  location.reload();
 }
 
 function templatePasien(d){
@@ -453,22 +572,19 @@ function controlLoopRequestPasien(){
 $(async function () {
   $polis = $('.my-poli-grid');
 
-  //init data antrean 
-  for (let i = 0; i < listpoli.length; i++) {
-    ALLantreanPoliState.push({
-        "container":null,
-        "elemheight": null,
-        "$bottomElem":null
-    });
-    intervalInstance.push(null)
-    ALLstreamnomor.push(null)
-    getNomor(listpoli[i].id, $($polis[i]), i)
-  }
-
+  $("#viewantrian").hide();
   getDataUnitkerja();
   date_time("date_time");
   
-  // getpoliaktif();
+  getpoliaktif();
+
+  if(sessionStorage.setpoli2){
+    var poli = sessionStorage.getItem('setpoli2').split(',');
+    
+    listpoli.push({id:poli[0], nama:poli[1]},{id:poli[2], nama:poli[3]});
+    
+    setpoli();
+  }
 
   // if(localStorage.getItem("suaraantrian") !== null){
   //     suaraaktif = localStorage.getItem("suaraantrian");
