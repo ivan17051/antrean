@@ -40,6 +40,7 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 	Route::get('lab', ['uses' => 'Poli@lab']);
 	Route::get('farmasi', ['uses' => 'Poli@farmasi']);
 
+	Route::post('syncpoli', ['uses' => 'Antrian@syncpoli', 'as' => 'syncpoli']);
 	Route::post('layaniantrian', ['uses' => 'Antrian@layaniantrian', 'as' => 'layaniantrian']);
 	Route::post('layanikembali', ['uses' => 'Antrian@layanikembali', 'as' => 'layanikembali']);
 	Route::post('gotofarmasilab', ['uses' => 'Antrian@goToFarmasiLab', 'as' => 'gotofarmasilab']);

@@ -224,6 +224,25 @@ class Antrian extends Controller
         
         return Response::json(array('data' => $data));
     }
+
+    public function syncpoli(Request $request){
+        $idunitkerja = $request->get('idunitkerja');
+        // return response()->json($request->input('poli'), 200);
+        // return response()->json(['idunitkerja'=>$idunitkerja], 200);
+
+        foreach($request->input('poli') as $idbppoli){
+            $data = [ 'idunitkerja'=>$idunitkerja,
+               'idbppoli'=>$idbppoli ];
+
+            $data['currentnomor'] = $this->getCurrentTotalNomorAntrian($data);
+            $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data);
+            $statusCode = $res->getStatusCode();
+            $data = json_decode($res->getBody(), true);
+
+            $this->syncAntrian($data);
+        }
+        return response()->json('syncing', 200);
+    }
     
     public function layaniantrian(Request $request)
     {
@@ -256,8 +275,12 @@ class Antrian extends Controller
 
     public function goToFarmasiLab(Request $request)
     {
-        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
-        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
+        $idunitkerja = $request->get('idunitkerja');
+        $idbppoli = $request->input('poli')[0];
+        $data = [ 'idunitkerja'=>$idunitkerja,
+                    'idbppoli'=>$idbppoli ];
+        $currentnomor = $this->getCurrentTotalNomorAntrian($data);
+        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor], $data);
 
         $res = Http::post(config('app.hostapi')."/api/gotofarmasilab2", $data);
         $statusCode = $res->getStatusCode();
@@ -285,9 +308,9 @@ class Antrian extends Controller
             $this->syncAntrian($data);
 
             //sync antrian lab/farmasi
-            $data2 = [ 'idunitkerja'=>$request->input('idunitkerja'),
+            $data2 = [ 'idunitkerja'=>$idunitkerja,
                         'idbppoli'=>$idbppoli_baru ];
-            $data2['currentnomor'] = $this->getCurrentTotalNomorAntrian();
+            $data2['currentnomor'] = $this->getCurrentTotalNomorAntrian($data2);
             $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data2);
             $statusCode2 = $res->getStatusCode();
             $data2 = json_decode($res->getBody(), true);
@@ -313,11 +336,15 @@ class Antrian extends Controller
 
     public function goToPoliRujukan(Request $request)
     {
+        $idunitkerja = $request->get('idunitkerja');
+        $idbppoli = $request->input('poli')[0];
+        $data = [ 'idunitkerja'=>$idunitkerja,
+                    'idbppoli'=>$idbppoli ];
         $pasiennoantrian = $request->input('pasiennoantrian');
         $idbppoli_baru = $request->input('polirujukan');
         
-        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
-        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
+        $currentnomor = $this->getCurrentTotalNomorAntrian($data);
+        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor], $data);
 
         $res = Http::post(config('app.hostapi')."/api/gotopolirujukan2", $data);
         $statusCode = $res->getStatusCode();
@@ -335,9 +362,9 @@ class Antrian extends Controller
             $this->syncAntrian($data);
 
             //sync antrian lab/farmasi
-            $data2 = [ 'idunitkerja'=>$request->input('idunitkerja'),
+            $data2 = [ 'idunitkerja'=>$idunitkerja,
                         'idbppoli'=>$idbppoli_baru ];
-            $data2['currentnomor'] = $this->getCurrentTotalNomorAntrian();
+            $data2['currentnomor'] = $this->getCurrentTotalNomorAntrian($data2);
             $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data2);
             $statusCode2 = $res->getStatusCode();
             $data2 = json_decode($res->getBody(), true);
@@ -363,11 +390,14 @@ class Antrian extends Controller
 
     public function layanikembali(Request $request)
     {
+        $idunitkerja = $request->get('idunitkerja');
+        $idbppoli = $request->input('poli')[0];
         $noantrian = $request->input('pasiennoantrian');
-        $idbppoli = $request->input('poli');
+        $data = [ 'idunitkerja'=>$request->get('idunitkerja'),
+                    'idbppoli'=>$idbppoli ];
 		
-        $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
-        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
+        $currentnomor = $this->getCurrentTotalNomorAntrian($data);
+        $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor], $data);
 
         $res = Http::post(config('app.hostapi')."/api/layanikembali2", $data);
         $statusCode = $res->getStatusCode();
@@ -583,7 +613,7 @@ class Antrian extends Controller
             ->where('idbppoli', $idbppoli)
             ->where('servesdate', $tanggal)
             ->first();
-        $total = isset($res) ? $res->servesdate : 0;
+        $total = isset($res) ? $res->servesmax : 0;
         return $total;
     }
 

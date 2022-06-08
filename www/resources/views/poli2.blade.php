@@ -469,11 +469,32 @@
     $("#viewantrian").hide('slow');
   }
 
-  function getDataPoli() {
+  function syncPoli($polis){
+    return $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      url: Settings.baseurl + '/syncpoli',
+      type: 'POST',
+      data: {
+        'poli[]': $polis
+      },
+      dataType: 'json',
+      success: function (result) {
+        console.log('sync',result);
+        // var data = result.data[0];
+        // sound(noantrian, idbppoli);
+      }
+    });
+  }
+
+  async function getDataPoli() {
     // $('#listpoli').empty();
     $("#loading").show();
     // $("#tombolnext").prop("disabled", true);
     if (idbppoli) {
+      var res = await syncPoli([idbppoli]);
+
       $.ajax({
         url: Settings.baseurl + '/getdatapoli/' + idbppoli,
         type: 'GET',
