@@ -79,6 +79,21 @@ return [
             'strict' => false,
             'engine' => null,
         ],
+		
+		'mysqlreplikasi' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', '172.18.1.206'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'dbantrian'),
+            'username' => env('DB_USERNAME', 'itdkk'),
+            'password' => env('DB_PASSWORD', 'gudang1234567890'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
+
 
         'pgsql' => [
             'driver' => 'pgsql',

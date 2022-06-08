@@ -11,6 +11,7 @@
 |
 */
 use Illuminate\Http\Request;
+
 Route::get('login', ['uses' => 'UserController@index', 'as' => 'login']);
 // Route::post('login', ['uses' => 'UserController@doLogin', 'as' => 'login']);
 // Route::get('/', 'Home@index');
