@@ -210,7 +210,7 @@ async function setpoli(id, nama) {
 
     sessionStorage.setItem("setpoli", id+','+nama);
     
-    getDokter();
+    // getDokter();
     getNomor();
 
     loopRequestPasien();

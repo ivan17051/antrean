@@ -25,12 +25,12 @@ class DatabaseConnection
                 $password = 'Puskesmas1234';
         }else{
                 $username = $r->n;
-                $password = '12345';
+                $password = '12345678';
         }
 
         config(['database.connections.onthefly' => [
             'driver'   => 'mysql',
-            'host'     => '172.18.1.208',
+            'host'     => '172.18.1.206',
             'port'     => 3306,
             'database' => 'dbantrian',
             'username' => $username,

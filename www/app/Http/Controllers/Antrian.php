@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use App\Helpers\Http;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
-
+use DBOnTheFly;
 
 class Antrian extends Controller
 {
@@ -115,7 +115,7 @@ class Antrian extends Controller
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
 		$idunitkerja = $request->get('idunitkerja');
-        $data = DB::connection('mysql')->select("SELECT A.nama, COALESCE(X.servesno, 0) AS noantrian, COALESCE(X.NAMA_LGKP, '-') AS pasien, X.*
+        $data = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.nama, COALESCE(X.servesno, 0) AS noantrian, COALESCE(X.NAMA_LGKP, '-') AS pasien, X.*
             FROM mbppoli A
             LEFT JOIN ( SELECT A.*, B.NAMA_LGKP FROM munitkerjapolidaily A
                 LEFT JOIN (
@@ -141,7 +141,7 @@ class Antrian extends Controller
         $wherepoli = "";
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
-        $dokter = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, B.*, C.nama AS namapoli
+        $dokter = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.policaption AS bppoli, B.*, C.nama AS namapoli
         	FROM munitkerjapoli A
             LEFT JOIN mdokter B ON A.idunitkerja = B.idunitkerja
             LEFT JOIN mbppoli C ON C.noid = A.idbppoli
@@ -211,14 +211,14 @@ class Antrian extends Controller
             $wherehistory = "";
         } else {
             $wherehistory = "";
-            $cekantrian = DB::select("SELECT COALESCE(servesno, 0) AS noantrian FROM munitkerjapolidaily WHERE idunitkerja = $idunitkerja $wherepoli AND servesdate = '$tanggal' LIMIT 1");
+            $cekantrian = DBOnTheFly::setConnection($idunitkerja)->select("SELECT COALESCE(servesno, 0) AS noantrian FROM munitkerjapolidaily WHERE idunitkerja = $idunitkerja $wherepoli AND servesdate = '$tanggal' LIMIT 1");
             if ($cekantrian) {
                 $noantrian = $cekantrian[0]->noantrian;
             }
         }
 
 		
-        $data = DB::connection('mysql')->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli $whereisconfirm AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
+        $data = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli $whereisconfirm AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
             UNION
             SELECT A.noid, idunitkerja, idbppoli,  B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP FROM mantrianserve A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory ORDER BY pasiennoantrian ");
         
@@ -263,6 +263,35 @@ class Antrian extends Controller
             }
 
             $this->syncAntrian($data);
+
+            $tipe = $request->input('tipe');
+            if ($tipe == 1) {
+                //do nothing
+            }else if($tipe == 2){
+                $CALLNEXT = true;
+            }else{
+                $CALLNEXT = true;
+            }
+
+            if ($CALLNEXT) {
+                $tanggal     = date('Y-m-d');
+                $idunitkerja = $request->input('idunitkerja');
+                $idbppoli    = $request->input('idbppoli');
+                
+                $dt = [
+                    "tanggal" => $tanggal,
+                    "idbppoli" => $idbppoli,
+                    "idunitkerja" => $idunitkerja,
+                    "pasiennoantrian" => $data['munitkerjapolidaily']['servesno'],
+                    "text" => "",
+                ];
+
+                // if ($data) {
+                //     $dt["text"] = $data[0]->nama;
+                // }
+
+                $addantriansuara = $this->addAntrianSuara(new Request($dt));
+            }
 
             DB::commit();
         } catch (Exception $e) {

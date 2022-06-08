@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="{{asset('theme/bower_components/bootstrap-daterangepicker/daterangepicker.css')}}">
     <link rel="stylesheet" href="{{asset('theme/plugins/bootstrap-toastr/toastr.min.css')}}"/>
     <link rel="stylesheet" href="{{asset('theme/plugins/sweetalert/sweetalert.css')}}"/>
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{asset('theme/bower_components/select2/dist/css/select2.min.css')}}">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -265,6 +267,8 @@
 <script src="{{asset('theme/dist/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('theme/dist/js/demo.js')}}"></script>
+<!-- Select2 -->
+<script src="{{asset('theme/bower_components/select2/dist/js/select2.full.min.js')}}"></script>
 
 <script src="{{asset('js/myapp.js?1')}}"></script>
 <script src="{{asset('js/suaraantrian.js?2')}}"></script>

@@ -1,6 +1,37 @@
 @extends('layouts.tvlayout')
 @section('content')
 <div style="height:calc(100vh - 81px);max-height:calc(100vh - 81px);" class="">
+  <div id="boxlistpoli">
+      <div class="row" id="listpoli">
+        <div class="col-md-4">
+          <div class="form-group" >
+            <label>Pilih Poli Kiri</label>
+            <select id="selectpoli1" name="selectpoli1" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;" data-maximum-selection-length="3">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group" >
+            <label>Pilih Poli Tengah</label>
+            <select id="selectpoli2" name="selectpoli2" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;" data-maximum-selection-length="3">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group" >
+            <label>Pilih Poli Kanan</label>
+            <select id="selectpoli3" name="selectpoli3" class="form-control select2 dataselect" data-placeholder="Pilih 1 Poli" 
+              style="width: 100%;" data-maximum-selection-length="3">
+            </select>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <button type="button" class="btn btn-primary btn-block" style="font-size:30px;" onclick="setpoli()">Pilih</button>
+        </div>
+      </div>
+  </div>
   <div id="viewantrian" style="height:calc(100% - 481px);">
     <div class="row">
       <div class="col-md-12 " id="barisbutton">
@@ -101,9 +132,7 @@ var listpasienNeedUpdate = true;
 var ALLantreanPoliState=[];
 var intervalInstance = [];
 var listpoli = [
-  {"id": 19, "nama": "BATRA"},
-  {"id": 2, "nama": "GIGI"},
-  {"id": 22, "nama": "PSIKOLOGI"},
+ 
 ];
 var $polis;
 
@@ -162,6 +191,122 @@ function settombolsuara(){
     } else {
         $("#tombolsuara").html('<i class="glyphicon glyphicon-volume-off">');
     }
+}
+
+function getpoliaktif(){
+    // console.log('link: '+Settings.baseurl+'/getlistpoli');
+    $.ajax({
+        type: 'GET',
+        headers: { 'X-CSRF-TOKEN': "{{ csrf_token() }}" },
+        url: Settings.baseurl+'/getlistpoli',
+        // data: { idshift: idshift },
+        dataType: 'json',
+        async: false,
+        success: function (result) {
+            var data = result.data;
+            createlistmodal(data);
+        },
+        error: function (result) {
+            console.log(result.statusText);
+        }
+    }).done( () => {
+        // console.table(listpoli)
+    })
+}
+
+$('.select2').select2();
+
+function createlistmodal(data){
+    // $("#boxpoliantrian").empty()
+    var i = 0;
+    // console.log(data);
+    data.push({id:39, nama:'LABORATORIUM'})
+    data.push({id:31, nama:'FARMASI'})
+
+    let $listpoli = $('.dataselect')
+    $listpoli.empty();
+    for(const poli of data){
+      $listpoli.append('<option value="'+poli['id']+','+poli['nama']+'" data-text="'+poli['nama']+'">'+poli['nama']+'</option>');
+    }
+
+    // var box = data.map(function (poli) {
+    //     var x = $('<option class="btn btn-block btn-lg btn-danger buttonpoli" style="font-size: 32px;">' + poli.nama + '</button>' +
+    //     '</div>');
+        
+    //     x.on('click' , function(){
+    //         // namapoli = poli.nama
+    //         setpoli(poli.id, poli.nama)
+    //     });
+    //     return x;
+    // })
+    // $("#listpoli").html('').append(box);
+    // showmodalsetup();
+}
+
+async function setpoli() {
+    
+    $("#loading").show();
+    $("#boxlistpoli").hide();
+    $("#viewantrian").show('slow');
+    
+    // listpoli[0] = id;
+    // await getlistpoli(id, nama);
+    // setTimeout(ceksuara, 2000);
+    if(sessionStorage.setpoli3 == null){
+      
+      listpoli=[];
+      listpoli2=[];
+
+      poli = $('#selectpoli1').val().split(',');
+      listpoli.push({id:poli[0], nama:poli[1]});
+      listpoli2.push(poli[0],poli[1]);
+
+      poli = $('#selectpoli2').val().split(',');
+      listpoli.push({id:poli[0], nama:poli[1]});
+      listpoli2.push(poli[0],poli[1]);
+
+      poli = $('#selectpoli3').val().split(',');
+      listpoli.push({id:poli[0], nama:poli[1]});
+      listpoli2.push(poli[0],poli[1]);
+
+      sessionStorage.setItem("setpoli3", listpoli2);
+    }
+    
+    getDokter();
+    getNomor();
+
+    loopRequestPasien();
+
+    setInterval(loopRequestPasien, 60000);
+
+    //init data antrean 
+    for (let i = 0; i < listpoli.length; i++) {
+      ALLantreanPoliState.push({
+          "container":null,
+          "elemheight": null,
+          "$bottomElem":null
+      });
+      intervalInstance.push(null)
+      ALLstreamnomor.push(null)
+      getNomor(listpoli[i].id, $($polis[i]), i)
+    }
+
+    // setTimeout(getDokter, 2000);
+    // setTimeout(cekPanggilan, 2000, listpoli);
+    // setTimeout(getNomor, 2000);
+
+    controlLoopRequestPasien();
+
+    setInterval(controlLoopRequestPasien, 60000);
+
+    $("#loading").hide();
+}
+
+function kembali(){
+    // $("#boxlistpoli").show('slow');
+    // $("#viewantrian").hide('slow');
+    sessionStorage.removeItem("setpoli3");
+    location.reload();
 }
 
 function templatePasien(d){
@@ -424,21 +569,26 @@ function controlLoopRequestPasien(){
 
 $(async function () {
   $polis = $('.my-poli-grid');
-
-  //init data antrean 
-  for (let i = 0; i < listpoli.length; i++) {
-    ALLantreanPoliState.push({
-        "container":null,
-        "elemheight": null,
-        "$bottomElem":null
-    });
-    intervalInstance.push(null)
-    ALLstreamnomor.push(null)
-    getNomor(listpoli[i].id, $($polis[i]), i)
-  }
-
+  
+  $("#viewantrian").hide();
   getDataUnitkerja();
   date_time("date_time");
+  // getPoliUtama();
+  getpoliaktif();
+
+  if(sessionStorage.setpoli3){
+      listpoli=[];
+      var poli = sessionStorage.getItem('setpoli3');
+      var poli2 = poli.split(',');
+      // console.log(poli2);
+      listpoli.push({id:poli2[0],nama:poli2[1]},{id:poli2[2],nama:poli2[3]},{id:poli2[4], nama:poli2[5]});
+      
+      setpoli();
+  }
+  
+
+  // getDataUnitkerja();
+  // date_time("date_time");
   
   // getpoliaktif();
 
@@ -446,10 +596,8 @@ $(async function () {
   //     suaraaktif = localStorage.getItem("suaraantrian");
   //     settombolsuara();
   // }
-
-  controlLoopRequestPasien();
-
-  setInterval(controlLoopRequestPasien, 60000);
+  
+  
 });
 
 </script>
