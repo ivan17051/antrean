@@ -36,20 +36,20 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="tipe1">SELESAI</label>
           <div class="iradio checked">
+            <label for="tipe1">SELESAI</label>
             <input type="radio" name="tipe" id="tipe1"  value="SELESAI" checked>
           </div>
         </div>
         <div class="form-group">
-          <label for="tipe2">KE FARMASI</label>
           <div class="iradio checked">
+            <label for="tipe2">KE FARMASI</label>
             <input type="radio" name="tipe" id="tipe2" value="FARMASI"  >
           </div>
         </div>
         <div class="form-group">
-          <label for="tipe3">KE LAB</label>
           <div class="iradio checked">
+            <label for="tipe3">KE LAB</label>
             <input type="radio" name="tipe" id="tipe3" value="LAB"  >
           </div>
         </div>
@@ -208,6 +208,18 @@
       <div class="box box-primary">
         <div class="box-header">
           <div class="policaption" id="namapoli">Poli</div>
+          <div class="d-flex">
+            <div class="form-group flex-0" style="flex-basis: 160px;">
+              <!-- select poli -->
+              <select id="listpoliselect" class="form-control" >
+                <option></option>
+              </select>
+              <!-- end select poli -->
+            </div>
+            <span class="flex-1" style="padding-left:12px">
+              <button class="btn btn-success " onclick="getDataPoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
+            </span>
+          </div>
         </div>
         <div class="box-body">
           <div class="row">
@@ -420,7 +432,8 @@
       async: false,
       success: function (result) {
         var data = result.data;
-        createlistpoli(data);
+        // createlistpoli(data);
+        createlistpoliselect(data);
       },
       error: function (result) {
         console.log(result.statusText);
@@ -448,6 +461,21 @@
 
     setDropDownListPoliRujukan(data)
     // showmodalsetup();
+  }
+
+  function createlistpoliselect(data){
+    $("#listpoliselect").select2({
+      placeholder: 'Pilih Poli',
+      allowClear: true
+    });
+    var options = $('#listpoliselect');
+    $.each(data, function() {
+      options.append($("<option />").val(this.id).text(this.nama));
+    });
+    $('#listpoliselect').val(null).trigger("change");
+    $('#listpoliselect').change(function(){
+      setpoli(this.value)
+    })
   }
 
   function setpoli(id) {
@@ -943,7 +971,7 @@
       }
     });
 
-    $("#viewantrian").hide();
+    $("#boxlistpoli").hide();
 
     getpoliaktif();
 

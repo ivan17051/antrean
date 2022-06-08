@@ -33,8 +33,8 @@ class Antrian extends Controller
             ->whereDate('tanggaleta', '=', $tanggal)
             ->where('pasiennoantrian','>',$currentnomor)->get();
 
-        $idpasien = collect($res['mantrian'])->pluck('pasienid');
-        $res['pasien']=DBOnTheFly::setConnection($idunitkerja)->table('mpasien')->whereIn('noid',$idpasien)->get();
+        $res['pasien']=[];
+
         return $res;
     }
 

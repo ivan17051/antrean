@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use App\Helpers\Http;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\RequestException;
-use DBOnTheFly;
 
 class Antrian extends Controller
 {
@@ -115,7 +114,7 @@ class Antrian extends Controller
         $tanggal = date('Y-m-d');
         // $tanggal = '2019-08-07';
 		$idunitkerja = $request->get('idunitkerja');
-        $data = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.nama, COALESCE(X.servesno, 0) AS noantrian, COALESCE(X.NAMA_LGKP, '-') AS pasien, X.*
+        $data = DB::connection('mysql')->select("SELECT A.nama, COALESCE(X.servesno, 0) AS noantrian, COALESCE(X.NAMA_LGKP, '-') AS pasien, X.*
             FROM mbppoli A
             LEFT JOIN ( SELECT A.*, B.NAMA_LGKP FROM munitkerjapolidaily A
                 LEFT JOIN (
@@ -141,7 +140,7 @@ class Antrian extends Controller
         $wherepoli = "";
         $filterpoli = $request->input('poli');
         if ($filterpoli) $wherepoli = " AND A.idbppoli IN (" . implode(",", $filterpoli) . ") ";
-        $dokter = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.policaption AS bppoli, B.*, C.nama AS namapoli
+        $dokter = DB::connection('mysql')->select("SELECT A.policaption AS bppoli, B.*, C.nama AS namapoli
         	FROM munitkerjapoli A
             LEFT JOIN mdokter B ON A.idunitkerja = B.idunitkerja
             LEFT JOIN mbppoli C ON C.noid = A.idbppoli
@@ -211,14 +210,14 @@ class Antrian extends Controller
             $wherehistory = "";
         } else {
             $wherehistory = "";
-            $cekantrian = DBOnTheFly::setConnection($idunitkerja)->select("SELECT COALESCE(servesno, 0) AS noantrian FROM munitkerjapolidaily WHERE idunitkerja = $idunitkerja $wherepoli AND servesdate = '$tanggal' LIMIT 1");
+            $cekantrian = DB::connection('mysql')->select("SELECT COALESCE(servesno, 0) AS noantrian FROM munitkerjapolidaily WHERE idunitkerja = $idunitkerja $wherepoli AND servesdate = '$tanggal' LIMIT 1");
             if ($cekantrian) {
                 $noantrian = $cekantrian[0]->noantrian;
             }
         }
 
 		
-        $data = DBOnTheFly::setConnection($idunitkerja)->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli $whereisconfirm AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
+        $data = DB::connection('mysql')->select("SELECT A.noid, idunitkerja, idbppoli, B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP  FROM mantrian A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli $whereisconfirm AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory
             UNION
             SELECT A.noid, idunitkerja, idbppoli,  B.nama AS bppoli, pasiennoantrian, tanggaleta, DATE_FORMAT(tanggaleta, '%Y-%m-%d') AS tanggallayanan, DATE_FORMAT(tanggaleta, '%H.%i') AS jamestimasi, NIK, NAMA_LGKP FROM mantrianserve A LEFT JOIN mbppoli B ON A.idbppoli = B.noid WHERE idunitkerja = $idunitkerja $wherepoli AND DATE(tanggalbuka) = '$tanggal' AND pasiennoantrian > $noantrian $wherehistory ORDER BY pasiennoantrian ");
         
@@ -231,15 +230,22 @@ class Antrian extends Controller
         // return response()->json(['idunitkerja'=>$idunitkerja], 200);
 
         foreach($request->input('poli') as $idbppoli){
-            $data = [ 'idunitkerja'=>$idunitkerja,
+            DB::beginTransaction();
+            try {
+                $data = [ 'idunitkerja'=>$idunitkerja,
                'idbppoli'=>$idbppoli ];
 
-            $data['currentnomor'] = $this->getCurrentTotalNomorAntrian($data);
-            $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data);
-            $statusCode = $res->getStatusCode();
-            $data = json_decode($res->getBody(), true);
-
-            $this->syncAntrian($data);
+                $data['currentnomor'] = $this->getCurrentTotalNomorAntrian($data);
+                $res = Http::post(config('app.hostapi')."/api/getantrianpoli2", $data);
+                $statusCode = $res->getStatusCode();
+                $data = json_decode($res->getBody(), true);
+                // dd($data);
+                $this->syncAntrian($data);
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollback();
+                return response()->json($e->getMessage(), 500);
+            }
         }
         return response()->json('syncing', 200);
     }
@@ -648,59 +654,30 @@ class Antrian extends Controller
 
     private function syncAntrian($data){
         //sync munitkerjapoli
-        DB::connection('mysql')->select("REPLACE INTO munitkerjapolidaily VALUES(
-            :noid,
-            :idunitkerja,
-            :idbppoli,
-            :idtypeantrian,
-            :idshift,
-            :servesdate,
-            :jambuka,
-            :jamtutup,
-            :jamlayanan,
-            :avgservice,
-            :avgtindakan,
-            :avgnontindakan,
-            :noserver,
-            :servesno,
-            :servesmax,
-            :servestime)", $data['munitkerjapolidaily']);
-        
-        //sync mpasien
-        foreach ($data['pasien'] as $px) {
-            DB::connection('mysql')->select("REPLACE INTO mpasien VALUES(
+        if(isset($data['munitkerjapolidaily'])){
+            DB::connection('mysql')->select("REPLACE INTO munitkerjapolidaily VALUES(
                 :noid,
-                :nik,
-                :nama,
-                :jeniskelamin,
-                :tgllahir,
-                :agama,
-                :pendidikan,
-                :pekerjaan,
-                :goldarah,
-                :no_kel,
-                :nama_kel,
-                :no_kec,
-                :nama_kec,
-                :no_kab,
-                :nama_kab,
-                :no_prop,
-                :nama_prop,
-                :alamat,
-                :rt,
-                :rw,
-                :issurabaya,
-                :nohp,
-                :idcreate,
-                :docreate,
-                :idupdate,
-                :lastupdate)", $px);
+                :idunitkerja,
+                :idbppoli,
+                :idtypeantrian,
+                :idshift,
+                :servesdate,
+                :jambuka,
+                :jamtutup,
+                :jamlayanan,
+                :avgservice,
+                :avgtindakan,
+                :avgnontindakan,
+                :noserver,
+                :servesno,
+                :servesmax,
+                :servestime)", $data['munitkerjapolidaily']);
         }
 
         //sync mantrian
         foreach ($data['mantrian'] as $a) {
             DB::connection('mysql')->select("REPLACE INTO mantrian VALUES(
-                   :noid,
+                :noid,
                 :idunitkerja,
                 :idbppoli,
                 :idunitkerjaasal,
@@ -756,13 +733,13 @@ class Antrian extends Controller
                 :idtypepasien,
                 :idshift,
                 :kodekartu,
+                :kodejadwaldokter,
                 :isexpired,
                 :doexpired,
+                :isarrived,
+                :doarrived,
                 :iscall,
                 :docall,
-                :ipaddress,
-                :iddevice,
-                :statusnik,
                 :isrecall,
                 :dorecall,
                 :isconfirm,
@@ -774,7 +751,10 @@ class Antrian extends Controller
                 :isconsul,
                 :doconsul,
                 :isdone,
-                :dodone)", $a);
+                :dodone,
+                :ipaddress,
+                :iddevice,
+                :statusnik)", $a);
         }
 
         //sync statusantrian
