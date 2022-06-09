@@ -217,7 +217,7 @@
               <!-- end select poli -->
             </div>
             <span class="flex-1" style="padding-left:12px">
-              <button class="btn btn-success " onclick="getDataPoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
+              <button class="btn btn-success " onclick="setpoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
             </span>
           </div>
         </div>
@@ -473,17 +473,25 @@
       options.append($("<option />").val(this.id).text(this.nama));
     });
     $('#listpoliselect').val(null).trigger("change");
-    $('#listpoliselect').change(function(){
-      setpoli(this.value)
-    })
+
+    setDropDownListPoliRujukan(data)
+    // $('#listpoliselect').change(function(){
+    //   setpoli(this.value)
+    // })
   }
 
-  function setpoli(id) {
+  async function setpoli() {
     $("#loading").show();
     $("#boxlistpoli").hide('slow');
     $("#viewantrian").show('slow');
 
-    idbppoli = id;
+    idbppoli = $("#listpoliselect").val();
+    if(idbppoli == ""){ 
+      alert('Pilih poli terlebih dahulu!')
+      $("#loading").hide();
+      return
+    }
+    var res = await syncPoli([idbppoli]);
     // setTimeout(getNomor, 2000);
     getDataPoli();
     getListPasien();
@@ -516,12 +524,11 @@
     });
   }
 
-  async function getDataPoli() {
+  function getDataPoli() {
     // $('#listpoli').empty();
     $("#loading").show();
     // $("#tombolnext").prop("disabled", true);
     if (idbppoli) {
-      var res = await syncPoli([idbppoli]);
 
       $.ajax({
         url: Settings.baseurl + '/getdatapoli/' + idbppoli,
@@ -588,9 +595,9 @@
         getListPasien();
         getListPasienSkip();
         getListPasienKonsul();
+        $("#loading").hide();
       }
     });
-    $("#loading").hide();
   }
 
   function recall() {

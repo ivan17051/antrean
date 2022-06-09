@@ -208,12 +208,24 @@
       <div class="box box-primary">
         <div class="box-header">
           <div class="policaption" id="namapoli">Poli</div>
+          <div class="d-flex">
+            <div class="form-group flex-0" style="flex-basis: 160px;">
+              <!-- select poli -->
+              <select id="listpoliselect" class="form-control" >
+                <option></option>
+              </select>
+              <!-- end select poli -->
+            </div>
+            <span class="flex-1" style="padding-left:12px">
+              <button class="btn btn-success " onclick="setpoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
+            </span>
+          </div>
         </div>
         <div class="box-body">
           <div class="row">
             <div class="col-md-5">
               <div> <span class="pasiencaption" id="namapasien">Pasien</span> &nbsp;&nbsp;&nbsp; <button type="button"
-                  onclick="getDataPoli()" class="btn btn-xs btn-default"><i class="fa fa-refresh"></i></button></div>
+                  onclick="setpoli()" class="btn btn-xs btn-default"><i class="fa fa-refresh"></i></button></div>
               <div class="box-info">
                 <span class="box-info-number bg-red" id="noantrian"></span>
                 <div class="box-info-content">
@@ -455,12 +467,34 @@
     // showmodalsetup();
   }
 
-  function setpoli(id) {
+  function createlistpoliselect(data){
+    $("#listpoliselect").select2({
+      placeholder: 'Pilih Poli',
+      allowClear: true
+    });
+    var options = $('#listpoliselect');
+    $.each(data, function() {
+      options.append($("<option />").val(this.id).text(this.nama));
+    });
+    $('#listpoliselect').val(null).trigger("change");
+
+    setDropDownListPoliRujukan(data)
+    // $('#listpoliselect').change(function(){
+    //   setpoli(this.value)
+    // })
+  }
+
+  function setpoli() {
     $("#loading").show();
     $("#boxlistpoli").hide('slow');
     $("#viewantrian").show('slow');
 
-    idbppoli = id;
+    idbppoli = $("#listpoliselect").val();
+    if(idbppoli == ""){ 
+      alert('Pilih poli terlebih dahulu!')
+      $("#loading").hide();
+      return
+    }
     // setTimeout(getNomor, 2000);
     getDataPoli();
     getListPasien();
@@ -472,6 +506,25 @@
   function kembali() {
     $("#boxlistpoli").show('slow');
     $("#viewantrian").hide('slow');
+  }
+
+  function syncPoli($polis){
+    return $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      },
+      url: Settings.baseurl + '/syncpoli',
+      type: 'POST',
+      data: {
+        'poli[]': $polis
+      },
+      dataType: 'json',
+      success: function (result) {
+        console.log('sync',result);
+        // var data = result.data[0];
+        // sound(noantrian, idbppoli);
+      }
+    });
   }
 
   function getDataPoli() {
@@ -931,10 +984,11 @@
       }
     });
 
-    $("#viewantrian").hide();
+    $("#boxlistpoli").hide();
 
     var listpoli = <?php echo json_encode($d['listpoli']); ?>;
-    createlistpoli(listpoli);
+    // createlistpoli(listpoli);
+    createlistpoliselect(listpoli)
 
     // getpoliaktif();
 
