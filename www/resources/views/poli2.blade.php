@@ -217,7 +217,7 @@
               <!-- end select poli -->
             </div>
             <span class="flex-1" style="padding-left:12px">
-              <button class="btn btn-success " onclick="getDataPoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
+              <button class="btn btn-success " onclick="setpoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
             </span>
           </div>
         </div>
@@ -473,17 +473,18 @@
       options.append($("<option />").val(this.id).text(this.nama));
     });
     $('#listpoliselect').val(null).trigger("change");
-    $('#listpoliselect').change(function(){
-      setpoli(this.value)
-    })
+    // $('#listpoliselect').change(function(){
+    //   setpoli(this.value)
+    // })
   }
 
-  function setpoli(id) {
+  function setpoli() {
     $("#loading").show();
     $("#boxlistpoli").hide('slow');
     $("#viewantrian").show('slow');
 
-    idbppoli = id;
+    idbppoli = $("#listpoliselect").val();
+    var res = await syncPoli([idbppoli]);
     // setTimeout(getNomor, 2000);
     getDataPoli();
     getListPasien();
@@ -521,7 +522,7 @@
     $("#loading").show();
     // $("#tombolnext").prop("disabled", true);
     if (idbppoli) {
-      var res = await syncPoli([idbppoli]);
+      // var res = await syncPoli([idbppoli]);
 
       $.ajax({
         url: Settings.baseurl + '/getdatapoli/' + idbppoli,
@@ -578,19 +579,22 @@
         } else {
           toast("info", respon);
         }
+        $("#loading").hide();
       },
       error: function (XMLHttpRequest, textStatus, errorThrown) {
         toast("error", textStatus);
         setTimeout(getDataPoli, 1000);
+        $("#loading").hide();
       },
       complete: function (data) {
         setTimeout(getDataPoli, 1000);
         getListPasien();
         getListPasienSkip();
         getListPasienKonsul();
+        $("#loading").hide();
       }
     });
-    $("#loading").hide();
+    
   }
 
   function recall() {
