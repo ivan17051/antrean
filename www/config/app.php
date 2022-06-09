@@ -40,7 +40,7 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
-    'hostapi' => env('HOST_API', 'https://dinkes.surabaya.go.id/antrean'),
+    'hostapi' => env('HOST_API', 'https://ehealth.surabaya.go.id/antrean3'),
 
     /*
     |--------------------------------------------------------------------------

@@ -21,11 +21,11 @@ class DatabaseConnection
             ->where('munitkerja.idtype', '207')
             ->take(1)->first();
         if(!$r){
-                $username = 'alif';
-                $password = 'Puskesmas1234';
+                $username = 'root';
+                $password = 'root';
         }else{
                 $username = $r->n;
-                $password = '12345678';
+                $password = 'root';
         }
 
         config(['database.connections.onthefly' => [
