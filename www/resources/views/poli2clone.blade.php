@@ -478,7 +478,7 @@
     });
     $('#listpoliselect').val(null).trigger("change");
 
-    setDropDownListPoliRujukan(data)
+    // setDropDownListPoliRujukan(data)
     // $('#listpoliselect').change(function(){
     //   setpoli(this.value)
     // })
