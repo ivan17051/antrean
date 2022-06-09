@@ -196,13 +196,13 @@
   <div class="row" id="listpoli"></div>
 </div>
 <div id="viewantrian">
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-md-12">
       <button type="button" class="btn btn-primary" onclick="kembali();"><i class="fa fa-angle-left"></i>
         Kembali</button>
     </div>
   </div>
-  <br>
+  <br> -->
   <div class="row">
     <div class="col-md-12">
       <div class="box box-primary">

@@ -41,12 +41,12 @@
             <input type="radio" name="tipe" id="tipe1"  value="SELESAI" checked>
           </div>
         </div>
-        <div class="form-group">
+        <!-- <div class="form-group">
           <div class="iradio checked">
             <label for="tipe2">KE FARMASI</label>
             <input type="radio" name="tipe" id="tipe2" value="FARMASI"  >
           </div>
-        </div>
+        </div> -->
         <div class="form-group">
           <div class="iradio checked">
             <label for="tipe3">KE LAB</label>
@@ -196,13 +196,13 @@
   <div class="row" id="listpoli"></div>
 </div>
 <div id="viewantrian">
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-md-12">
       <button type="button" class="btn btn-primary" onclick="kembali();"><i class="fa fa-angle-left"></i>
         Kembali</button>
     </div>
   </div>
-  <br>
+  <br> -->
   <div class="row">
     <div class="col-md-12">
       <div class="box box-primary">
