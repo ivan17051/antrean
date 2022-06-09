@@ -321,7 +321,7 @@
                   <div class="info-box bg-aqua text-center" style="height:100%;">
                     <div class="info-box-content" style="margin:0;">
                       <span class="info-box-text">Jumlah Antrean</span>
-                      <span class="info-box-number" id="maxantrian" style="font-size:25px;">41,410</span>
+                      <span class="info-box-number" id="maxantrian" style="font-size:25px;">-</span>
                     </div>
                   </div>
                 </div>
@@ -329,7 +329,7 @@
                   <div class="info-box bg-teal text-center" style="height:100%;">
                     <div class="info-box-content" style="margin:0;">
                       <span class="info-box-text">Nomor Berikutnya</span>
-                      <span class="info-box-number" id="nextantrian" style="font-size:25px;">41,410</span>
+                      <span class="info-box-number" id="nextantrian" style="font-size:25px;">-</span>
                     </div>
                   </div>
                 </div>
@@ -337,7 +337,7 @@
                   <div class="info-box bg-red text-center" style="height:100%">
                     <div class="info-box-content" style="margin:0;">
                       <span class="info-box-text">Sisa Antrean</span>
-                      <span class="info-box-number" id="sisaantrian" style="font-size:25px;">41,410</span>
+                      <span class="info-box-number" id="sisaantrian" style="font-size:25px;">-</span>
                     </div>
                   </div>
                 </div>
