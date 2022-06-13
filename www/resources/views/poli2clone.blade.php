@@ -363,7 +363,7 @@
                   </div>
                 </div>
                 <div class="row" style="padding: 0 30px 12px 30px;height: calc(100% - 410px);">
-                  <div class="box antrean-poli-container original" style="display: block;overflow: auto;height: 100%;">
+                  <div class="box antrean-poli-container original" style="display:block;overflow-y:scroll;overflow-x:hidden;height: 50vh;">
                     <div class="box-body p-0 ">
                       <table class="table table-bordered m-0">
                         <tbody>
@@ -524,6 +524,10 @@
         console.log('sync',result);
         // var data = result.data[0];
         // sound(noantrian, idbppoli);
+      },
+      error: function (result) {
+        toast('Gagal Terhubung Server');
+        $("#loading").hide();
       }
     });
   }
@@ -540,7 +544,7 @@
         dataType: 'json',
         success: function (result) {
           var data = result.data[0];
-          console.log(data);
+          // console.log(data);
           noantrian = data['noantrian'];
           textpanggilan = data['pasien'];
           var maxantrian = data['servesmax'];

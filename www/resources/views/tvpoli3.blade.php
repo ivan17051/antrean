@@ -56,8 +56,8 @@
           </div>
       </div>
   </div>
-  <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
-      <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+  <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 310px);">
+      <div class="box antrean-poli-container" style="display: block;overflow: hidden;height: 100%;">
           <div class="box-body p-0 " >
               <table class="table table-bordered m-0 font-large ">
                   <tbody style="font-size: 24px;">
@@ -68,11 +68,11 @@
   </div>
   <div class="row" style="padding: 12px 20px;">
       <div class="d-flex justify-content-center my-5">
-          <h5 class="legend-item"><span class="warning" ></span>Hadir</h5>
-          <h5 class="legend-item"><span class="danger" ></span>Batal</h5>
-          <h5 class="legend-item"><span class="light" ></span>Belum Datang</h5>
-          <h5 class="legend-item"><span class="success" ></span>Dilayani</h5>
-          <h5 class="legend-item"><span class="info" ></span>Konsultasi/Penunjang</h5>
+          <h4 class="legend-item"><span class="warning" ></span>Hadir</h4>
+          <h4 class="legend-item"><span class="danger" ></span>Batal</h4>
+          <h4 class="legend-item"><span class="light" ></span>Belum Datang</h4>
+          <h4 class="legend-item"><span class="success" ></span>Dilayani</h4>
+          <h4 class="legend-item"><span class="info" ></span>Konsultasi/Penunjang</h4>
       </div>
   </div>
   </div>
@@ -210,7 +210,7 @@ async function setpoli(id, nama) {
 
     sessionStorage.setItem("setpoli", id+','+nama);
     
-    // getDokter();
+    getDokter();
     getNomor();
 
     loopRequestPasien();
@@ -462,7 +462,7 @@ $(function () {
     // getPoliUtama();
     getpoliaktif();
 
-    if(sessionStorage.getItem("suaraantrian") !== null){
+    if(sessionStorage.suaraantrian==1){
         suaraaktif = sessionStorage.getItem("suaraantrian");
         settombolsuara();
     }

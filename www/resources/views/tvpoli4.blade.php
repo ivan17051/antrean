@@ -100,7 +100,7 @@
           </div>
         </div>
         <div class="row" style="padding: 0 15px 12px 15px;height: calc(100vh - 800px);">
-          <div class="box antrean-poli-container" style="display: block;overflow: auto;height: 100%;">
+          <div class="box antrean-poli-container" style="display: block;overflow: hidden;height: 100%;">
             <div class="box-body p-0 ">
               <table class="table table-bordered m-0 font-large ">
                 <tbody style="font-size: 24px;">
@@ -114,11 +114,11 @@
     </div>
     <div class="row" style="padding: 12px 20px;">
       <div class="d-flex justify-content-center my-5">
-          <h5 class="legend-item"><span class="warning" ></span>Hadir</h5>
-          <h5 class="legend-item"><span class="danger" ></span>Batal</h5>
-          <h5 class="legend-item"><span class="light" ></span>Belum Datang</h5>
-          <h5 class="legend-item"><span class="success" ></span>Dilayani</h5>
-          <h5 class="legend-item"><span class="info" ></span>Konsultasi/Penunjang</h5>
+          <h4 class="legend-item"><span class="warning" ></span>Hadir</h4>
+          <h4 class="legend-item"><span class="danger" ></span>Batal</h4>
+          <h4 class="legend-item"><span class="light" ></span>Belum Datang</h4>
+          <h4 class="legend-item"><span class="success" ></span>Dilayani</h4>
+          <h4 class="legend-item"><span class="info" ></span>Konsultasi/Penunjang</h4>
       </div>
     </div>
   </div>
@@ -174,11 +174,11 @@ var suaraaktif = 0;
 function setsuara(){
     if (suaraaktif == 1) {
         // $("#tombolsuara").html('<i class="glyphicon glyphicon-volume-off">');
-        localStorage.setItem("suaraantrian", 0);
+        sessionStorage.setItem("suaraantrian3", 0);
         suaraaktif = 0;
     } else {
         // $("#tombolsuara").html('<i class="glyphicon glyphicon-volume-up">');
-        localStorage.setItem("suaraantrian", 1);
+        sessionStorage.setItem("suaraantrian3", 1);
         suaraaktif = 1;
     }
     settombolsuara();
@@ -592,10 +592,10 @@ $(async function () {
   
   // getpoliaktif();
 
-  // if(localStorage.getItem("suaraantrian") !== null){
-  //     suaraaktif = localStorage.getItem("suaraantrian");
-  //     settombolsuara();
-  // }
+  if(sessionStorage.suaraantrian3==1){
+      suaraaktif = sessionStorage.getItem("suaraantrian3");
+      settombolsuara();
+  }
   
   
 });

@@ -254,7 +254,7 @@ class Antrian extends Controller
     {
         $currentnomor = $this->getCurrentTotalNomorAntrian($request->all());
         $data = array_merge( $request->all() , ['currentnomor'=>$currentnomor]);
-
+        $CALLNEXT = null;
         $res = Http::post(config('app.hostapi')."/api/layaniantrian2", $data);
         $statusCode = $res->getStatusCode();
         $data = json_decode($res->getBody(), true);

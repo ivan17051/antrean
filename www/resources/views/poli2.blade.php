@@ -216,9 +216,10 @@
               </select>
               <!-- end select poli -->
             </div>
-            <span class="flex-1" style="padding-left:12px">
+            <div class="flex-1" style="padding-left:12px;flex-basis: 160px;">
               <button class="btn btn-success " onclick="setpoli()"><i class="fa fa-refresh"></i> Tampilkan</button>
-            </span>
+            </div>
+            
           </div>
         </div>
         <div class="box-body">
@@ -271,7 +272,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
+                    <div class="row" style="padding: 0 10px 12px 10px;height: calc(100% - 410px);">
                       <div class="box antrean-poli-container skip" style="display: block;overflow: auto;height: 100%;">
                         <div class="box-body p-0 ">
                           <table class="table table-bordered m-0">
@@ -299,7 +300,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="row" style="padding: 0 20px 12px 20px;height: calc(100% - 410px);">
+                    <div class="row" style="padding: 0 10px 12px 10px;height: calc(100% - 410px);">
                       <div class="box antrean-poli-container konsul"
                         style="display: block;overflow: auto;height: 100%;">
                         <div class="box-body p-0 ">
@@ -520,6 +521,10 @@
         console.log('sync',result);
         // var data = result.data[0];
         // sound(noantrian, idbppoli);
+      },
+      error: function (result) {
+        toast('error', 'Gagal Terhubung ke Server');
+        $("#loading").hide();
       }
     });
   }
