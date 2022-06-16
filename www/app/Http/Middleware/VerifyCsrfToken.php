@@ -11,7 +11,16 @@ class VerifyCsrfToken extends BaseVerifier
      *
      * @var array
      */
+    
     protected $except = [
         //
+        '*/syncpoli',
+        '*/layaniantrian',
+        '*/layanikembali',
+        '*/gotofarmasilab',
+        '*/gotopolirujukan',
+
+        '*/addantriansuara',
+        '*/getpanggilanantrian'
     ];
 }
