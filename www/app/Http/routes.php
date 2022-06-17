@@ -82,6 +82,8 @@ Route::group(['prefix'=>'{idunitkerja}', 'middleware'=>'customize.parameter'], f
 	
 	Route::get('getdokter', ['uses' => 'Antrian@getDokter', 'as' => 'get-dokter']);
 	Route::get('getlistpasien', ['uses' => 'Antrian@getListPasien', 'as' => 'get-pasien']);
+	Route::get('getbulklistpasien', ['uses' => 'Antrian@getBulklistpasien', 'as' => 'get-bulk-pasien']);
+
 	Route::get('tvpoli2', ['uses' => 'TVPoli@index2', 'as' => 'tvpoli2']);
 	Route::get('tvpoli3', ['uses' => 'TVPoli@index3', 'as' => 'tvpoli3']);
 	Route::get('tvpoli4', ['uses' => 'TVPoli@index4', 'as' => 'tvpoli4']);

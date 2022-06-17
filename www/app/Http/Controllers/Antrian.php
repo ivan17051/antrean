@@ -177,6 +177,37 @@ class Antrian extends Controller
         
         return Response::json(array('data' => $data));
     }
+
+    public function getBulkListPasien(Request $request)
+    {
+        // $idunitkerja = Auth::user()->idunitkerja;
+        $idunitkerja = $request->get('idunitkerja');
+        $tanggalawal = date('Y-m-d');
+		$tanggalakhir = date('Y-m-d', strtotime('+1 day', strtotime($tanggalawal)));
+        // $tanggal = '2022-05-12';
+		
+        $wherepoli = "";
+        $limit ="";
+		$wheretanggal = "AND A.tanggaleta >= '{$tanggalawal} 00:00:00' AND A.tanggaleta < '{$tanggalakhir} 00:00:00'";
+        $filterpoli = $request->input('poli');
+
+        $pasien = [];
+        foreach ($filterpoli as $poli) {
+            if ($filterpoli) $wherepoli = " AND A.idbppoli = {$poli} ";
+            if ($limit = $request->input('limit')) $limit = " LIMIT {$limit} ";
+            if ($where = $request->input('where')) $wherepoli = $wherepoli." ".$where;
+            
+            $pasien[$poli] = DB::connection('mysql')->select("SELECT A.pasiennoantrian, A.NAMA_LGKP, A.tanggaleta, A.iscall, A.isrecall, A.isconfirm, A.isserved, A.isskipped, A.isconsul, A.isdone, A.idbppoli, A.idbppoliasal, P.nama as poli, P2.nama as poliasal
+                FROM mantrian A
+                INNER JOIN mbppoli P ON P.noid = A.idbppoli
+                INNER JOIN mbppoli P2 ON P2.noid = A.idbppoliasal
+                WHERE A.idunitkerja = {$idunitkerja} {$wherepoli} {$wheretanggal} AND A.pasiennoantrian>0 GROUP BY A.pasiennoantrian ORDER BY A.idbppoli, A.pasiennoantrian {$limit}");
+        }
+            
+        $data = array("listpasien" => $pasien);
+        
+        return Response::json(array('data' => $data));
+    }
 	
     public function getPasienPoli(Request $request)
     {
