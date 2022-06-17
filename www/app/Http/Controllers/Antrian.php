@@ -754,7 +754,9 @@ class Antrian extends Controller
                 :dodone,
                 :ipaddress,
                 :iddevice,
-                :statusnik)", $a);
+                :statusnik,
+                :isnotpresent,
+                :donotpresent)", $a);
         }
 
         //sync statusantrian
